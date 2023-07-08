@@ -3,12 +3,18 @@ import ReactDOM from 'react-dom';
 import { Route, Routes } from 'react-router-dom'
 import HomeScreen from './pages/navigation/HomeScreen';
 import FourOhFour from './pages/error/FourOhFour';
+import Landing from './pages/navigation/LandingScreen';
+import Login from './pages/auth/Login'
+import Register from './pages/auth/Register'
 
 function App() {
     return (
         <Routes>
-            <Route path="/" element={<HomeScreen/>} />
+            <Route path="/" element={<Landing/>} />
             <Route path="*" element={<FourOhFour/>} />
+            <Route path="/home" element={<HomeScreen/>}/>
+            <Route path="/login" element={<Login/>} />
+            <Route path="/register" element={<Register/>} />
         </Routes>
     )
 }

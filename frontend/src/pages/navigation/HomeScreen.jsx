@@ -1,5 +1,6 @@
 import React from 'react';
-import Welcome from '../../components/welcome';
+import Welcome from '../../components/Welcome';
+import NavigationBar from '../../components/NavigationBar'
 
 function HomeScreen() {
   return (
