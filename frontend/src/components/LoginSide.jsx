@@ -67,7 +67,9 @@ function LoginSide({openByDefault}) {
               paddingTop: '2vh',
             }}
           >
-            <img src={IconDark} alt="Icon" />
+            <Link to='/'>
+              <img src={IconDark} alt="Icon"/>
+            </Link>
           </Box>
   
           <Box

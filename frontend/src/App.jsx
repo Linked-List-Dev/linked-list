@@ -4,7 +4,6 @@ import { Route, Routes } from 'react-router-dom'
 import HomeScreen from './pages/navigation/HomeScreen';
 import FourOhFour from './pages/error/FourOhFour';
 import Landing from './pages/navigation/LandingScreen';
-import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
 
 function App() {
