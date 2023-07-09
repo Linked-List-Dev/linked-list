@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Route, Routes } from 'react-router-dom'
-import HomeScreen from './pages/HomeScreen';
-import FourOhFour from './pages/FourOhFour';
+import HomeScreen from './pages/navigation/HomeScreen';
+import FourOhFour from './pages/error/FourOhFour';
 
 function App() {
     return (

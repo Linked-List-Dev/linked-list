@@ -1,5 +1,5 @@
 import React from 'react';
-import Welcome from '../components/welcome';
+import Welcome from '../../components/welcome';
 
 function HomeScreen() {
   return (
