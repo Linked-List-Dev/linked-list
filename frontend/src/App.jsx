@@ -13,8 +13,8 @@ function App() {
             <Route path="/" element={<Landing/>} />
             <Route path="*" element={<FourOhFour/>} />
             <Route path="/home" element={<HomeScreen/>}/>
-            <Route path="/login" element={<Login/>} />
-            <Route path="/register" element={<Register/>} />
+            <Route path="/login" element={<Register openModal={true}/>} />
+            <Route path="/register" element={<Register openModal={false}/>} />
         </Routes>
     )
 }

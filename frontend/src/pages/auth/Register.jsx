@@ -9,12 +9,12 @@ import {ThemeProvider,
 } from '@mui/material';
 import AppTheme from '../../util/Theme'
 
-function Register() {
+function Register({ openModal }) {
   return (
     <div>
         <ThemeProvider theme={AppTheme}>
             <Box sx={{ display: 'flex', width: '100%' }}>
-                <LoginSide/>
+                <LoginSide openByDefault={openModal}/>
                 <RegisterSide/>
             </Box>
         </ThemeProvider>

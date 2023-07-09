@@ -16,8 +16,8 @@ import facebook from '../assets/socials/facebook.svg'
 import google from '../assets/socials/google.svg'
 import linkedin from '../assets/socials/linkedin.svg'
 
-function LoginSide() {
-    const [open, setOpen] = useState(false);
+function LoginSide({openByDefault}) {
+    const [open, setOpen] = useState(openByDefault);
     const [formValues, setFormValues] = useState({
         email: '',
         password: ''
