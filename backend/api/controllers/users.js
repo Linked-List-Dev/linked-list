@@ -21,7 +21,7 @@ router.post("/", async function (req, res, next) {
         const { error } = schema.validate(req.body)
 
         if (error) {
-            return res.status(401).json({ message: error.details[0].message })
+            return res.status(400).json({ error: error.details[0].message })
         }
 
         const userExistsAlready = await User.findOne({
@@ -31,7 +31,7 @@ router.post("/", async function (req, res, next) {
         if (userExistsAlready) {
             return res
                 .status(403)
-                .json({ message: "User with this email already exists!" })
+                .json({ error: "User with this email already exists!" })
         } else {
             const userToCreate = new User({
                 ...req.body,
@@ -40,8 +40,11 @@ router.post("/", async function (req, res, next) {
 
             const createdUser = await userToCreate.save()
 
+            const token = generateAuthToken(createdUser)
+
             res.status(201).json({
                 id: createdUser.id,
+                token: token,
                 links: {
                     user: `/users/${createdUser.id}`,
                 },
@@ -143,9 +146,9 @@ router.get("/", requireAuthentication, async function (req, res) {
         })
     } catch (err) {
         console.error(err)
-        res.status(500).json({
-            error: `Failed to retrieve the collection of all the users due to the following error: ${err.message}`,
-        })
+        res
+            .status(500)
+            .json({ error: `Failed to retrieve the collection of all the users due to the following error: ${err.message}` })
     }
 })
 
@@ -160,27 +163,28 @@ router.post("/login", async function (req, res, next) {
             if (authenticated) {
                 const token = generateAuthToken(user)
                 res.status(200).send({
+                    id: user._id,
                     token: token,
                 })
             } else if (!user) {
                 return res
                     .status(401)
-                    .json({ message: "User with the provided email not found" })
+                    .json({ error: "User with the provided email not found!" })
             } else {
-                return res.status(401).send({
-                    error: "Invalid authentication credentials",
-                })
+                return res
+                    .status(401)
+                    .json({ error: "Invalid authentication credentials!" })
             }
         } catch (err) {
             // next(e)
-            res.status(500).json({
-                error: `Failed to login the user by id due to the following error: ${err.message}`,
-            })
+            res.
+                status(500)
+                .json({ error: `Failed to login the user by id due to the following error: ${err.message}` })
         }
     } else {
-        res.status(400).send({
-            error: "Request body requires `email` and `password`.",
-        })
+        res
+            .status(400)
+            .json({ error: "Request body requires `email` and `password`." })
     }
 })
 
