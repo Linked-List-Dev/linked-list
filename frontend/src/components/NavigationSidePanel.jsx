@@ -13,7 +13,8 @@ import { TextField,
     ListItemText,
     Avatar,
     Modal,
-    Box } from '@mui/material';
+    Box, 
+    Button} from '@mui/material';
 
 import HomeIcon from '@mui/icons-material/Home';
 import AddBoxIcon from '@mui/icons-material/AddBox';
@@ -27,6 +28,27 @@ function NavigationSidePanel() {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+
+    const [formValues, setFormValues] = useState({
+        content: ""
+    })
+
+    const handleChange = (e) => {
+        const { name, value } = e.target
+        setFormValues((prevValues) => ({
+            ...prevValues,
+            [name]: value,
+        }))
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        console.log(formValues)
+
+        //Artem TODO upload post refresh or do whatever you need to do
+        // ඞඞඞ
+    }
+
   return (
     <div >
         <ThemeProvider theme={AppTheme}>
@@ -114,18 +136,59 @@ function NavigationSidePanel() {
                     alignItems: "center",
                     justifyContent: "center",
                     textAlign: "center",
-                    }}>
-                    <Box paddingTop="3vh" paddingBottom="3vh">
+                }}>
+                    <Box 
+                        paddingTop="3vh" 
+                        paddingBottom="3vh">
                     <Stack
                         spacing={5}
                         direction="row"
-                        alignItems="flex-end"
+                        alignItems="center"
                         justifyContent="center"
                         paddingTop="2vh"
-                        paddingBottom="2vh"
-                    >
+                        paddingBottom="2vh">
+
+                        <form onSubmit={handleSubmit}>
+                            <Stack alignItems={'center'} spacing={3}>
+                                <Typography variant='h3' color='accent.main'>
+                                    New Post
+                                </Typography>
+                                <TextField
+                                    sx={{width: '30vw'}}
+                                    multiline
+                                    rows={5}
+                                    variant='outlined'
+                                    name='content'
+                                    label="What's on your mind?"
+                                    value={formValues.content}
+                                    onChange={handleChange}
+                                    fullWidth
+                                    required/>
+
+                                <Button 
+                                    type='submit'
+                                    variant='contained'
+                                    size='large'
+                                    sx={{
+                                        backgroundColor: "accent.main",
+                                        textTransform: "none",
+                                        borderRadius: 4,
+                                        width: "7vw",
+                                        height: "auto",
+                                        "&:hover": {
+                                            backgroundColor: "accent.secondary",
+                                        },
+                                    }}>
+                                    <Typography variant='h4'>
+                                        Post!
+                                    </Typography>
+                                </Button>
+                            </Stack>
+                            
+                            
+                        </form>
                     </Stack>
-                    
+
                     </Box>
                 </Box>
             </Modal>
