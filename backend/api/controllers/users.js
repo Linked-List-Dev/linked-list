@@ -4,6 +4,8 @@ import bcrypt from "bcrypt"
 import { isValidObjectId } from "mongoose"
 import joi from "joi"
 import User from "../../models/User.js"
+import Feed from "../../models/Feed.js"
+import Post from "../../models/Post.js"
 import { generateAuthToken } from "../../lib/token.js"
 import { requireAuthentication } from "../../middleware/auth.js"
 
@@ -73,17 +75,42 @@ router.get("/:userid", requireAuthentication, async function (req, res, next) {
 })
 
 // delete a specific user by id
-router.delete(
-    "/:userid",
-    requireAuthentication,
-    async function (req, res, next) {
+router.delete("/:userid", requireAuthentication, async function (req, res, next) {
         // console.log("req.user.id:", req.user._id)
         if (req.user._id === req.params.userid) {
             try {
-                const user = await User.findByIdAndDelete(req.params.userid)
+                const user = await User.findById(req.params.userid)
+
                 if (!user) {
                     return next()
                 }
+
+                const userPostIds = user.posts.map((post) => post._id)
+                // await Post.deleteMany({ _id: { $in: userPostIds } })   //this will work too
+
+                // Delete user's posts from the feed
+                for (const postId of userPostIds) {
+                    await Post.findByIdAndDelete(postId.toString())
+
+                    const feed = await Feed.findById(process.env.FEED_ID)
+
+                    const postIndex = feed.posts.findIndex(
+                        (post) => post._id.toString() === postId.toString()
+                    )
+
+                    if (postIndex !== -1) {
+                        feed.posts.splice(postIndex, 1)
+                    }
+
+                    feed.posts.sort(
+                        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                    )
+
+                    await feed.save()
+                }
+
+                await User.findByIdAndDelete(req.params.userid)
+
                 res.status(204).end()
             } catch (err) {
                 res.status(500).json({
@@ -146,9 +173,9 @@ router.get("/", requireAuthentication, async function (req, res) {
         })
     } catch (err) {
         console.error(err)
-        res
-            .status(500)
-            .json({ error: `Failed to retrieve the collection of all the users due to the following error: ${err.message}` })
+        res.status(500).json({
+            error: `Failed to retrieve the collection of all the users due to the following error: ${err.message}`,
+        })
     }
 })
 
@@ -177,14 +204,14 @@ router.post("/login", async function (req, res, next) {
             }
         } catch (err) {
             // next(e)
-            res.
-                status(500)
-                .json({ error: `Failed to login the user by id due to the following error: ${err.message}` })
+            res.status(500).json({
+                error: `Failed to login the user by id due to the following error: ${err.message}`,
+            })
         }
     } else {
-        res
-            .status(400)
-            .json({ error: "Request body requires `email` and `password`." })
+        res.status(400).json({
+            error: "Request body requires `email` and `password`.",
+        })
     }
 })
 

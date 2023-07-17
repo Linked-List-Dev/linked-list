@@ -1,4 +1,5 @@
 import mongoose from "mongoose"
+import Post from "./Post.js"
 
 const userSchema = new mongoose.Schema({
     email: {
@@ -12,6 +13,10 @@ const userSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
+    },
+    posts: {
+        type: [Post.Schema],
+        default: [],
     },
 })
 
