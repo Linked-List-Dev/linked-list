@@ -17,6 +17,7 @@ import facebook from "../assets/socials/facebook.svg"
 import google from "../assets/socials/google.svg"
 import linkedin from "../assets/socials/linkedin.svg"
 import axios from "axios"
+import { useNavigate } from "react-router-dom"
 
 function LoginSide({ openByDefault }) {
   const [open, setOpen] = useState(openByDefault)
@@ -25,6 +26,7 @@ function LoginSide({ openByDefault }) {
     password: "",
   })
   const [error, setError] = useState("")
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -36,7 +38,8 @@ function LoginSide({ openByDefault }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log(formValues)
+    console.log(formValues.email)
+    console.log(formValues.password)
     const res = await axios.post("http://localhost:8000/api/users/login", {
       email: formValues.email,
       password: formValues.password
@@ -47,6 +50,7 @@ function LoginSide({ openByDefault }) {
       localStorage.setItem("token", res.data.token)
       localStorage.setItem("id", res.data.id)
 
+      navigate('/feed')
       // TODO:
       // setTimeout(() => {
       //   setMessage('User logged in successfully');

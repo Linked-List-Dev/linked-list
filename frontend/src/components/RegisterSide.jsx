@@ -12,8 +12,8 @@ import AppTheme from "../util/Theme"
 import facebook from "../assets/socials/facebook.svg"
 import google from "../assets/socials/google.svg"
 import linkedin from "../assets/socials/linkedin.svg"
-import { Link, useNavigate } from "react-router-dom"
 import axios from "axios"
+import { useNavigate } from "react-router-dom"
 
 function RegisterSide() {
     const [formValues, setFormValues] = useState({
@@ -23,6 +23,7 @@ function RegisterSide() {
         confirmPassword: "",
     })
     const [error, setError] = useState("")
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -56,6 +57,7 @@ function RegisterSide() {
                 localStorage.setItem("token", res.data.token)
                 localStorage.setItem("id", res.data.id)
 
+                navigate('/feed')
                 // TODO:
                 // setTimeout(() => {
                 //   setMessage('User created successfully');
