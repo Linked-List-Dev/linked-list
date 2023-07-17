@@ -50,7 +50,7 @@ function NavigationSidePanel() {
     }
 
   return (
-    <div >
+    <div>
         <ThemeProvider theme={AppTheme}>
             <Box height={'100vh'}>
 

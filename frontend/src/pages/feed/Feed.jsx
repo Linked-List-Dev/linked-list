@@ -11,7 +11,7 @@ const placeholder = [
         postId: 1,
         userName: 'Maserati Bugatti',
         jobTitle: 'Software Engineer',
-        profilePhoto: 'https://merriam-webster.com/assets/mw/images/article/art-wap-article-main/egg-3442-e1f6463624338504cd021bf23aef8441@1x.jpg',
+        profilePhoto: 'https://www.catster.com/wp-content/uploads/2017/11/Mackerel-Tabby-cat.jpg.optimal.jpg',
         description: 'This is a post that I made',
         numLikes: 400
     },
@@ -40,7 +40,7 @@ function Feed(){
         <div>
             <ThemeProvider theme={AppTheme}>
                 <Box sx={{ display: 'flex', backgroundColor: 'page.secondary' }}>
-                    <NavigationSidePanel/>
+                    <NavigationSidePanel sx={{position: 'fixed'}}/>
                     <Box sx={{ flex: 1, paddingLeft: '2vw', paddingRight: '2vw', paddingTop: '2vh'}}>
                         <Stack spacing={3}>
                             {posts.map((post) => (

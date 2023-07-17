@@ -4,10 +4,12 @@ import Card from '@mui/material/Card';
 import { Button, 
     CardActionArea, 
     CardActions, 
+    ThemeProvider,
     Avatar, 
     Typography,
     Stack,
     CardContent } from '@mui/material';
+import AppTheme from '../util/Theme'
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
 import CommentIcon from '@mui/icons-material/Comment';
@@ -23,46 +25,52 @@ function Post({_postId, _userName, _jobTitle, _profilePhoto, _description, _numL
     const [numLikes, setNumLikes] = useState(_numLikes)
 
   return (
-    <Card>
-      <CardActionArea>
-        <CardContent>
-            <Stack direction={'row'} spacing={2} paddingBottom={'1vh'}>
-                <Avatar src={profilePhoto} sx={{ width: 60, height: 60 }}></Avatar>
-                <Stack>
-                    <Typography variant="h5">
-                        {userName}
-                    </Typography>
-                    <Typography variant="body1" component="div" style={{ verticalAlign: 'sub' }}>
-                        {jobTitle}
-                    </Typography>
-                </Stack>
-            </Stack>
+    <div>
+        <ThemeProvider theme={AppTheme}>
+            <Card sx={{bgcolor: 'page.main'}}>
+                <CardActionArea>
+                    <CardContent>
+                        <Stack direction={'row'} spacing={2} paddingBottom={'1vh'}>
+                            <Avatar src={profilePhoto} sx={{ width: 60, height: 60 }}></Avatar>
+                            <Stack>
+                                <Typography variant="h5">
+                                    {userName}
+                                </Typography>
+                                <Typography variant="body1" component="div" style={{ verticalAlign: 'sub' }}>
+                                    {jobTitle}
+                                </Typography>
+                            </Stack>
+                        </Stack>
 
-          <Typography variant="body2" color="text.secondary">
-            {description}
-          </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        {description}
+                    </Typography>
 
-        </CardContent>
-      </CardActionArea>
-      <CardActions>
-        <Button size="small" color="primary">
-          <ThumbUpOffAltIcon/>
-          {numLikes}
-        </Button>
-        <Button size="small" color="primary">
-          <ThumbDownOffAltIcon/>
-        </Button>
-        <Button>
-            <CommentIcon/>
-        </Button>
-        <Button>
-            <IosShareIcon/>
-        </Button>
-        <Button>
-            <BookmarkBorderIcon/>
-        </Button>
-      </CardActions>
-    </Card>
+                    </CardContent>
+                </CardActionArea>
+                <CardActions>
+                    <Button size="small" color="primary">
+                    <ThumbUpOffAltIcon/>
+                    {numLikes}
+                    </Button>
+                    <Button size="small" color="primary">
+                    <ThumbDownOffAltIcon/>
+                    </Button>
+                    <Button>
+                        <CommentIcon/>
+                    </Button>
+                    <Button>
+                        <IosShareIcon/>
+                    </Button>
+                    <Button>
+                        <BookmarkBorderIcon/>
+                    </Button>
+                </CardActions>
+            </Card>
+        </ThemeProvider>
+    </div>
+    
+    
   );
 }
 
