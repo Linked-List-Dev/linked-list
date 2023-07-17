@@ -57,6 +57,62 @@ router.post("/", requireAuthentication, async function (req, res, next) {
     }
 })
 
+router.put("/:postid", requireAuthentication, async function (req, res, next) {
+    const email = req.user.email
+    const userid = req.user._id
+
+    const { description } = req.body
+
+    if (!req.params.postid) {
+        return res.status(400).json({ error: "Post ID not provided" })
+    }
+
+    try {
+        const postToEdit = await Post.findById(req.params.postid)
+        if (!postToEdit) {
+            return next()
+        }
+
+        if (email !== postToEdit.authorEmail) {
+            return res
+                .status(401)
+                .json({ error: "You can only edit your own posts!" })
+        }
+        postToEdit.description = description
+
+        // update the post in the global feed
+        const feed = await Feed.findById(process.env.FEED_ID)
+
+        const postIndexInFeed = feed.posts.findIndex(
+            (post) => post._id.toString() === req.params.postid.toString()
+        )
+
+        if (postIndexInFeed !== -1) {
+            feed.posts[postIndexInFeed] = postToEdit
+        }
+
+        // update the post within the user's profile page
+        const user = await User.findById(userid)
+        const postIndexInProfile = user.posts.findIndex(
+            (post) => post._id.toString() === req.params.postid.toString()
+        )
+
+        if (postIndexInProfile !== -1) {
+            user.posts[postIndexInProfile] = postToEdit
+        }
+
+        await user.save()
+        await feed.save()
+        const editedPost = await postToEdit.save()
+
+        return res
+            .status(200)
+            .json({ message: "Post successfully edited!", post: editedPost })
+    } catch (err) {
+        return res.status(500).json({ error: err.message })
+    }
+})
+
 // get info about a specific post by post id
 router.get("/:postid", requireAuthentication, async function (req, res, next) {
     if (!req.params.postid) {
@@ -78,53 +134,49 @@ router.get("/:postid", requireAuthentication, async function (req, res, next) {
     }
 })
 
-router.delete(
-    "/:postid",
-    requireAuthentication,
-    async function (req, res, next) {
-        const email = req.user.email
+router.delete("/:postid", requireAuthentication, async function (req, res, next) {
+    const email = req.user.email
 
-        if (!req.params.postid) {
-            return res.status(400).json({ error: "Post ID not provided" })
-        }
-
-        try {
-            const post = await Post.findById(req.params.postid)
-            if (!post) {
-                return next()
-            }
-
-            if (email !== post.authorEmail) {
-                return res
-                    .status(401)
-                    .json({ error: "You can only delete your own posts!" })
-            }
-
-            // delete the post from the global feed
-            const feed = await Feed.findById(process.env.FEED_ID)
-
-            const postIndex = feed.posts.findIndex(
-                (post) => post._id.toString() === req.params.postid.toString()
-            )
-
-            if (postIndex !== -1) {
-                feed.posts.splice(postIndex, 1)
-            }
-
-            feed.posts.sort((a, b) => {
-                return new Date(b.createdAt) - new Date(a.createdAt)
-            })
-
-            await feed.save()
-
-            await Post.findByIdAndDelete(req.params.postid)
-
-            res.status(204).end()
-        } catch (err) {
-            return res.status(500).json({ error: err.message })
-        }
+    if (!req.params.postid) {
+        return res.status(400).json({ error: "Post ID not provided" })
     }
-)
+
+    try {
+        const post = await Post.findById(req.params.postid)
+        if (!post) {
+            return next()
+        }
+
+        if (email !== post.authorEmail) {
+            return res
+                .status(401)
+                .json({ error: "You can only delete your own posts!" })
+        }
+
+        // delete the post from the global feed
+        const feed = await Feed.findById(process.env.FEED_ID)
+
+        const postIndex = feed.posts.findIndex(
+            (post) => post._id.toString() === req.params.postid.toString()
+        )
+
+        if (postIndex !== -1) {
+            feed.posts.splice(postIndex, 1)
+        }
+
+        feed.posts.sort((a, b) => {
+            return new Date(b.createdAt) - new Date(a.createdAt)
+        })
+
+        await feed.save()
+
+        await Post.findByIdAndDelete(req.params.postid)
+
+        res.status(204).end()
+    } catch (err) {
+        return res.status(500).json({ error: err.message })
+    }
+})
 
 router.post("/like/", requireAuthentication, async function (req, res, next) {
     const email = req.user.email
@@ -231,11 +283,13 @@ router.post("/dislike/", requireAuthentication, async function (req, res, next) 
 
         return res
             .status(200)
-            .json({ message: "Post successfully disliked!", post: dislikedPost })
+            .json({
+                message: "Post successfully disliked!",
+                post: dislikedPost,
+            })
     } catch (err) {
         return res.status(500).json({ error: err.message })
     }
-}
-)
+})
 
 export default router

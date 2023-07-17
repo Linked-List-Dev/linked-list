@@ -76,54 +76,91 @@ router.get("/:userid", requireAuthentication, async function (req, res, next) {
 
 // delete a specific user by id
 router.delete("/:userid", requireAuthentication, async function (req, res, next) {
-        // console.log("req.user.id:", req.user._id)
-        if (req.user._id === req.params.userid) {
-            try {
-                const user = await User.findById(req.params.userid)
+    // console.log("req.user.id:", req.user._id)
+    if (req.user._id === req.params.userid) {
+        try {
+            const user = await User.findById(req.params.userid)
 
-                if (!user) {
-                    return next()
-                }
-
-                const userPostIds = user.posts.map((post) => post._id)
-                // await Post.deleteMany({ _id: { $in: userPostIds } })   //this will work too
-
-                // Delete user's posts from the feed
-                for (const postId of userPostIds) {
-                    await Post.findByIdAndDelete(postId.toString())
-
-                    const feed = await Feed.findById(process.env.FEED_ID)
-
-                    const postIndex = feed.posts.findIndex(
-                        (post) => post._id.toString() === postId.toString()
-                    )
-
-                    if (postIndex !== -1) {
-                        feed.posts.splice(postIndex, 1)
-                    }
-
-                    feed.posts.sort(
-                        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-                    )
-
-                    await feed.save()
-                }
-
-                await User.findByIdAndDelete(req.params.userid)
-
-                res.status(204).end()
-            } catch (err) {
-                res.status(500).json({
-                    error: `Failed to delete the user by id due to the following error: ${err.message}`,
-                })
+            if (!user) {
+                return next()
             }
-        } else {
-            res.status(403).json({
-                error: `You don't have permissions to delete any other users besides yourself!`,
+
+            const userPostIds = user.posts.map((post) => post._id)
+            // await Post.deleteMany({ _id: { $in: userPostIds } })   //this will work too
+
+            // Delete user's posts from the feed
+            for (const postId of userPostIds) {
+                await Post.findByIdAndDelete(postId.toString())
+
+                const feed = await Feed.findById(process.env.FEED_ID)
+
+                const postIndex = feed.posts.findIndex(
+                    (post) => post._id.toString() === postId.toString()
+                )
+
+                if (postIndex !== -1) {
+                    feed.posts.splice(postIndex, 1)
+                }
+
+                feed.posts.sort(
+                    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                )
+
+                await feed.save()
+            }
+
+            await User.findByIdAndDelete(req.params.userid)
+
+            res.status(204).end()
+        } catch (err) {
+            res.status(500).json({
+                error: `Failed to delete the user by id due to the following error: ${err.message}`,
             })
         }
+    } else {
+        res.status(403).json({
+            error: `You don't have permissions to delete any other users besides yourself!`,
+        })
     }
-)
+})
+
+// update user's profile info by id
+router.put("/:userid", requireAuthentication, async function (req, res, next) {
+    const { name, jobTitle, bio } = req.body
+    if (req.user._id === req.params.userid) {
+        try {
+            const userToUpdate = await User.findById(req.params.userid)
+
+            if (!userToUpdate) {
+                return next()
+            }
+
+            if (name && name != "") {
+                userToUpdate.name = name
+            }
+            if (jobTitle && jobTitle != "") {
+                userToUpdate.jobTitle = jobTitle
+            }
+            if (bio && bio != "") {
+                userToUpdate.bio = bio
+            }
+            
+            const updatedUser = await userToUpdate.save()
+
+            return res
+                .status(200)
+                .json({ message: "User info successfully updated!", user: updatedUser })
+        } catch (err) {
+            res.status(500).json({
+                error: `Failed to update the user by id due to the following error: ${err.message}`,
+            })
+        }
+    } else {
+        res.status(403).json({
+            error: `You don't have permissions to update any other users' personal info!`,
+        })
+    }
+})
 
 // get info about all existing users
 router.get("/", requireAuthentication, async function (req, res) {

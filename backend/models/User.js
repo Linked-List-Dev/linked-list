@@ -14,6 +14,20 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    // profileAvatarPicture: {            //to be implemented
+    //     type:
+    // },
+    // profileBackgroundPicture: {        //to be implemented
+    //     type:
+    // },
+    bio: {
+        type: String,
+        required: false
+    },
+    jobTitle: {
+        type: String,
+        required: false
+    },
     posts: {
         type: [Post.Schema],
         default: [],
