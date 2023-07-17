@@ -12,23 +12,23 @@ const placeholder = [
         userName: 'Maserati Bugatti',
         jobTitle: 'Software Engineer',
         profilePhoto: 'https://www.catster.com/wp-content/uploads/2017/11/Mackerel-Tabby-cat.jpg.optimal.jpg',
-        description: 'This is a post that I made',
+        description: 'Hello everyone this is a post that I made!',
         numLikes: 400
     },
     {
         postId: 2,
-        userName: 'Drake',
-        jobTitle: 'Certified Lover Boy',
-        profilePhoto: 'https://i0.wp.com/o3v.a1b.mywebsitetransfer.com/wp-content/uploads/2019/09/Screen-Shot-2019-09-04-at-10.11.10-PM.png?resize=840%2C1060',
-        description: 'Who wanna hire me?',
+        userName: 'Hozer',
+        jobTitle: 'Senior UX Designer',
+        profilePhoto: 'https://images.unsplash.com/photo-1593483316242-efb5420596ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8b3JhbmdlJTIwY2F0fGVufDB8fDB8fHww&w=1000&q=80',
+        description: 'Hello everyone I was recently laid off from Meta so if anyone needs a CEO of their company please message me!',
         numLikes: 1
     },
     {
         postId: 3,
-        userName: 'Drake',
-        jobTitle: 'Certified Lover Boy',
-        profilePhoto: 'https://i0.wp.com/o3v.a1b.mywebsitetransfer.com/wp-content/uploads/2019/09/Screen-Shot-2019-09-04-at-10.11.10-PM.png?resize=840%2C1060',
-        description: 'Somebody please give me a job dawg.',
+        userName: 'Hozer',
+        jobTitle: 'Senior UX Designer',
+        profilePhoto: 'https://images.unsplash.com/photo-1593483316242-efb5420596ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8b3JhbmdlJTIwY2F0fGVufDB8fDB8fHww&w=1000&q=80',
+        description: 'Everyone check out my portfolio on my profile!',
         numLikes: 10
     }
 ]

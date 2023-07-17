@@ -104,7 +104,7 @@ function NavigationSidePanel() {
                                 </ListItemText>
                             </ListItemButton>
                         </ListItem>
-
+{/*
                         <ListItem>
                             <ListItemButton component={Link} to='*'>
                             <ListItemIcon>
@@ -114,7 +114,7 @@ function NavigationSidePanel() {
                                 <Typography variant='h4'>Settings</Typography>
                             </ListItemText>
                             </ListItemButton>
-                        </ListItem>
+                    </ListItem>*/}
                     </List>
                 </Stack>
             </Box>

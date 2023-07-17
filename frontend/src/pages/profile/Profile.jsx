@@ -30,21 +30,12 @@ const placeholder = [
   {
     postId: 2,
     userName: "Maserati Bugatti",
-    jobTitle: "Certified Lover Boy",
+    jobTitle: "Software Engineer",
     profilePhoto:
       "https://www.catster.com/wp-content/uploads/2017/11/Mackerel-Tabby-cat.jpg.optimal.jpg",
-    description: "Who wanna hire me?",
+    description: "Hello everyone this is a post that I made!",
     numLikes: 1,
-  },
-  {
-    postId: 3,
-    userName: "Maserati Bugatti",
-    jobTitle: "Certified Lover Boy",
-    profilePhoto:
-      "https://www.catster.com/wp-content/uploads/2017/11/Mackerel-Tabby-cat.jpg.optimal.jpg",
-    description: "Somebody please give me a job dawg.",
-    numLikes: 10,
-  },
+  }
 ];
 
 const placeholderBio = `
