@@ -6,9 +6,13 @@
 
 import { Router } from "express"
 import users from "./controllers/users.js"
+import posts from "./controllers/posts.js"
+import feed from "./controllers/feed.js"
 
 const router = Router()
 
 router.use("/users", users)
+router.use("/posts", posts)
+router.use("/feed", feed)
 
 export default router

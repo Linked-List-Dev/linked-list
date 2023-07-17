@@ -12,7 +12,7 @@ const requireAuthentication = async (req, res, next) => {
     if (!token) {
         return res
             .status(401)
-            .json({ msg: "Authorization denied - no token provided" })
+            .json({ error: "Authorization denied - no token provided" })
     }
 
     try {
@@ -21,9 +21,8 @@ const requireAuthentication = async (req, res, next) => {
         // console.log("req.user:", req.user)
         next()
     } catch (err) {
-        console.log("err:", err)
         res.status(400).json({
-            msg: "Authorization denied - provided token is not valid",
+            error: "Authorization denied - provided token is either not valid or has expired",
         })
     }
 }

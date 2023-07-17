@@ -43,7 +43,7 @@ function LoginSide({ openByDefault }) {
     })
 
     if (res.status === 200) {
-      console.log("Created new user, navigate to the posts page (TODO)")
+      console.log("Logged in a user, navigate to the posts page (TODO)")
       localStorage.setItem("token", res.data.token)
       localStorage.setItem("id", res.data.id)
 
