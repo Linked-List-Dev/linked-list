@@ -24,13 +24,15 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import SearchIcon from '@mui/icons-material/Search';
 import InputAdornment from '@mui/material/InputAdornment';
 import axios from "axios"
+import { useNavigate } from "react-router-dom"
 
 import { Link } from 'react-router-dom';
 
-function NavigationSidePanel() {
+function NavigationSidePanel({ onPostCreated }) {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+    const navigate = useNavigate();
 
     const [formValues, setFormValues] = useState({
         content: ""
@@ -63,13 +65,14 @@ function NavigationSidePanel() {
             if (res.status === 200) {
                 // console.log("response: ", res.data.id)
                 // return res.data.id;
-                navigate('/feed')
+                onPostCreated()
+                // Tia TODO: close the modal after that
             } else {
                 console.log("err.message:", res.data.error)
                 // Tia TODO: display err.response.data
             }
         } catch (err) {
-            console.log("err.message:", err.res.data)
+            console.log("err.message:", err.message)
             // Tia TODO: display err.response.data
         }
     }
