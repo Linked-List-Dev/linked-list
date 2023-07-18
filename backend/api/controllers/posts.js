@@ -50,7 +50,7 @@ router.post("/", requireAuthentication, async function (req, res, next) {
         return res.status(200).json({
             id: createdPost._id,
             description: createdPost.description,
-            author: createdPost.postedBy,
+            author: createdPost.authorName,
         })
     } catch (err) {
         return res.status(500).json({ error: err.message })

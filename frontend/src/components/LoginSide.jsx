@@ -38,15 +38,13 @@ function LoginSide({ openByDefault }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log(formValues.email)
-    console.log(formValues.password)
     const res = await axios.post("http://localhost:8000/api/users/login", {
       email: formValues.email,
       password: formValues.password
     })
 
     if (res.status === 200) {
-      console.log("Logged in a user, navigate to the posts page (TODO)")
+      console.log("Logged in a user, user's id and token are:", res.data.id, res.data.token)
       localStorage.setItem("token", res.data.token)
       localStorage.setItem("id", res.data.id)
 
