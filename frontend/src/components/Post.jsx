@@ -16,13 +16,14 @@ import CommentIcon from '@mui/icons-material/Comment';
 import IosShareIcon from '@mui/icons-material/IosShare';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 
-function Post({_postId, _userName, _jobTitle, _profilePhoto, _description, _numLikes}) {
+function Post({_postId, _userName, _jobTitle, _profilePhoto, _description, _numLikes, _numDislikes}) {
     const [postId, setPostId] = useState(_postId) // may be used for expanded view later...
     const [userName, setUserName] = useState(_userName)
     const [jobTitle, setJobTitle] = useState(_jobTitle)
     const [profilePhoto, setProfilePhoto] = useState(_profilePhoto)
     const [description, setDescription] = useState(_description)
     const [numLikes, setNumLikes] = useState(_numLikes)
+    const [numDislikes, setNumDislikes] = useState(_numDislikes)
 
   return (
     <div>
@@ -54,7 +55,8 @@ function Post({_postId, _userName, _jobTitle, _profilePhoto, _description, _numL
                     {numLikes}
                     </Button>
                     <Button size="small" color="primary">
-                    <ThumbDownOffAltIcon/>
+                    <ThumbDownOffAltIcon />
+                    {numDislikes}
                     </Button>
                     <Button>
                         <CommentIcon/>

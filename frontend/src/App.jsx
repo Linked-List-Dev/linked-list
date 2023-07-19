@@ -6,7 +6,7 @@ import FourOhFour from './pages/error/FourOhFour';
 import Landing from './pages/navigation/LandingScreen';
 import Register from './pages/auth/Register'
 import Feed from './pages/feed/Feed'
-import Profile from './pages/profile/Profile';
+import PersonalProfile from './pages/profile/PersonalProfile';
 
 function App() {
     return (
@@ -17,7 +17,7 @@ function App() {
             <Route path="/login" element={<Register openModal={true}/>} />
             <Route path="/register" element={<Register openModal={false}/>} />
             <Route path="/feed" element={<Feed/>} />
-            <Route path="/profile" element={<Profile/>}/>
+            <Route path="/profile" element={<PersonalProfile/>}/>
         </Routes>
     )
 }

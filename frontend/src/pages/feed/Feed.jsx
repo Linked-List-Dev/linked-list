@@ -44,10 +44,11 @@ function Feed() {
                                     key={post._id}
                                     _postId={post._id}
                                     _userName={post.authorName}
-                                    _jobTitle={"SDE I"} //Todo
+                                    _jobTitle={post.authorJobTitle}
                                     _profilePhoto={'https://images.unsplash.com/photo-1593483316242-efb5420596ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8b3JhbmdlJTIwY2F0fGVufDB8fDB8fHww&w=1000&q=80'} //todo
                                     _description={post.description}
                                     _numLikes={post.likes.length}
+                                    _numDislikes={post.dislikes.length}
                                 />
                             ))}
                         </Stack>

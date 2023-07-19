@@ -1,5 +1,4 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from 'react';
 import NavigationSidePanel from "../../components/NavigationSidePanel";
 import AppTheme from "../../util/Theme";
 import {
@@ -15,54 +14,15 @@ import {
 } from "@mui/material";
 import Post from "../../components/Post";
 import EditIcon from "@mui/icons-material/Edit";
+import axios from 'axios';
 
-const placeholder = [
-  {
-    postId: 1,
-    userName: "Maserati Bugatti",
-    jobTitle: "Software Engineer",
-    profilePhoto:
-      "https://www.catster.com/wp-content/uploads/2017/11/Mackerel-Tabby-cat.jpg.optimal.jpg",
-    description:
-      "Im a professional sleeper if you need someone to sleep and catch mice please comment!!",
-    numLikes: 400,
-  },
-  {
-    postId: 2,
-    userName: "Maserati Bugatti",
-    jobTitle: "Software Engineer",
-    profilePhoto:
-      "https://www.catster.com/wp-content/uploads/2017/11/Mackerel-Tabby-cat.jpg.optimal.jpg",
-    description: "Hello everyone this is a post that I made!",
-    numLikes: 1,
-  }
-];
-
-const placeholderBio = `
-🔹 Welcome to my profile! I'm Maserati Bugatti, a highly skilled software engineer with a strong passion for developing cutting-edge applications and systems. With a proven track record of delivering high-quality software solutions, I thrive in fast-paced and dynamic environments.
-
-🔹 Expertise: I specialize in full-stack development, leveraging my proficiency in languages such as Java, Python, and JavaScript. I'm well-versed in frameworks like Angular and React, and I have hands-on experience with various databases and cloud technologies.
-
-🔹 Problem Solver: I love tackling complex challenges and finding efficient solutions. Whether it's optimizing code performance, improving user experiences, or implementing scalable architectures, I enjoy applying my problem-solving skills to create robust software solutions.
-
-🔹 Collaboration: As a dedicated team player, I believe in the power of collaboration and effective communication. I thrive in cross-functional teams, valuing diverse perspectives and actively contributing to a positive and supportive work environment.
-
-🔹 Continuous Learning: The tech industry is constantly evolving, and I'm committed to staying up-to-date with the latest advancements. I actively participate in conferences, workshops, and online courses to enhance my knowledge and keep my skill set current.
-
-🔹 Achievements: I have successfully delivered several high-impact projects throughout my career, including [mention notable projects or accomplishments]. These experiences have honed my ability to adapt quickly, meet deadlines, and deliver exceptional results.
-
-🔹 If you're looking for a driven and dedicated software engineer who can effectively contribute to your team's success, feel free to reach out. Let's connect and explore potential collaborations!
-`;
-
-function Profile() {
-  const [userName, setUserName] = useState("Maserati Bugatti");
-  const [jobTitle, setJobTitle] = useState("Software Engineer");
-  const [biography, setBiography] = useState(placeholderBio);
-  const [posts, setPosts] = useState(placeholder);
-  const [profileImage, setProfileImage] = useState(placeholder[0].profilePhoto);
-  const [headPhoto, setHeaderPhoto] = useState(
-    "https://images.pexels.com/photos/1796730/pexels-photo-1796730.jpeg?cs=srgb&dl=pexels-chait-goli-1796730.jpg&fm=jpg"
-  );
+function PersonalProfile() {
+  const [userName, setUserName] = useState("");
+  const [jobTitle, setJobTitle] = useState("");
+  const [biography, setBiography] = useState("");
+  const [posts, setPosts] = useState([]);
+  const [profileImage, setProfileImage] = useState("https://www.catster.com/wp-content/uploads/2017/11/Mackerel-Tabby-cat.jpg.optimal.jpg");
+  const [headPhoto, setHeaderPhoto] = useState("https://images.pexels.com/photos/1796730/pexels-photo-1796730.jpeg?cs=srgb&dl=pexels-chait-goli-1796730.jpg&fm=jpg");
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -70,7 +30,7 @@ function Profile() {
 
   const [formValues, setFormValues] = useState({
     name: "",
-    biography: "",
+    bio: "",
     jobTitle: "",
   });
 
@@ -82,20 +42,72 @@ function Profile() {
     }));
   };
 
-  //
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formValues);
 
-    //TODO update profile stuff and state
+    // Make PUT request to update user data
+    try {
+      const res = await axios.put(
+        `http://localhost:8000/api/users/${localStorage.getItem('id')}`,
+        formValues,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        }
+      );
+
+      console.log("res.status:", res.status)
+      if (res.status === 200) {
+        // Update the state variables with the updated user data
+        setUserName(res.data.name);
+        setJobTitle(res.data.jobTitle);
+        setBiography(res.data.bio);
+        // Tia TODO: close the modal and clear the input values
+      } else {
+        console.log("Tia TODO: display an error saying failed to update user info (res.data.error)");
+      }
+    } catch (err) {
+      console.log("err:", err.message)
+      console.log("Tia TODO: display an error saying failed to update user info");
+    }
   };
+
+  useEffect(() => {
+    // Fetch user data
+    const fetchUserData = async () => {
+      try {
+        console.log("")
+        const res = await axios.get(`http://localhost:8000/api/users/${localStorage.getItem('id')}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+
+        if (res.status === 200) {
+          const userData = res.data.user;
+          setUserName(userData.name);
+          setJobTitle(userData.jobTitle);
+          setBiography(userData.bio);
+          setPosts(userData.posts);
+        } else {
+          console.log("Tia TODO: display an error saying failed to fetch user data");
+        }
+      } catch (err) {
+        console.log("Tia TODO: display an error saying failed to fetch user data");
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   return (
     <div>
       <ThemeProvider theme={AppTheme}>
         <Box sx={{ display: "flex", backgroundColor: "page.secondary" }}>
           <NavigationSidePanel position="fixed" />
-
+  
           <Box
             sx={{
               flex: 1,
@@ -132,7 +144,7 @@ function Profile() {
                         }}
                       />
                     </Box>
-
+  
                     <Button
                       sx={{
                         position: "absolute",
@@ -155,7 +167,7 @@ function Profile() {
                   {jobTitle}
                 </Typography>
               </Box>
-
+  
               <Box>
                 <Typography variant="h4">About Me</Typography>
                 <Paper
@@ -170,26 +182,27 @@ function Profile() {
                   <Typography color={"text.secondary"}>{biography}</Typography>
                 </Paper>
               </Box>
-
+  
               <Box>
                 <Typography variant="h4">Posts</Typography>
                 <Stack spacing={3}>
                   {posts.map((post) => (
                     <Post
-                      key={post.postId}
-                      _postId={post.postId}
-                      _userName={post.userName}
-                      _jobTitle={post.jobTitle}
-                      _profilePhoto={post.profilePhoto}
+                      key={post._id}
+                      _postId={post._id}
+                      _userName={post.authorName}
+                      _jobTitle={post.authorJobTitle}
+                      _profilePhoto={post.authorProfilePicutureId}
                       _description={post.description}
-                      _numLikes={post.numLikes}
+                      _numLikes={post.likes.length}
+                      _numDislikes={post.dislikes.length}
                     />
                   ))}
                 </Stack>
               </Box>
             </Stack>
           </Box>
-
+  
           <Modal
             open={open}
             onClose={handleClose}
@@ -248,9 +261,9 @@ function Profile() {
                         sx={{ width: "30vw" }}
                         rows={5}
                         variant="outlined"
-                        name="biography"
+                        name="bio"
                         label="Biography"
-                        value={formValues.biography}
+                        value={formValues.bio}
                         onChange={handleChange}
                         fullWidth
                       />
@@ -280,7 +293,7 @@ function Profile() {
         </Box>
       </ThemeProvider>
     </div>
-  );
+  );  
 }
 
-export default Profile;
+export default PersonalProfile;

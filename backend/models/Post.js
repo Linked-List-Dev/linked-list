@@ -24,6 +24,14 @@ const postSchema = new mongoose.Schema(
             type: String,       //user's email
             required: true,
         },
+        authorJobTitle: {
+            type: String,       //user's title
+            required: false,
+        },
+        authorProfilePicutureId: {
+            type: String,       //TODO
+            required: false,
+        }
     },
     {
         timestamps: true,

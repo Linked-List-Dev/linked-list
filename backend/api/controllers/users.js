@@ -135,21 +135,55 @@ router.put("/:userid", requireAuthentication, async function (req, res, next) {
                 return next()
             }
 
-            if (name && name != "") {
-                userToUpdate.name = name
-            }
-            if (jobTitle && jobTitle != "") {
-                userToUpdate.jobTitle = jobTitle
-            }
-            if (bio && bio != "") {
-                userToUpdate.bio = bio
-            }
-            
-            const updatedUser = await userToUpdate.save()
+            const updatedUser = await User.findByIdAndUpdate(
+                req.params.userid,
+                {
+                    $set: {
+                        name: name || userToUpdate.name,
+                        jobTitle: jobTitle || userToUpdate.jobTitle,
+                        bio: bio || userToUpdate.bio,
+                    },
+                },
+                { new: true }
+            )
+
+            // iterate though the posts and update authorName, and authorJobTitle if they have changed
+            await Post.updateMany(
+                { authorEmail: userToUpdate.email },
+                {
+                    $set: {
+                        authorName: updatedUser.name,
+                        authorJobTitle: updatedUser.jobTitle,
+                    },
+                }
+            )
+
+            await User.findByIdAndUpdate(req.params.userid, {
+                $set: {
+                    "posts.$[].authorName": updatedUser.name,
+                    "posts.$[].authorJobTitle": updatedUser.jobTitle,
+                },
+            })
+
+            await Feed.updateMany(
+                { "posts.authorEmail": userToUpdate.email },
+                {
+                    $set: {
+                        "posts.$[post].authorName": updatedUser.name,
+                        "posts.$[post].authorJobTitle": updatedUser.jobTitle,
+                    },
+                },
+                { arrayFilters: [{ "post.authorEmail": userToUpdate.email }] }
+            )
 
             return res
                 .status(200)
-                .json({ message: "User info successfully updated!", user: updatedUser })
+                .json({
+                    message: "User info successfully updated!",
+                    name: updatedUser.name,
+                    jobTitle: updatedUser.jobTitle,
+                    bio: updatedUser.bio
+                })
         } catch (err) {
             res.status(500).json({
                 error: `Failed to update the user by id due to the following error: ${err.message}`,

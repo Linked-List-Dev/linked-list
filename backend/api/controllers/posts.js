@@ -28,17 +28,19 @@ router.post("/", requireAuthentication, async function (req, res, next) {
     }
 
     try {
+        const user = await User.findById(userid)
+        
         //create the post iteslf and save it
         const postToCreate = new Post({
             description: description,
             authorName: username,
             authorEmail: email,
+            authorJobTitle: user.jobTitle ? user.jobTitle : 'looking for job'
         })
 
         const createdPost = await postToCreate.save()
 
         //associate the created post with an author
-        const user = await User.findById(userid)
         user.posts.push(createdPost)
         await user.save()
 
@@ -51,6 +53,7 @@ router.post("/", requireAuthentication, async function (req, res, next) {
             id: createdPost._id,
             description: createdPost.description,
             author: createdPost.authorName,
+            authorJobTitle: createdPost.authorJobTitle
         })
     } catch (err) {
         return res.status(500).json({ error: err.message })
@@ -188,7 +191,7 @@ router.post("/like/", requireAuthentication, async function (req, res, next) {
         // console.log("postToLike before the update:", postToLike)
 
         if (!postToLike) {
-            return res.status(400).json({ error: "Post to upvote not found" })
+            return res.status(400).json({ error: "Post to like not found" })
         }
 
         postToLike.likes = [...new Set(postToLike.likes)]
