@@ -48,7 +48,6 @@ function NavigationSidePanel({ onPostCreated }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // Tia TODO: make sure we don't let them submit empty content or any weird characters we do not want to store
         console.log(formValues);
 
         try {
@@ -66,7 +65,8 @@ function NavigationSidePanel({ onPostCreated }) {
                 // console.log("response: ", res.data.id)
                 // return res.data.id;
                 onPostCreated()
-                // Tia TODO: close the modal after that
+                setOpen(false)
+                formValues.content = ""
             } else {
                 console.log("err.message:", res.data.error)
                 // Tia TODO: display err.response.data
