@@ -15,6 +15,8 @@ import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
 import CommentIcon from '@mui/icons-material/Comment';
 import IosShareIcon from '@mui/icons-material/IosShare';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
+import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
 
 function Post({_postId, _userName, _jobTitle, _profilePhoto, _description, _numLikes, _numDislikes}) {
     const [postId, setPostId] = useState(_postId) // may be used for expanded view later...
@@ -24,6 +26,18 @@ function Post({_postId, _userName, _jobTitle, _profilePhoto, _description, _numL
     const [description, setDescription] = useState(_description)
     const [numLikes, setNumLikes] = useState(_numLikes)
     const [numDislikes, setNumDislikes] = useState(_numDislikes)
+    const [liked, setLiked] = useState(false)
+    const [disliked, setDisliked] = useState(false)
+
+    const handleLike = (e) => {
+        setLiked((prevLiked) => !prevLiked)
+        setDisliked(false)
+    }
+
+    const handleDislike = (e) => {
+        setDisliked(true)
+        setLiked(false)
+    }
 
   return (
     <div>
@@ -50,12 +64,14 @@ function Post({_postId, _userName, _jobTitle, _profilePhoto, _description, _numL
                     </CardContent>
                 </CardActionArea>
                 <CardActions>
-                    <Button size="small" color="primary">
-                    <ThumbUpOffAltIcon/>
+                    <Button size="small" color="primary" onClick={handleLike}>
+                        {liked ? <ThumbUpAltIcon/> : <ThumbUpOffAltIcon/>}
                     {numLikes}
                     </Button>
-                    <Button size="small" color="primary">
-                    <ThumbDownOffAltIcon />
+                    <Button size="small" color="primary" onClick={handleDislike}>
+                        {disliked ? <ThumbDownAltIcon/> : <ThumbDownOffAltIcon />}
+                    
+                    
                     {numDislikes}
                     </Button>
                     <Button>
