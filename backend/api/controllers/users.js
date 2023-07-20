@@ -262,6 +262,7 @@ router.post("/login", async function (req, res, next) {
                 const token = generateAuthToken(user)
                 res.status(200).send({
                     id: user._id,
+                    email: user.email,
                     token: token,
                 })
             } else if (!user) {

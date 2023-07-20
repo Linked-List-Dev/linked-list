@@ -199,8 +199,8 @@ router.post("/like/", requireAuthentication, async function (req, res, next) {
 
         const alreadyLiked = postToLike.likes.includes(email)
 
-        if (isDisliked === false && !alreadyLiked) {
-            if (isLiked === true) {
+        if (isLiked === false && !alreadyLiked) {
+            if (isDisliked === true) {
                 // postToLike.dislikes -= 1
                 const dislikeIndex = postToLike.dislikes.indexOf(email)
                 if (dislikeIndex !== -1) {
@@ -230,7 +230,12 @@ router.post("/like/", requireAuthentication, async function (req, res, next) {
 
         return res
             .status(200)
-            .json({ message: "Post successfully liked!", post: likedPost })
+            .json({
+                message: "Post successfully liked!",
+                postId: likedPost._id,
+                likes: likedPost.likes,
+                dislikes: likedPost.dislikes
+            })
     } catch (err) {
         return res.status(500).json({ error: err.message })
     }
@@ -288,7 +293,9 @@ router.post("/dislike/", requireAuthentication, async function (req, res, next) 
             .status(200)
             .json({
                 message: "Post successfully disliked!",
-                post: dislikedPost,
+                postId: dislikedPost._id,
+                likes: dislikedPost.likes,
+                dislikes: dislikedPost.dislikes
             })
     } catch (err) {
         return res.status(500).json({ error: err.message })

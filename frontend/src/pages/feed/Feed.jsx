@@ -47,8 +47,8 @@ function Feed() {
                                     _jobTitle={post.authorJobTitle}
                                     _profilePhoto={'https://images.unsplash.com/photo-1593483316242-efb5420596ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8b3JhbmdlJTIwY2F0fGVufDB8fDB8fHww&w=1000&q=80'} //todo
                                     _description={post.description}
-                                    _numLikes={post.likes.length}
-                                    _numDislikes={post.dislikes.length}
+                                    _likes={post.likes}
+                                    _dislikes={post.dislikes}
                                 />
                             ))}
                         </Stack>

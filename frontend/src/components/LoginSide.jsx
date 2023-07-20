@@ -47,6 +47,7 @@ function LoginSide({ openByDefault }) {
       console.log("Logged in a user, user's id and token are:", res.data.id, res.data.token)
       localStorage.setItem("token", res.data.token)
       localStorage.setItem("id", res.data.id)
+      localStorage.setItem("email", res.data.email)
 
       navigate('/feed')
       // TODO:
