@@ -65,6 +65,7 @@ function PersonalProfile() {
         setJobTitle(res.data.jobTitle);
         setBiography(res.data.bio);
         // Tia TODO: close the modal and clear the input values
+        setOpen(false)
       } else {
         console.log("Tia TODO: display an error saying failed to update user info (res.data.error)");
       }
@@ -192,7 +193,7 @@ function PersonalProfile() {
                       _postId={post._id}
                       _userName={post.authorName}
                       _jobTitle={post.authorJobTitle}
-                      _profilePhoto={post.authorProfilePicutureId}
+                      _profilePhoto={profileImage}
                       _description={post.description}
                       _numLikes={post.likes.length}
                       _numDislikes={post.dislikes.length}
@@ -265,6 +266,7 @@ function PersonalProfile() {
                         label="Biography"
                         value={formValues.bio}
                         onChange={handleChange}
+                        multiline
                         fullWidth
                       />
 
