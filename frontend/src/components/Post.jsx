@@ -1,234 +1,284 @@
-import * as React from 'react';
-import { useState } from "react"
-import Card from '@mui/material/Card';
+import * as React from "react";
+import { useState } from "react";
+import Card from "@mui/material/Card";
 import {
-    Button,
-    CardActionArea,
-    CardActions,
-    ThemeProvider,
-    Avatar,
-    Typography,
-    Stack,
-    CardContent
-} from '@mui/material';
-import AppTheme from '../util/Theme'
-import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
-import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
-import CommentIcon from '@mui/icons-material/Comment';
-import IosShareIcon from '@mui/icons-material/IosShare';
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
-import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
-import axios from "axios"
+  Button,
+  CardActionArea,
+  CardActions,
+  ThemeProvider,
+  Avatar,
+  Typography,
+  Stack,
+  CardContent,
+  IconButton
+} from "@mui/material";
+import AppTheme from "../util/Theme";
+import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
+import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
+import CommentIcon from "@mui/icons-material/Comment";
+import IosShareIcon from "@mui/icons-material/IosShare";
+import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
+import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
+import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import axios from "axios";
 
-function Post({ _postId, _userName, _jobTitle, _profilePhoto, _description, _likes, _dislikes }) {
-    const [postId, setPostId] = useState(_postId) // may be used for expanded view later...
-    const [userName, setUserName] = useState(_userName)
-    const [jobTitle, setJobTitle] = useState(_jobTitle)
-    const [profilePhoto, setProfilePhoto] = useState(_profilePhoto)
-    const [description, setDescription] = useState(_description)
-    const [likes, setLikes] = useState(_likes)
-    const [dislikes, setDislikes] = useState(_dislikes)
+function Post({
+  _postId,
+  _userName,
+  _jobTitle,
+  _profilePhoto,
+  _description,
+  _likes,
+  _dislikes,
+}) {
+  const [postId, setPostId] = useState(_postId); // may be used for expanded view later...
+  const [userName, setUserName] = useState(_userName);
+  const [jobTitle, setJobTitle] = useState(_jobTitle);
+  const [profilePhoto, setProfilePhoto] = useState(_profilePhoto);
+  const [description, setDescription] = useState(_description);
+  const [likes, setLikes] = useState(_likes);
+  const [dislikes, setDislikes] = useState(_dislikes);
 
-    async function handleLike(){
-        if (!likes.includes(localStorage.getItem('email'))) {
-            if (dislikes.includes(localStorage.getItem('email'))) {
-                //if its disliked and they like do +2 instead of +1
-                const res = await axios.post(
-                    "http://localhost:8000/api/posts/like/",
-                    {
-                        postId: postId,
-                        isLiked: false,
-                        isDisliked: true
-                    },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem('token')}`,
-                        },
-                    }
-                );
-                if (res.status === 200) {
-                    // Update the likes state
-                    setLikes(res.data.likes);
-                    // Update the dislikes state
-                    setDislikes(res.data.dislikes);
-                } else {
-                    console.log("err.message:", res.data.error)
-                }
-            } else {
-                //if its not disliked and they like do +1
-                const res = await axios.post(
-                    "http://localhost:8000/api/posts/like/",
-                    {
-                        postId: postId,
-                        isLiked: false,
-                        isDisliked: false
-                    },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem('token')}`,
-                        },
-                    }
-                );
-                if (res.status === 200) {
-                    // Update the likes state
-                    setLikes(res.data.likes);
-                    // Update the dislikes state
-                    setDislikes(res.data.dislikes);
-                } else {
-                    console.log("err.message:", res.data.error)
-                }
-            }
-        } else {
-            //if its liked and they like again do -1
-            const res = await axios.post(
-                "http://localhost:8000/api/posts/like/",
-                {
-                    postId: postId,
-                    isLiked: true,
-                    isDisliked: false
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`,
-                    },
-                }
-            );
-            if (res.status === 200) {
-                // Update the likes state
-                setLikes(res.data.likes);
-                // Update the dislikes state
-                setDislikes(res.data.dislikes);
-            } else {
-                console.log("err.message:", res.data.error)
-            }
-        }
+    const handleEditClick = (e) => {
+        console.log('Edit')
+        e.stopPropagation()
     }
 
-    async function handleDislike(){
-        if (!dislikes.includes(localStorage.getItem('email'))) {
-            if (likes.includes(localStorage.getItem('email'))) {
-                //if its liked and they dislike do -2 instead of -1
-                const res = await axios.post(
-                    "http://localhost:8000/api/posts/dislike/",
-                    {
-                        postId: postId,
-                        isLiked: true,
-                        isDisliked: false
-                    },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem('token')}`,
-                        },
-                    }
-                );
-                if (res.status === 200) {
-                    // Update the likes state
-                    setLikes(res.data.likes);
-                    // Update the dislikes state
-                    setDislikes(res.data.dislikes);
-                } else {
-                    console.log("err.message:", res.data.error)
-                }
-            } else {
-                //if its not liked and they dislike do -1
-                const res = await axios.post(
-                    "http://localhost:8000/api/posts/dislike/",
-                    {
-                        postId: postId,
-                        isLiked: false,
-                        isDisliked: false
-                    },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem('token')}`,
-                        },
-                    }
-                );
-                if (res.status === 200) {
-                    // Update the likes state
-                    setLikes(res.data.likes);
-                    // Update the dislikes state
-                    setDislikes(res.data.dislikes);
-                } else {
-                    console.log("err.message:", res.data.error)
-                }
-            }
-        } else {
-            //if its disliked and they disliked again do +1
-            const res = await axios.post(
-                "http://localhost:8000/api/posts/dislike/",
-                {
-                    postId: postId,
-                    isLiked: false,
-                    isDisliked: true
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`,
-                    },
-                }
-            );
-            if (res.status === 200) {
-                // Update the likes state
-                setLikes(res.data.likes);
-                // Update the dislikes state
-                setDislikes(res.data.dislikes);
-            } else {
-                console.log("err.message:", res.data.error)
-            }
-        }
+    const handleDeleteClick = (e) => {
+        console.log('delete')
+        e.stopPropagation()
     }
 
-return (
+    function onCardClick(){
+        console.log('post was clicked', _postId)
+    }
+
+  async function handleLike() {
+    if (!likes.includes(localStorage.getItem("email"))) {
+      if (dislikes.includes(localStorage.getItem("email"))) {
+        //if its disliked and they like do +2 instead of +1
+        const res = await axios.post(
+          "http://localhost:8000/api/posts/like/",
+          {
+            postId: postId,
+            isLiked: false,
+            isDisliked: true,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        if (res.status === 200) {
+          // Update the likes state
+          setLikes(res.data.likes);
+          // Update the dislikes state
+          setDislikes(res.data.dislikes);
+        } else {
+          console.log("err.message:", res.data.error);
+        }
+      } else {
+        //if its not disliked and they like do +1
+        const res = await axios.post(
+          "http://localhost:8000/api/posts/like/",
+          {
+            postId: postId,
+            isLiked: false,
+            isDisliked: false,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        if (res.status === 200) {
+          // Update the likes state
+          setLikes(res.data.likes);
+          // Update the dislikes state
+          setDislikes(res.data.dislikes);
+        } else {
+          console.log("err.message:", res.data.error);
+        }
+      }
+    } else {
+      //if its liked and they like again do -1
+      const res = await axios.post(
+        "http://localhost:8000/api/posts/like/",
+        {
+          postId: postId,
+          isLiked: true,
+          isDisliked: false,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      if (res.status === 200) {
+        // Update the likes state
+        setLikes(res.data.likes);
+        // Update the dislikes state
+        setDislikes(res.data.dislikes);
+      } else {
+        console.log("err.message:", res.data.error);
+      }
+    }
+  }
+
+  async function handleDislike() {
+    if (!dislikes.includes(localStorage.getItem("email"))) {
+      if (likes.includes(localStorage.getItem("email"))) {
+        //if its liked and they dislike do -2 instead of -1
+        const res = await axios.post(
+          "http://localhost:8000/api/posts/dislike/",
+          {
+            postId: postId,
+            isLiked: true,
+            isDisliked: false,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        if (res.status === 200) {
+          // Update the likes state
+          setLikes(res.data.likes);
+          // Update the dislikes state
+          setDislikes(res.data.dislikes);
+        } else {
+          console.log("err.message:", res.data.error);
+        }
+      } else {
+        //if its not liked and they dislike do -1
+        const res = await axios.post(
+          "http://localhost:8000/api/posts/dislike/",
+          {
+            postId: postId,
+            isLiked: false,
+            isDisliked: false,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        if (res.status === 200) {
+          // Update the likes state
+          setLikes(res.data.likes);
+          // Update the dislikes state
+          setDislikes(res.data.dislikes);
+        } else {
+          console.log("err.message:", res.data.error);
+        }
+      }
+    } else {
+      //if its disliked and they disliked again do +1
+      const res = await axios.post(
+        "http://localhost:8000/api/posts/dislike/",
+        {
+          postId: postId,
+          isLiked: false,
+          isDisliked: true,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      if (res.status === 200) {
+        // Update the likes state
+        setLikes(res.data.likes);
+        // Update the dislikes state
+        setDislikes(res.data.dislikes);
+      } else {
+        console.log("err.message:", res.data.error);
+      }
+    }
+  }
+
+  return (
     <div>
-        <ThemeProvider theme={AppTheme}>
-            <Card sx={{ bgcolor: 'page.main' }}>
-                <CardActionArea>
-                    <CardContent>
-                        <Stack direction={'row'} spacing={2} paddingBottom={'1vh'}>
-                            <Avatar src={profilePhoto} sx={{ width: 60, height: 60 }}></Avatar>
-                            <Stack>
-                                <Typography variant="h5">
-                                    {userName}
-                                </Typography>
-                                <Typography variant="body1" component="div" style={{ verticalAlign: 'sub' }}>
-                                    {jobTitle}
-                                </Typography>
-                            </Stack>
-                        </Stack>
+      <ThemeProvider theme={AppTheme}>
+        <Card sx={{ bgcolor: "page.main" }}>
+        <div style={{ position: 'relative', zIndex: 999 }}>
+        <IconButton
+          onClick={(event) => handleEditClick(event)}
+          style={{ position: 'absolute', top: '10px', right: '10px' }}
+        >
+          <EditIcon />
+        </IconButton>
+        <IconButton
+          onClick={(event) => handleDeleteClick(event)}
+          style={{ position: 'absolute', top: '10px', right: '50px' }}
+        >
+          <DeleteIcon />
+        </IconButton>
+      </div>
+          <CardActionArea onClick={onCardClick}>
+            <CardContent style={{ position: "relative" }}>
+              
+              <Stack direction={"row"} spacing={2} paddingBottom={"1vh"}>
+                <Avatar
+                  src={profilePhoto}
+                  sx={{ width: 60, height: 60 }}
+                ></Avatar>
+                <Stack>
+                  <Typography variant="h5">{userName}</Typography>
+                  <Typography
+                    variant="body1"
+                    component="div"
+                    style={{ verticalAlign: "sub" }}
+                  >
+                    {jobTitle}
+                  </Typography>
+                </Stack>
+              </Stack>
 
-                        <Typography variant="body2" color="text.secondary">
-                            {description}
-                        </Typography>
-
-                    </CardContent>
-                </CardActionArea>
-                <CardActions>
-                    <Button size="small" color="primary" onClick={handleLike}>
-                        {likes.includes(localStorage.getItem('email')) ? <ThumbUpAltIcon /> : <ThumbUpOffAltIcon />}
-                        {likes.length}
-                    </Button>
-                    <Button size="small" color="primary" onClick={handleDislike}>
-                        {dislikes.includes(localStorage.getItem('email')) ? <ThumbDownAltIcon /> : <ThumbDownOffAltIcon />}
-                        {dislikes.length}
-                    </Button>
-                    <Button>
-                        <CommentIcon />
-                    </Button>
-                    <Button>
-                        <IosShareIcon />
-                    </Button>
-                    <Button>
+              <Typography variant="body2" color="text.secondary">
+                {description}
+              </Typography>
+            </CardContent>
+          </CardActionArea>
+          <CardActions>
+            <Button size="small" color="primary" onClick={handleLike}>
+              {likes.includes(localStorage.getItem("email")) ? (
+                <ThumbUpAltIcon />
+              ) : (
+                <ThumbUpOffAltIcon />
+              )}
+              {likes.length}
+            </Button>
+            <Button size="small" color="primary" onClick={handleDislike}>
+              {dislikes.includes(localStorage.getItem("email")) ? (
+                <ThumbDownAltIcon />
+              ) : (
+                <ThumbDownOffAltIcon />
+              )}
+              {dislikes.length}
+            </Button>
+            <Button>
+              <CommentIcon />
+            </Button>
+            <Button>
+              <IosShareIcon />
+            </Button>
+            {/* <Button>
                         <BookmarkBorderIcon />
-                    </Button>
-                </CardActions>
-            </Card>
-        </ThemeProvider>
+                    </Button> */}
+          </CardActions>
+        </Card>
+      </ThemeProvider>
     </div>
-
-
-);
+  );
 }
 
-export default Post
+export default Post;
