@@ -1,4 +1,5 @@
 import mongoose from "mongoose"
+import Comment from './Comment.js'
 
 const postSchema = new mongoose.Schema(
     {
@@ -24,6 +25,10 @@ const postSchema = new mongoose.Schema(
             type: String,       //user's email
             required: true,
         },
+        authorId: {
+            type: String,
+            required: true,
+        },
         authorJobTitle: {
             type: String,       //user's title
             required: false,
@@ -31,7 +36,11 @@ const postSchema = new mongoose.Schema(
         authorProfilePicutureId: {
             type: String,       //TODO
             required: false,
-        }
+        },
+        comments: {
+            type: [Comment.schema],
+            required: false,
+        },
     },
     {
         timestamps: true,
