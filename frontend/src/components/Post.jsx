@@ -32,6 +32,8 @@ function Post({
   _description,
   _likes,
   _dislikes,
+  _authorId,
+  onDeletePost
 }) {
   const [postId, setPostId] = useState(_postId); // may be used for expanded view later...
   const [userName, setUserName] = useState(_userName);
@@ -40,19 +42,40 @@ function Post({
   const [description, setDescription] = useState(_description);
   const [likes, setLikes] = useState(_likes);
   const [dislikes, setDislikes] = useState(_dislikes);
+  const [authorId, setAuthorId] = useState(_authorId);
 
     const handleEditClick = (e) => {
         console.log('Edit')
         e.stopPropagation()
     }
 
-    const handleDeleteClick = (e) => {
-        console.log('delete')
+    const handleDeleteClick = async (e) => {
+        try {
+          const res = await axios.delete(
+            `http://localhost:8000/api/posts/${postId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+              },
+            }
+          );
+    
+          if (res.status === 204) {
+            // Tia TODO: create a popup saying that the post got deleted successfully 
+            onDeletePost(postId)
+          } else {
+            console.log("Tia TODO: display an error saying failed to delete a post (res.data.error)");
+          }
+        } catch (err) {
+          console.log("err:", err.message)
+          console.log("Tia TODO: display an error saying failed to delete a post");
+        }
+
         e.stopPropagation()
     }
 
     function onCardClick(){
-        console.log('post was clicked', _postId)
+        console.log('post was clicked', postId)
     }
 
   async function handleLike() {
@@ -210,18 +233,24 @@ function Post({
       <ThemeProvider theme={AppTheme}>
         <Card sx={{ bgcolor: "page.main" }}>
         <div style={{ position: 'relative', zIndex: 999 }}>
-        <IconButton
-          onClick={(event) => handleEditClick(event)}
-          style={{ position: 'absolute', top: '10px', right: '10px' }}
-        >
-          <EditIcon />
-        </IconButton>
-        <IconButton
-          onClick={(event) => handleDeleteClick(event)}
-          style={{ position: 'absolute', top: '10px', right: '50px' }}
-        >
-          <DeleteIcon />
-        </IconButton>
+          
+        {authorId.toString() === localStorage.getItem("id") ? (   //only author can edit/delete their posts
+          <>
+            <IconButton
+              onClick={(event) => handleDeleteClick(event)}
+              style={{ position: 'absolute', top: '10px', right: '10px' }}
+            >
+              <DeleteIcon />
+            </IconButton>
+            <IconButton
+              onClick={(event) => handleEditClick(event)}
+              style={{ position: 'absolute', top: '10px', right: '50px' }}
+            >
+              <EditIcon />
+            </IconButton>
+          </>
+        ) : null}
+        
       </div>
           <CardActionArea onClick={onCardClick}>
             <CardContent style={{ position: "relative" }}>

@@ -56,6 +56,7 @@ function RegisterSide() {
                 )
                 localStorage.setItem("token", res.data.token)
                 localStorage.setItem("id", res.data.id)
+                localStorage.setItem("email", res.data.email)
 
                 navigate('/feed')
                 // TODO:
