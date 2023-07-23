@@ -10,21 +10,18 @@ function Feed() {
     const [posts, setPosts] = useState([]);
 
     async function getPosts() {
-        try {
-            const res = await axios.get("http://localhost:8000/api/feed/", {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
+        const res = await axios.get("http://localhost:8000/api/feed/", {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        });
 
-            if (res.status === 200) {
-                // console.log("response.data.posts:", res.data.posts);
-                setPosts(res.data.posts);
-            } else {
-                console.log("Tia TODO: display an error saying failed to load posts");
-            }
-        } catch (error) {
-            console.log(error);
+        console.log(res.status)
+        if (res.status === 200 || res.status === 304) {
+            // console.log("response.data.posts:", res.data.posts);
+            setPosts(res.data.posts);
+        } else {
+            console.log("Tia TODO: display an error saying failed to load posts");
         }
     }
 

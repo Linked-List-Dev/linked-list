@@ -67,29 +67,25 @@ function Post({
   };
 
   const handleDeleteClick = async (e) => {
-    try {
-      const res = await axios.delete(
-        `http://localhost:8000/api/posts/${postId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      if (res.status === 204) {
-        // Tia TODO: create a popup saying that the post got deleted successfully
-        onDeletePost(postId);
-      } else {
-        console.log(
-          "Tia TODO: display an error saying failed to delete a post (res.data.error)"
-        );
+    const res = await axios.delete(
+      `http://localhost:8000/api/posts/${postId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       }
-    } catch (err) {
-      console.log("err:", err.message);
-      console.log("Tia TODO: display an error saying failed to delete a post");
-    }
+    );
 
+    console.log(res.status);
+    if (res.status === 204) {
+      // Tia TODO: create a popup saying that the post got deleted successfully
+      onDeletePost(postId);
+    } else {
+      console.log(
+        "Tia TODO: display an error saying failed to delete a post (res.data.error)"
+      );
+    }
+    
     e.stopPropagation();
   };
 
@@ -247,6 +243,11 @@ function Post({
     }
   }
 
+  const handlePostUpdate = (newDescription) => {
+    // Remove the deleted post from the posts array in the state
+    setDescription(newDescription);
+  };
+
   return (
     <div>
       <ThemeProvider theme={AppTheme}>
@@ -340,7 +341,13 @@ function Post({
             handleDislike={handleDislike}
             handleLike={handleLike}
           />
-          <EditPost _content={description} _open={editOpen} _handleClose={handleEditClose}/>
+          <EditPost
+            _content={description}
+            _open={editOpen}
+            _handleClose={handleEditClose}
+            _postId={postId}
+            onUpdatePost={handlePostUpdate}
+          />
         </Box>
       </ThemeProvider>
     </div>

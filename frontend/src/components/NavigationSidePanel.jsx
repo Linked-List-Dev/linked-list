@@ -76,30 +76,26 @@ function NavigationSidePanel({ onPostCreated }) {
     e.preventDefault();
     console.log(formValues);
 
-    try {
-      const res = await axios.post(
-        "http://localhost:8000/api/posts/",
-        { description: formValues.content }, // Request payload
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      if (res.status === 200) {
-        // console.log("response: ", res.data.id)
-        // return res.data.id;
-        onPostCreated();
-        setOpen(false);
-        setSuccessVis(true)
-        formValues.content = "";
-      } else {
-        console.log("err.message:", res.data.error);
-        // Tia TODO: display err.response.data
+    const res = await axios.post(
+      "http://localhost:8000/api/posts/",
+      { description: formValues.content }, // Request payload
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       }
-    } catch (err) {
-      console.log("err.message:", err.message);
+    );
+
+    console.log(res.status);
+    if (res.status === 200) {
+      // console.log("response: ", res.data.id)
+      // return res.data.id;
+      onPostCreated();
+      setOpen(false);
+      setSuccessVis(true)
+      formValues.content = "";
+    } else {
+      console.log("err.message:", res.data.error);
       // Tia TODO: display err.response.data
     }
   };

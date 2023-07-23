@@ -113,9 +113,7 @@ router.delete("/:userid", requireAuthentication, async function (req, res, next)
 
             res.status(204).end()
         } catch (err) {
-            res.status(500).json({
-                error: `Failed to delete the user by id due to the following error: ${err.message}`,
-            })
+            return res.status(500).json({ error: err.message })
         }
     } else {
         res.status(403).json({
@@ -185,9 +183,7 @@ router.put("/:userid", requireAuthentication, async function (req, res, next) {
                     bio: updatedUser.bio
                 })
         } catch (err) {
-            res.status(500).json({
-                error: `Failed to update the user by id due to the following error: ${err.message}`,
-            })
+            return res.status(500).json({ error: err.message })
         }
     } else {
         res.status(403).json({
@@ -244,9 +240,7 @@ router.get("/", requireAuthentication, async function (req, res) {
         })
     } catch (err) {
         console.error(err)
-        res.status(500).json({
-            error: `Failed to retrieve the collection of all the users due to the following error: ${err.message}`,
-        })
+        return res.status(500).json({ error: err.message })
     }
 })
 
@@ -275,10 +269,7 @@ router.post("/login", async function (req, res, next) {
                     .json({ error: "Invalid authentication credentials!" })
             }
         } catch (err) {
-            // next(e)
-            res.status(500).json({
-                error: `Failed to login the user by id due to the following error: ${err.message}`,
-            })
+            return res.status(500).json({ error: err.message })
         }
     } else {
         res.status(400).json({

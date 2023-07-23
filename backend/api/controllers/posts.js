@@ -143,6 +143,7 @@ router.get("/:postid", requireAuthentication, async function (req, res, next) {
 
 router.delete("/:postid", requireAuthentication, async function (req, res, next) {
     const email = req.user.email
+    const userid = req.user._id
 
     if (!req.params.postid) {
         return res.status(400).json({ error: "Post ID not provided" })
@@ -176,6 +177,17 @@ router.delete("/:postid", requireAuthentication, async function (req, res, next)
         })
 
         await feed.save()
+
+        const user = await User.findById(userid)
+
+        const postIndexInUser = user.posts.findIndex(
+            (userPost) => userPost._id.toString() === req.params.postid.toString()
+        )
+        if (postIndexInUser !== -1) {
+            user.posts.splice(postIndexInUser, 1)
+        }
+
+        await user.save()
 
         await Post.findByIdAndDelete(req.params.postid)
 

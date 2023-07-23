@@ -21,7 +21,7 @@ function Profile() {
   const [jobTitle, setJobTitle] = useState("");
   const [biography, setBiography] = useState("");
   const [posts, setPosts] = useState([]);
-  const [profileImage, setProfileImage] = useState("https://www.catster.com/wp-content/uploads/2017/11/Mackerel-Tabby-cat.jpg.optimal.jpg");
+  const [profileImage, setProfileImage] = useState("https://images.unsplash.com/photo-1593483316242-efb5420596ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8b3JhbmdlJTIwY2F0fGVufDB8fDB8fHww&w=1000&q=80");
   const [headPhoto, setHeaderPhoto] = useState("https://images.pexels.com/photos/1796730/pexels-photo-1796730.jpeg?cs=srgb&dl=pexels-chait-goli-1796730.jpg&fm=jpg");
 
   const [open, setOpen] = useState(false);
@@ -47,57 +47,48 @@ function Profile() {
     console.log(formValues);
 
     // Make PUT request to update user data
-    try {
-      const res = await axios.put(
-        `http://localhost:8000/api/users/${localStorage.getItem('id')}`,
-        formValues,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        }
-      );
-
-      console.log("res.status:", res.status)
-      if (res.status === 200) {
-        // Update the state variables with the updated user data
-        setUserName(res.data.name);
-        setJobTitle(res.data.jobTitle);
-        setBiography(res.data.bio);
-        setOpen(false)
-      } else {
-        console.log("Tia TODO: display an error saying failed to update user info (res.data.error)");
+    const res = await axios.put(
+      `http://localhost:8000/api/users/${localStorage.getItem('id')}`,
+      formValues,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
       }
-    } catch (err) {
-      console.log("err:", err.message)
-      console.log("Tia TODO: display an error saying failed to update user info");
+    );
+
+    console.log("res.status:", res.status)
+    if (res.status === 200) {
+      // Update the state variables with the updated user data
+      setUserName(res.data.name);
+      setJobTitle(res.data.jobTitle);
+      setBiography(res.data.bio);
+      setOpen(false)
+    } else {
+      console.log("Tia TODO: display an error saying failed to update user info (res.data.error)");
     }
   };
 
   useEffect(() => {
     // Fetch user data
     const fetchUserData = async () => {
-      try {
-        console.log("")
-        const res = await axios.get(`http://localhost:8000/api/users/${localStorage.getItem('id')}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
+      const res = await axios.get(`http://localhost:8000/api/users/${localStorage.getItem('id')}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
 
-        if (res.status === 200) {
-          const userData = res.data.user;
-          setUserName(userData.name);
-          setJobTitle(userData.jobTitle);
-          setBiography(userData.bio);
-          setPosts(userData.posts);
+      console.log(res.status)
+      if (res.status === 200 || res.status === 304) {
+        const userData = res.data.user;
+        setUserName(userData.name);
+        setJobTitle(userData.jobTitle);
+        setBiography(userData.bio);
+        setPosts(userData.posts);
 
-        setFormValues({name: userData.name, jobTitle: userData.jobTitle, bio: userData.bio})
-        } else {
-          console.log("Tia TODO: display an error saying failed to fetch user data");
-        }
-      } catch (err) {
-        console.log("Tia TODO: display an error saying failed to fetch user data");
+      setFormValues({name: userData.name, jobTitle: userData.jobTitle, bio: userData.bio})
+      } else {
+        console.log("Tia TODO: display an error saying failed to fetch user data (res.data.error)");
       }
     };
 
