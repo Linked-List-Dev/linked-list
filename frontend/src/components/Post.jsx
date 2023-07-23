@@ -10,7 +10,8 @@ import {
   Typography,
   Stack,
   CardContent,
-  IconButton
+  IconButton,
+  Box,
 } from "@mui/material";
 import AppTheme from "../util/Theme";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
@@ -23,6 +24,8 @@ import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
+import ExpandedPost from "./ExpandedPost";
+import EditPost from "./EditPost";
 
 function Post({
   _postId,
@@ -33,7 +36,7 @@ function Post({
   _likes,
   _dislikes,
   _authorId,
-  onDeletePost
+  onDeletePost,
 }) {
   const [postId, setPostId] = useState(_postId); // may be used for expanded view later...
   const [userName, setUserName] = useState(_userName);
@@ -44,39 +47,55 @@ function Post({
   const [dislikes, setDislikes] = useState(_dislikes);
   const [authorId, setAuthorId] = useState(_authorId);
 
-    const handleEditClick = (e) => {
-        console.log('Edit')
-        e.stopPropagation()
-    }
+  const [open, setOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false)
 
-    const handleDeleteClick = async (e) => {
-        try {
-          const res = await axios.delete(
-            `http://localhost:8000/api/posts/${postId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
-              },
-            }
-          );
-    
-          if (res.status === 204) {
-            // Tia TODO: create a popup saying that the post got deleted successfully 
-            onDeletePost(postId)
-          } else {
-            console.log("Tia TODO: display an error saying failed to delete a post (res.data.error)");
-          }
-        } catch (err) {
-          console.log("err:", err.message)
-          console.log("Tia TODO: display an error saying failed to delete a post");
+  const handleEditOpen = () => {
+    setEditOpen(true);
+  };
+
+  const handleEditClose = () => {
+    setEditOpen(false);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleDeleteClick = async (e) => {
+    try {
+      const res = await axios.delete(
+        `http://localhost:8000/api/posts/${postId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
+      );
 
-        e.stopPropagation()
+      if (res.status === 204) {
+        // Tia TODO: create a popup saying that the post got deleted successfully
+        onDeletePost(postId);
+      } else {
+        console.log(
+          "Tia TODO: display an error saying failed to delete a post (res.data.error)"
+        );
+      }
+    } catch (err) {
+      console.log("err:", err.message);
+      console.log("Tia TODO: display an error saying failed to delete a post");
     }
 
-    function onCardClick(){
-        console.log('post was clicked', postId)
-    }
+    e.stopPropagation();
+  };
+
+  function onCardClick() {
+    console.log("post was clicked", postId);
+  }
 
   async function handleLike() {
     if (!likes.includes(localStorage.getItem("email"))) {
@@ -232,34 +251,32 @@ function Post({
     <div>
       <ThemeProvider theme={AppTheme}>
         <Card sx={{ bgcolor: "page.main" }}>
-        <div style={{ position: 'relative', zIndex: 999 }}>
-          
-        {authorId.toString() === localStorage.getItem("id") ? (   //only author can edit/delete their posts
-          <>
-            <IconButton
-              onClick={(event) => handleDeleteClick(event)}
-              style={{ position: 'absolute', top: '10px', right: '10px' }}
-            >
-              <DeleteIcon />
-            </IconButton>
-            <IconButton
-              onClick={(event) => handleEditClick(event)}
-              style={{ position: 'absolute', top: '10px', right: '50px' }}
-            >
-              <EditIcon />
-            </IconButton>
-          </>
-        ) : null}
-        
-      </div>
-          <CardActionArea onClick={onCardClick}>
-            <CardContent style={{ position: "relative" }}>
-              
-              <Stack direction={"row"} spacing={2} paddingBottom={"1vh"}>
+          <div style={{ position: "relative", zIndex: 999 }}>
+            {authorId.toString() === localStorage.getItem("id") ? ( //only author can edit/delete their posts
+              <>
+                <IconButton
+                  onClick={(event) => handleDeleteClick(event)}
+                  style={{ position: "absolute", top: "10px", right: "10px" }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+                <IconButton
+                  onClick={handleEditOpen}
+                  style={{ position: "absolute", top: "10px", right: "50px" }}
+                >
+                  <EditIcon />
+                </IconButton>
+              </>
+            ) : null}
+
+                <Stack direction={"row"} spacing={2} paddingBottom={"1vh"}>
+                <Button>
                 <Avatar
                   src={profilePhoto}
                   sx={{ width: 60, height: 60 }}
-                ></Avatar>
+                />
+                </Button>
+                
                 <Stack>
                   <Typography variant="h5">{userName}</Typography>
                   <Typography
@@ -272,13 +289,17 @@ function Post({
                 </Stack>
               </Stack>
 
-              <Typography variant="body2" color="text.secondary">
+          </div>
+          <CardActionArea onClick={() => handleOpen()}>
+            <CardContent style={{ position: "relative" }}>
+
+              <Typography variant="h6" color="text.secondary">
                 {description}
               </Typography>
             </CardContent>
           </CardActionArea>
           <CardActions>
-            <Button size="small" color="primary" onClick={handleLike}>
+            <Button size="small" onClick={handleLike} sx={{color: 'accent.main'}}>
               {likes.includes(localStorage.getItem("email")) ? (
                 <ThumbUpAltIcon />
               ) : (
@@ -286,7 +307,7 @@ function Post({
               )}
               {likes.length}
             </Button>
-            <Button size="small" color="primary" onClick={handleDislike}>
+            <Button size="small" onClick={handleDislike} sx={{color: 'accent.main'}}>
               {dislikes.includes(localStorage.getItem("email")) ? (
                 <ThumbDownAltIcon />
               ) : (
@@ -294,17 +315,33 @@ function Post({
               )}
               {dislikes.length}
             </Button>
-            <Button>
+            <Button sx={{color: 'accent.main'}}>
               <CommentIcon />
             </Button>
-            <Button>
+            {/* <Button sx={{color: 'accent.main'}}>
               <IosShareIcon />
-            </Button>
+            </Button> */}
             {/* <Button>
                         <BookmarkBorderIcon />
                     </Button> */}
           </CardActions>
         </Card>
+        <Box>
+          <ExpandedPost
+            _postId={postId}
+            _content={description}
+            _userName={userName}
+            _jobTitle={jobTitle}
+            _profilePhoto={profilePhoto}
+            _likes={likes}
+            _dislikes={dislikes}
+            open={open}
+            handleClose={handleClose}
+            handleDislike={handleDislike}
+            handleLike={handleLike}
+          />
+          <EditPost _content={description} _open={editOpen} _handleClose={handleEditClose}/>
+        </Box>
       </ThemeProvider>
     </div>
   );

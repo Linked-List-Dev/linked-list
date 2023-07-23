@@ -110,22 +110,11 @@ function RegisterSide() {
                             >
                                 Create Account
                             </Typography>
-                            <Stack
-                                spacing={5}
-                                direction="row"
-                                alignItems="flex-end"
-                                justifyContent="center"
-                            >
-                                {/* Future TODO: social media authentication... */}
-                                <img src={facebook} width={75} />
-                                <img src={google} width={75} />
-                                <img src={linkedin} width={75} />
-                            </Stack>
                             <Typography
                                 variant="h5"
                                 sx={{ paddingBottom: "2vh", paddingTop: "2vh" }}
                             >
-                                Or use your email for registration
+                                Use your email for registration
                             </Typography>
 
                             <form onSubmit={handleSubmit}>

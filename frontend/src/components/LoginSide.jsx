@@ -160,31 +160,8 @@ function LoginSide({ openByDefault }) {
               <Typography color="accent.main" variant="h1">
                 Sign In
               </Typography>
-              <Stack
-                spacing={5}
-                direction="row"
-                alignItems="flex-end"
-                justifyContent="center"
-                paddingTop="2vh"
-                paddingBottom="2vh"
-              >
-                {/* Future TODO: social media authentication... */}
-                <img src={facebook} width={75} />
-                <img src={google} width={75} />
-                <img src={linkedin} width={75} />
-              </Stack>
-              <Divider
-                sx={{
-                  fontFamily: "Lato, sans-serif",
-                  paddingTop: "1vh",
-                  paddingBottom: "1vh",
-                  color: "#211E2250",
-                }}
-              >
-                OR
-              </Divider>
-              <form onSubmit={handleSubmit}>
-                <Stack spacing={3} sx={{ paddingBottom: 3 }}>
+              <form onSubmit={handleSubmit} >
+                <Stack spacing={3} sx={{ paddingBottom: 3, paddingTop: '2vh' }}>
                   <TextField
                     variant="outlined"
                     name="email"
