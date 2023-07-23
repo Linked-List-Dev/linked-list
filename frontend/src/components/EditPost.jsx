@@ -33,6 +33,10 @@ function EditPost({_content, _open, _handleClose}){
     const handleSubmit = (e) => {
         console.log(content)
 
+        // TODO update the post
+
+        _handleClose()
+
     }
 
     const handleChange = (e) => {
@@ -79,7 +83,7 @@ function EditPost({_content, _open, _handleClose}){
                     />
 
                     <Button
-                      onClick={_handleClose}
+                      onClick={handleSubmit}
                       variant="contained"
                       size="large"
                       sx={{
