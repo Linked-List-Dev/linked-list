@@ -26,9 +26,12 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 
-function Comment({_content, _authorName, _authorId}){
+function Comment({_content, _authorName, _authorId, _createdAt, _updatedAt}){
     const [userName, setUserName] = useState(_authorName)
-
+    const [content, setContent] = useState(_content)
+    const [createdAt, setCreatedAt] = useState(_createdAt)
+    const [updatedAt, setUpdatedAt] = useState(_updatedAt)
+  
     return(
         <Box sx={{textAlign: 'left', color: 'text.primary'}}>
             <Card  sx={{padding: '2vh',}}>
@@ -39,7 +42,7 @@ function Comment({_content, _authorName, _authorId}){
                   </Avatar>
                     <Typography variant="h5">{userName}</Typography>
                 </Stack>
-                <Typography>{_content}</Typography>
+                <Typography>{content}</Typography>
                 </CardContent>
              </Card>
             

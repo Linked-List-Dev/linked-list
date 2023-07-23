@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Card from "@mui/material/Card";
 import {
   Button,
@@ -27,19 +27,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import Comment from "./Comment";
 
-const fakeComments = [
-  {
-    content: "Wow I also need a job I love you so much",
-    authorName: "Maserati Bugatti",
-    authorId: "64ba08b6a235170b4bc19697", // we need to get job title etc using this -> Artems userId
-  },
-  {
-    content: "This is a great post",
-    authorName: "Drake",
-    authorId: "64ba0a1477b5fd3499ab805e", // -> Tia userId
-  },
-];
-
 function ExpandedPost({
   _postId,
   _content,
@@ -48,30 +35,75 @@ function ExpandedPost({
   _profilePhoto,
   _likes,
   _dislikes,
+  _comments,
   open,
   handleClose,
   handleLike,
   handleDislike,
 }) {
+  console.log("rendered ExpandedPost, _likes:", _likes)
   const [content, setContent] = useState(_content);
   const [userName, setUserName] = useState(_userName);
   const [jobTitle, setJobTitle] = useState(_jobTitle);
   const [profilePhoto, setProfilePhoto] = useState(_profilePhoto);
-  const [postId, setpostId] = useState("abc");
-  const [comments, setComments] = useState(fakeComments);
+  const [postId, setpostId] = useState(_postId);
+  const [comments, setComments] = useState(_comments);
   const [likes, setLikes] = useState(_likes);
   const [dislikes, setDislikes] = useState(_dislikes);
   const [commentContent, setCommentContent] = useState("");
 
-  //TODO ARTEM like/dislike not changing number or icon.
-  // using axios from Post.jsx gives a 500 error
-  // so that is why its not included here
+  useEffect(() => {
+    setContent(_content);
+  }, [_content]);
 
-  const handleComment = (e) => {
+  useEffect(() => {
+    setLikes(_likes);
+  }, [_likes]);
+
+  useEffect(() => {
+    setDislikes(_dislikes);
+  }, [_dislikes]);
+
+  const handleCreateComment = async (e) => {
     console.log(commentContent);
-    setCommentContent("");
+
+    const res = await axios.post(
+      "http://localhost:8000/api/posts/comment",
+      {
+        commentContent: commentContent,
+        postId: postId
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+
+    console.log(res.status);
+    if (res.status === 200) {
+      setComments(res.data.post.comments)
+      // setOpen(false);
+      // setSuccessVis(true)
+      // setCommentContent("");
+    } else {
+      console.log("err.message:", res.data.error);
+      // Tia TODO: display response error
+    }
   };
 
+  const handleLikeFromExpanded = async (e) => {
+    const res = await handleLike()
+    setLikes(res.likes)
+    setDislikes(res.dislikes)
+  }
+
+  const handleDislikeFromExpanded = async (e) => {
+    const res = await handleDislike()
+    setLikes(res.likes)
+    setDislikes(res.dislikes)
+  }
+  
   const handleChange = (e) => {
     setCommentContent(e.target.value);
   };
@@ -118,7 +150,7 @@ function ExpandedPost({
                 <CardActions>
                   <Button
                     size="small"
-                    onClick={handleLike}
+                    onClick={handleLikeFromExpanded}
                     sx={{ color: "accent.main" }}
                   >
                     {likes.includes(localStorage.getItem("email")) ? (
@@ -130,7 +162,7 @@ function ExpandedPost({
                   </Button>
                   <Button
                     size="small"
-                    onClick={handleDislike}
+                    onClick={handleDislikeFromExpanded}
                     sx={{ color: "accent.main" }}
                   >
                     {dislikes.includes(localStorage.getItem("email")) ? (
@@ -171,12 +203,14 @@ function ExpandedPost({
                   Comments
                 </Typography>
                 <Stack paddingTop={"1vh"}>
-                  {fakeComments.map((comment, index) => (
+                  {comments.map((comment) => (
                     <Comment
-                      key={index}
+                      key={comment._id}
                       _content={comment.content}
                       _authorId={comment.authorId}
                       _authorName={comment.authorName}
+                      _createdAt={comment.createdAt}
+                      _updatedAt={comment._updatedAt}
                     />
                   ))}
                 </Stack>
@@ -198,7 +232,7 @@ function ExpandedPost({
                         backgroundColor: "accent.secondary",
                       },
                     }}
-                    onClick={handleComment}
+                    onClick={handleCreateComment}
                   >
                     Comment
                   </Button>

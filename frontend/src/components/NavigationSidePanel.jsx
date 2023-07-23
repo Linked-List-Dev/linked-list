@@ -96,7 +96,7 @@ function NavigationSidePanel({ onPostCreated }) {
       formValues.content = "";
     } else {
       console.log("err.message:", res.data.error);
-      // Tia TODO: display err.response.data
+      // Tia TODO: display the error
     }
   };
 

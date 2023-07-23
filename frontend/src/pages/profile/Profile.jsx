@@ -190,6 +190,7 @@ function Profile() {
                       _description={post.description}
                       _likes={post.likes}
                       _dislikes={post.dislikes}
+                      _comments={post.comments}
                     />
                   ))}
                 </Stack>

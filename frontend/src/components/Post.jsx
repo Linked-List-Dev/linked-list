@@ -36,7 +36,10 @@ function Post({
   _likes,
   _dislikes,
   _authorId,
+  _comments,
   onDeletePost,
+  _createdAt,
+  _updatedAt
 }) {
   const [postId, setPostId] = useState(_postId); // may be used for expanded view later...
   const [userName, setUserName] = useState(_userName);
@@ -46,6 +49,9 @@ function Post({
   const [likes, setLikes] = useState(_likes);
   const [dislikes, setDislikes] = useState(_dislikes);
   const [authorId, setAuthorId] = useState(_authorId);
+  const [comments, setComments] = useState(_comments);
+  const [createdAt, setCreatedAt] = useState(_createdAt)
+  const [updatedAt, setUpdatedAt] = useState(_updatedAt)
 
   const [open, setOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false)
@@ -115,6 +121,7 @@ function Post({
           setLikes(res.data.likes);
           // Update the dislikes state
           setDislikes(res.data.dislikes);
+          return {likes: res.data.likes, dislikes: res.data.dislikes}
         } else {
           console.log("err.message:", res.data.error);
         }
@@ -138,6 +145,7 @@ function Post({
           setLikes(res.data.likes);
           // Update the dislikes state
           setDislikes(res.data.dislikes);
+          return {likes: res.data.likes, dislikes: res.data.dislikes}
         } else {
           console.log("err.message:", res.data.error);
         }
@@ -162,6 +170,7 @@ function Post({
         setLikes(res.data.likes);
         // Update the dislikes state
         setDislikes(res.data.dislikes);
+        return {likes: res.data.likes, dislikes: res.data.dislikes}
       } else {
         console.log("err.message:", res.data.error);
       }
@@ -190,6 +199,7 @@ function Post({
           setLikes(res.data.likes);
           // Update the dislikes state
           setDislikes(res.data.dislikes);
+          return {likes: res.data.likes, dislikes: res.data.dislikes}
         } else {
           console.log("err.message:", res.data.error);
         }
@@ -213,6 +223,7 @@ function Post({
           setLikes(res.data.likes);
           // Update the dislikes state
           setDislikes(res.data.dislikes);
+          return {likes: res.data.likes, dislikes: res.data.dislikes}
         } else {
           console.log("err.message:", res.data.error);
         }
@@ -237,6 +248,7 @@ function Post({
         setLikes(res.data.likes);
         // Update the dislikes state
         setDislikes(res.data.dislikes);
+        return {likes: res.data.likes, dislikes: res.data.dislikes}
       } else {
         console.log("err.message:", res.data.error);
       }
@@ -336,6 +348,7 @@ function Post({
             _profilePhoto={profilePhoto}
             _likes={likes}
             _dislikes={dislikes}
+            _comments={comments}
             open={open}
             handleClose={handleClose}
             handleDislike={handleDislike}

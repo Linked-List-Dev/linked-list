@@ -53,6 +53,9 @@ function Feed() {
                                     _likes={post.likes}
                                     _dislikes={post.dislikes}
                                     _authorId={post.authorId}
+                                    _comments={post.comments}
+                                    _createdAt={post.createdAt}
+                                    _updatedAt={post.updatedAt}
                                     onDeletePost={handlePostDelete}
                                 />
                             ))}
