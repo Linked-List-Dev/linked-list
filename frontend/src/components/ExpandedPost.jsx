@@ -63,8 +63,6 @@ function ExpandedPost({
   const [dislikes, setDislikes] = useState(_dislikes);
   const [commentContent, setCommentContent] = useState("");
 
-  console.log(_postId, open);
-
   //TODO ARTEM like/dislike not changing number or icon.
   // using axios from Post.jsx gives a 500 error
   // so that is why its not included here

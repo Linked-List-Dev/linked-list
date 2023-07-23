@@ -15,6 +15,8 @@ import {
   Avatar,
   Modal,
   Box,
+  Snackbar,
+  Alert,
   Button,
 } from "@mui/material";
 
@@ -32,6 +34,7 @@ function NavigationSidePanel({ onPostCreated }) {
   const [open, setOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [successVis, setSuccessVis] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const openSettingsModal = () => setSettingsOpen(true);
@@ -44,6 +47,14 @@ function NavigationSidePanel({ onPostCreated }) {
   const [formValues, setFormValues] = useState({
     content: "",
   });
+
+  const handleSnackClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
 
   const handleLogOut = () => {
     //Artem to do log out
@@ -81,6 +92,7 @@ function NavigationSidePanel({ onPostCreated }) {
         // return res.data.id;
         onPostCreated();
         setOpen(false);
+        setSuccessVis(true)
         formValues.content = "";
       } else {
         console.log("err.message:", res.data.error);
@@ -349,6 +361,21 @@ function NavigationSidePanel({ onPostCreated }) {
             </Stack>
           </Box>
         </Modal>
+
+        <Snackbar
+          open={successVis}
+          autoHideDuration={6000}
+          onClose={handleSnackClose}
+        >
+          <Alert
+            onClose={handleSnackClose}
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+            Your post was successfully created!
+          </Alert>
+        </Snackbar>
+
       </ThemeProvider>
     </div>
   );

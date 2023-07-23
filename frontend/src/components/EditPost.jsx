@@ -6,11 +6,11 @@ import {
   TextField,
   CardActions,
   ThemeProvider,
-  Avatar,
+  Alert,
   Typography,
   Stack,
   CardContent,
-  Divider,
+  Snackbar,
   Modal,
   Box,
 } from "@mui/material";
@@ -26,27 +26,43 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 
-function EditPost({_content, _open, _handleClose}){
-    const [content, setContent] = useState(_content)
-    const [open, setOpen] = useState(_open)
+function EditPost({ _content, _open, _handleClose }) {
+  const [content, setContent] = useState(_content);
+  const [open, setOpen] = useState(_open);
+  const [successVis, setSuccessVis] = useState(false);
 
-    const handleSubmit = (e) => {
-        console.log(content)
+  const handleSubmit = (e) => {
+    console.log(content);
 
-        // TODO update the post
-
-        _handleClose()
-
+    if(!content){
+        // if the user sets the message to empty
+        // todo warning here...
     }
 
-    const handleChange = (e) => {
-        setContent(e.target.value)
+    // TODO update the post
+
+    setSuccessVis(true);
+
+    _handleClose();
+  };
+
+  const handleChange = (e) => {
+    setContent(e.target.value);
+  };
+
+  const handleSnackClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
     }
 
-    return(
-        <div>
-            <ThemeProvider theme={AppTheme}>
-            <Modal
+    setOpen(false);
+  };
+
+
+  return (
+    <div>
+      <ThemeProvider theme={AppTheme}>
+        <Modal
           open={_open}
           onClose={_handleClose}
           sx={{
@@ -65,7 +81,7 @@ function EditPost({_content, _open, _handleClose}){
             <Stack>
               <Box>
                 <CardContent>
-                <Stack alignItems={"center"} spacing={3}>
+                  <Stack alignItems={"center"} spacing={3}>
                     <Typography variant="h3" color="accent.main">
                       Edit Your Post
                     </Typography>
@@ -101,14 +117,27 @@ function EditPost({_content, _open, _handleClose}){
                     </Button>
                   </Stack>
                 </CardContent>
-                </Box>
-                </Stack>
-              
+              </Box>
+            </Stack>
           </Card>
         </Modal>
-            </ThemeProvider>
-        </div>
-    )
+        <Snackbar
+          open={successVis}
+          autoHideDuration={6000}
+          onClose={handleSnackClose}
+        >
+          <Alert
+            onClose={handleSnackClose}
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+            Post saved successfully!
+          </Alert>
+        </Snackbar>
+        
+      </ThemeProvider>
+    </div>
+  );
 }
 
-export default EditPost
+export default EditPost;

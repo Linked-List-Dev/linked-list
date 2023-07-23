@@ -64,7 +64,6 @@ function Profile() {
         setUserName(res.data.name);
         setJobTitle(res.data.jobTitle);
         setBiography(res.data.bio);
-        // Tia TODO: close the modal and clear the input values
         setOpen(false)
       } else {
         console.log("Tia TODO: display an error saying failed to update user info (res.data.error)");
@@ -92,6 +91,8 @@ function Profile() {
           setJobTitle(userData.jobTitle);
           setBiography(userData.bio);
           setPosts(userData.posts);
+
+        setFormValues({name: userData.name, jobTitle: userData.jobTitle, bio: userData.bio})
         } else {
           console.log("Tia TODO: display an error saying failed to fetch user data");
         }

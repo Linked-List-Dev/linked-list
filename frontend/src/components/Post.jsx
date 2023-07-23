@@ -268,14 +268,15 @@ function Post({
                 </IconButton>
               </>
             ) : null}
-          </div>
-          <CardActionArea onClick={() => handleOpen()}>
-            <CardContent style={{ position: "relative" }}>
-              <Stack direction={"row"} spacing={2} paddingBottom={"1vh"}>
+
+                <Stack direction={"row"} spacing={2} paddingBottom={"1vh"}>
+                <Button>
                 <Avatar
                   src={profilePhoto}
                   sx={{ width: 60, height: 60 }}
-                ></Avatar>
+                />
+                </Button>
+                
                 <Stack>
                   <Typography variant="h5">{userName}</Typography>
                   <Typography
@@ -287,6 +288,10 @@ function Post({
                   </Typography>
                 </Stack>
               </Stack>
+
+          </div>
+          <CardActionArea onClick={() => handleOpen()}>
+            <CardContent style={{ position: "relative" }}>
 
               <Typography variant="h6" color="text.secondary">
                 {description}
