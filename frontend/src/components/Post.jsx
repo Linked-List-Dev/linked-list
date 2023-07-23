@@ -318,9 +318,9 @@ function Post({
             <Button sx={{color: 'accent.main'}}>
               <CommentIcon />
             </Button>
-            <Button sx={{color: 'accent.main'}}>
+            {/* <Button sx={{color: 'accent.main'}}>
               <IosShareIcon />
-            </Button>
+            </Button> */}
             {/* <Button>
                         <BookmarkBorderIcon />
                     </Button> */}
