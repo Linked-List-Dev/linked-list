@@ -10,7 +10,8 @@ import {
   Typography,
   Stack,
   CardContent,
-  IconButton
+  IconButton,
+  Box,
 } from "@mui/material";
 import AppTheme from "../util/Theme";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
@@ -23,6 +24,7 @@ import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
+import ExpandedPost from "./ExpandedPost";
 
 function Post({
   _postId,
@@ -32,6 +34,8 @@ function Post({
   _description,
   _likes,
   _dislikes,
+  _authorId,
+  onDeletePost,
 }) {
   const [postId, setPostId] = useState(_postId); // may be used for expanded view later...
   const [userName, setUserName] = useState(_userName);
@@ -40,20 +44,53 @@ function Post({
   const [description, setDescription] = useState(_description);
   const [likes, setLikes] = useState(_likes);
   const [dislikes, setDislikes] = useState(_dislikes);
+  const [authorId, setAuthorId] = useState(_authorId);
 
-    const handleEditClick = (e) => {
-        console.log('Edit')
-        e.stopPropagation()
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleEditClick = (e) => {
+    console.log("Edit");
+    e.stopPropagation();
+  };
+
+  const handleDeleteClick = async (e) => {
+    try {
+      const res = await axios.delete(
+        `http://localhost:8000/api/posts/${postId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (res.status === 204) {
+        // Tia TODO: create a popup saying that the post got deleted successfully
+        onDeletePost(postId);
+      } else {
+        console.log(
+          "Tia TODO: display an error saying failed to delete a post (res.data.error)"
+        );
+      }
+    } catch (err) {
+      console.log("err:", err.message);
+      console.log("Tia TODO: display an error saying failed to delete a post");
     }
 
-    const handleDeleteClick = (e) => {
-        console.log('delete')
-        e.stopPropagation()
-    }
+    e.stopPropagation();
+  };
 
-    function onCardClick(){
-        console.log('post was clicked', _postId)
-    }
+  function onCardClick() {
+    console.log("post was clicked", postId);
+  }
 
   async function handleLike() {
     if (!likes.includes(localStorage.getItem("email"))) {
@@ -209,23 +246,26 @@ function Post({
     <div>
       <ThemeProvider theme={AppTheme}>
         <Card sx={{ bgcolor: "page.main" }}>
-        <div style={{ position: 'relative', zIndex: 999 }}>
-        <IconButton
-          onClick={(event) => handleEditClick(event)}
-          style={{ position: 'absolute', top: '10px', right: '10px' }}
-        >
-          <EditIcon />
-        </IconButton>
-        <IconButton
-          onClick={(event) => handleDeleteClick(event)}
-          style={{ position: 'absolute', top: '10px', right: '50px' }}
-        >
-          <DeleteIcon />
-        </IconButton>
-      </div>
-          <CardActionArea onClick={onCardClick}>
+          <div style={{ position: "relative", zIndex: 999 }}>
+            {authorId.toString() === localStorage.getItem("id") ? ( //only author can edit/delete their posts
+              <>
+                <IconButton
+                  onClick={(event) => handleDeleteClick(event)}
+                  style={{ position: "absolute", top: "10px", right: "10px" }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+                <IconButton
+                  onClick={(event) => handleEditClick(event)}
+                  style={{ position: "absolute", top: "10px", right: "50px" }}
+                >
+                  <EditIcon />
+                </IconButton>
+              </>
+            ) : null}
+          </div>
+          <CardActionArea onClick={() => handleOpen()}>
             <CardContent style={{ position: "relative" }}>
-              
               <Stack direction={"row"} spacing={2} paddingBottom={"1vh"}>
                 <Avatar
                   src={profilePhoto}
@@ -243,13 +283,13 @@ function Post({
                 </Stack>
               </Stack>
 
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="h6" color="text.secondary">
                 {description}
               </Typography>
             </CardContent>
           </CardActionArea>
           <CardActions>
-            <Button size="small" color="primary" onClick={handleLike}>
+            <Button size="small" onClick={handleLike} sx={{color: 'accent.main'}}>
               {likes.includes(localStorage.getItem("email")) ? (
                 <ThumbUpAltIcon />
               ) : (
@@ -257,7 +297,7 @@ function Post({
               )}
               {likes.length}
             </Button>
-            <Button size="small" color="primary" onClick={handleDislike}>
+            <Button size="small" onClick={handleDislike} sx={{color: 'accent.main'}}>
               {dislikes.includes(localStorage.getItem("email")) ? (
                 <ThumbDownAltIcon />
               ) : (
@@ -265,10 +305,10 @@ function Post({
               )}
               {dislikes.length}
             </Button>
-            <Button>
+            <Button sx={{color: 'accent.main'}}>
               <CommentIcon />
             </Button>
-            <Button>
+            <Button sx={{color: 'accent.main'}}>
               <IosShareIcon />
             </Button>
             {/* <Button>
@@ -276,6 +316,21 @@ function Post({
                     </Button> */}
           </CardActions>
         </Card>
+        <Box>
+          <ExpandedPost
+            _postId={postId}
+            _content={description}
+            _userName={userName}
+            _jobTitle={jobTitle}
+            _profilePhoto={profilePhoto}
+            _likes={likes}
+            _dislikes={dislikes}
+            open={open}
+            handleClose={handleClose}
+            handleDislike={handleDislike}
+            handleLike={handleLike}
+          />
+        </Box>
       </ThemeProvider>
     </div>
   );

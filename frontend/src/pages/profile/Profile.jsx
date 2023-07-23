@@ -16,7 +16,7 @@ import Post from "../../components/Post";
 import EditIcon from "@mui/icons-material/Edit";
 import axios from 'axios';
 
-function PersonalProfile() {
+function Profile() {
   const [userName, setUserName] = useState("");
   const [jobTitle, setJobTitle] = useState("");
   const [biography, setBiography] = useState("");
@@ -192,11 +192,12 @@ function PersonalProfile() {
                       key={post._id}
                       _postId={post._id}
                       _userName={post.authorName}
+                      _authorId={post.authorId}
                       _jobTitle={post.authorJobTitle}
                       _profilePhoto={profileImage}
                       _description={post.description}
-                      _numLikes={post.likes.length}
-                      _numDislikes={post.dislikes.length}
+                      _likes={post.likes}
+                      _dislikes={post.dislikes}
                     />
                   ))}
                 </Stack>
@@ -298,4 +299,4 @@ function PersonalProfile() {
   );  
 }
 
-export default PersonalProfile;
+export default Profile;

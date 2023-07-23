@@ -28,6 +28,12 @@ function Feed() {
         }
     }
 
+
+    const handlePostDelete = (postId) => {
+        // Remove the deleted post from the posts array in the state
+        setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
+    };
+    
     useEffect(() => {
         getPosts();
     }, []);
@@ -49,6 +55,8 @@ function Feed() {
                                     _description={post.description}
                                     _likes={post.likes}
                                     _dislikes={post.dislikes}
+                                    _authorId={post.authorId}
+                                    onDeletePost={handlePostDelete}
                                 />
                             ))}
                         </Stack>
