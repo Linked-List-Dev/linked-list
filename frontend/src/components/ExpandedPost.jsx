@@ -3,7 +3,8 @@ import { useState } from "react";
 import Card from "@mui/material/Card";
 import {
   Button,
-TextField,  CardActions,
+  TextField,
+  CardActions,
   ThemeProvider,
   Avatar,
   Typography,
@@ -50,7 +51,7 @@ function ExpandedPost({
   open,
   handleClose,
   handleLike,
-  handleDislike
+  handleDislike,
 }) {
   const [content, setContent] = useState(_content);
   const [userName, setUserName] = useState(_userName);
@@ -58,24 +59,24 @@ function ExpandedPost({
   const [profilePhoto, setProfilePhoto] = useState(_profilePhoto);
   const [postId, setpostId] = useState("abc");
   const [comments, setComments] = useState(fakeComments);
-  const [likes, setLikes] = useState(_likes)
-  const [dislikes, setDislikes] = useState(_dislikes)
-  const [commentContent, setCommentContent] = useState("")
+  const [likes, setLikes] = useState(_likes);
+  const [dislikes, setDislikes] = useState(_dislikes);
+  const [commentContent, setCommentContent] = useState("");
 
   console.log(_postId, open);
 
-    //TODO ARTEM like/dislike not changing number or icon.
-    // using axios from Post.jsx gives a 500 error
-    // so that is why its not included here
+  //TODO ARTEM like/dislike not changing number or icon.
+  // using axios from Post.jsx gives a 500 error
+  // so that is why its not included here
 
-    const handleComment = (e) => {
-        console.log(commentContent)
-        setCommentContent("")
-    }
+  const handleComment = (e) => {
+    console.log(commentContent);
+    setCommentContent("");
+  };
 
-    const handleChange = (e) => {
-        setCommentContent(e.target.value)
-    }
+  const handleChange = (e) => {
+    setCommentContent(e.target.value);
+  };
 
   return (
     <div>
@@ -89,82 +90,124 @@ function ExpandedPost({
             justifyContent: "center",
           }}
         >
-            <Card sx={{
+          <Card
+            sx={{
               backgroundColor: "page.main",
               borderRadius: 2,
               width: "40vw",
-            }}>
-                <Stack>
-                    <Box>
-                    <CardContent>
-                <Stack direction={"row"} spacing={2} paddingBottom={"1vh"}>
-                  <Avatar src={profilePhoto} sx={{ width: 60, height: 60 }}>
-                    A
-                  </Avatar>
-                  <Stack>
-                    <Typography variant="h5">{userName}</Typography>
-                    <Typography
-                      variant="body1"
-                      component="div"
-                      style={{ verticalAlign: "sub" }}
-                    >
-                      {jobTitle}
-                    </Typography>
+            }}
+          >
+            <Stack>
+              <Box>
+                <CardContent>
+                  <Stack direction={"row"} spacing={2} paddingBottom={"1vh"}>
+                    <Avatar src={profilePhoto} sx={{ width: 60, height: 60 }}>
+                      A
+                    </Avatar>
+                    <Stack>
+                      <Typography variant="h5">{userName}</Typography>
+                      <Typography
+                        variant="body1"
+                        component="div"
+                        style={{ verticalAlign: "sub" }}
+                      >
+                        {jobTitle}
+                      </Typography>
+                    </Stack>
                   </Stack>
-                </Stack>
-                  <Typography variant="h5">
-                    {content}
-                  </Typography>
-              </CardContent>
-                    <CardActions>
-            <Button size="small" onClick={handleLike} sx={{color: 'accent.main'}}>
-              {likes.includes(localStorage.getItem("email")) ? (
-                <ThumbUpAltIcon />
-              ) : (
-                <ThumbUpOffAltIcon />
-              )}
-              {likes.length}
-            </Button>
-            <Button size="small" onClick={handleDislike} sx={{color: 'accent.main'}}>
-              {dislikes.includes(localStorage.getItem("email")) ? (
-                <ThumbDownAltIcon />
-              ) : (
-                <ThumbDownOffAltIcon />
-              )}
-              {dislikes.length}
-            </Button>
-            <Button sx={{color: 'accent.main'}}>
-              <IosShareIcon />
-            </Button>
-            {/* <Button>
+                  <Typography variant="h5">{content}</Typography>
+                </CardContent>
+                <CardActions>
+                  <Button
+                    size="small"
+                    onClick={handleLike}
+                    sx={{ color: "accent.main" }}
+                  >
+                    {likes.includes(localStorage.getItem("email")) ? (
+                      <ThumbUpAltIcon />
+                    ) : (
+                      <ThumbUpOffAltIcon />
+                    )}
+                    {likes.length}
+                  </Button>
+                  <Button
+                    size="small"
+                    onClick={handleDislike}
+                    sx={{ color: "accent.main" }}
+                  >
+                    {dislikes.includes(localStorage.getItem("email")) ? (
+                      <ThumbDownAltIcon />
+                    ) : (
+                      <ThumbDownOffAltIcon />
+                    )}
+                    {dislikes.length}
+                  </Button>
+                  <Button sx={{ color: "accent.main" }}>
+                    <IosShareIcon />
+                  </Button>
+                  {/* <Button>
                         <BookmarkBorderIcon />
                     </Button> */}
-          </CardActions>
-                    </Box>
-                
-            
-
-              <Box sx={{textAlign: 'center', alignItems: 'center', backgroundColor: 'page.secondary', paddingBottom: '1vh', color: 'text.primary'}}>
-                <Divider sx={{fontFamily: 'Lato'}}/>
-                <Typography variant="h5" sx={{color: 'text.secondary', textAlign: 'left', paddingLeft: '1vw', paddingTop: '1vh'}}>Comments</Typography>
-                <Stack  paddingTop={'1vh'}>
-                {fakeComments.map((comment,index) => (
-                    <Comment key={index} _content={comment.content} _authorId={comment.authorId} _authorName={comment.authorName}/>
-                ))}
-                </Stack>
-                <Divider sx={{fontFamily: 'Lato'}}/>
-                <Stack direction={'row'}>
-                <TextField variant="filled" label="Add comment" fullWidth onChange={handleChange} value={commentContent}/>
-                <Button variant="contained" disableElevation sx={{backgroundColor: 'accent.main', "&:hover": {
-                      backgroundColor: "accent.secondary",
-                    }}} onClick={handleComment} >Comment</Button>
-                </Stack>
-                
+                </CardActions>
               </Box>
+
+              <Box
+                sx={{
+                  textAlign: "center",
+                  alignItems: "center",
+                  backgroundColor: "page.secondary",
+                  paddingBottom: "1vh",
+                  color: "text.primary",
+                }}
+              >
+                <Divider sx={{ fontFamily: "Lato" }} />
+                <Typography
+                  variant="h5"
+                  sx={{
+                    color: "text.secondary",
+                    textAlign: "left",
+                    paddingLeft: "1vw",
+                    paddingTop: "1vh",
+                  }}
+                >
+                  Comments
+                </Typography>
+                <Stack paddingTop={"1vh"}>
+                  {fakeComments.map((comment, index) => (
+                    <Comment
+                      key={index}
+                      _content={comment.content}
+                      _authorId={comment.authorId}
+                      _authorName={comment.authorName}
+                    />
+                  ))}
                 </Stack>
-              
-                
-            </Card>
+                <Divider sx={{ fontFamily: "Lato" }} />
+                <Stack direction={"row"}>
+                  <TextField
+                    variant="filled"
+                    label="Add comment"
+                    fullWidth
+                    onChange={handleChange}
+                    value={commentContent}
+                  />
+                  <Button
+                    variant="contained"
+                    disableElevation
+                    sx={{
+                      backgroundColor: "accent.main",
+                      "&:hover": {
+                        backgroundColor: "accent.secondary",
+                      },
+                    }}
+                    onClick={handleComment}
+                  >
+                    Comment
+                  </Button>
+                </Stack>
+              </Box>
+            </Stack>
+          </Card>
         </Modal>
       </ThemeProvider>
     </div>

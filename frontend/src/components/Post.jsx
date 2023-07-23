@@ -25,6 +25,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import ExpandedPost from "./ExpandedPost";
+import EditPost from "./EditPost";
 
 function Post({
   _postId,
@@ -47,6 +48,15 @@ function Post({
   const [authorId, setAuthorId] = useState(_authorId);
 
   const [open, setOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false)
+
+  const handleEditOpen = () => {
+    setEditOpen(true);
+  };
+
+  const handleEditClose = () => {
+    setEditOpen(false);
+  };
 
   const handleOpen = () => {
     setOpen(true);
@@ -54,11 +64,6 @@ function Post({
 
   const handleClose = () => {
     setOpen(false);
-  };
-
-  const handleEditClick = (e) => {
-    console.log("Edit");
-    e.stopPropagation();
   };
 
   const handleDeleteClick = async (e) => {
@@ -256,7 +261,7 @@ function Post({
                   <DeleteIcon />
                 </IconButton>
                 <IconButton
-                  onClick={(event) => handleEditClick(event)}
+                  onClick={handleEditOpen}
                   style={{ position: "absolute", top: "10px", right: "50px" }}
                 >
                   <EditIcon />
@@ -330,6 +335,7 @@ function Post({
             handleDislike={handleDislike}
             handleLike={handleLike}
           />
+          <EditPost _content={description} _open={editOpen} _handleClose={handleEditClose}/>
         </Box>
       </ThemeProvider>
     </div>
