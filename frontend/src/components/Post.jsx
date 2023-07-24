@@ -333,7 +333,7 @@ function Post({
               {dislikes.length}
             </Button>
             <Button sx={{color: 'accent.main'}} onClick={handleComment}>
-              <CommentIcon />
+              <CommentIcon /> {comments.length}
             </Button>
             {/* <Button sx={{color: 'accent.main'}}>
               <IosShareIcon />

@@ -143,23 +143,6 @@ function NavigationSidePanel({ onPostCreated }) {
               <img src={LinkedListLogoLight} height={"50vh"} />
             </Box>
 
-            <TextField
-              id="input-with-icon-textfield"
-              variant="filled"
-              sx={{
-                paddingLeft: "2vw",
-                paddingRight: "2vw",
-                paddingTop: "2vh",
-              }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-            />
-
             <List>
               <ListItem>
                 <ListItemButton component={Link} to="/feed">

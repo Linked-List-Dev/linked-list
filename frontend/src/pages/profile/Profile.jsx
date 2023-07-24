@@ -8,6 +8,8 @@ import {
   Stack,
   Paper,
   Avatar,
+  Snackbar,
+  Alert,
   Button,
   TextField,
   Modal,
@@ -24,8 +26,8 @@ function Profile() {
   const { profileid } = useParams();
   const [userName, setUserName] = useState("");
   const [userId, setUserId] = useState("");
-  const [jobTitle, setJobTitle] = useState("");
-  const [biography, setBiography] = useState("");
+  const [jobTitle, setJobTitle] = useState("New user");
+  const [biography, setBiography] = useState("There's no bio yet... Click the edit button to add one!");
   const [posts, setPosts] = useState([]);
   const [profileImage, setProfileImage] = useState(
     "https://images.unsplash.com/photo-1593483316242-efb5420596ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8b3JhbmdlJTIwY2F0fGVufDB8fDB8fHww&w=1000&q=80"
@@ -37,7 +39,16 @@ function Profile() {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [successVis, setSuccessVis] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  const handleSnackClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setSuccessVis(false);
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -88,6 +99,7 @@ function Profile() {
       setJobTitle(res.data.jobTitle);
       setBiography(res.data.bio);
       setOpen(false);
+      setSuccessVis(true)
     } else {
       console.log(
         "Tia TODO: display an error saying failed to update user info (res.data.error)"
@@ -458,6 +470,19 @@ function Profile() {
             </Box>
           </Box>
         </Modal>
+        <Snackbar
+          open={successVis}
+          autoHideDuration={3000}
+          onClose={handleSnackClose}
+        >
+          <Alert
+            onClose={handleSnackClose}
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+            Your profile was updated!
+          </Alert>
+        </Snackbar>
       </ThemeProvider>
     </div>
   );

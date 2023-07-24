@@ -203,7 +203,8 @@ function ExpandedPost({
                 <Stack paddingTop={"1vh"} sx={{ maxHeight: '50vh',overflow: 'auto'}}>
                   {comments.map((comment) => (
                     <Comment
-                      key={comment._id}
+                    key={comment._id}
+                      _key={comment._id}
                       _content={comment.content}
                       _authorId={comment.authorId}
                       _authorName={comment.authorName}
