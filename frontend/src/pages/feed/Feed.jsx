@@ -5,23 +5,28 @@ import AppTheme from '../../util/Theme'
 import { Box, Stack, ThemeProvider } from '@mui/material';
 import Post from '../../components/Post';
 import axios from "axios"
+import { useNavigate } from "react-router-dom";
 
 function Feed() {
+    const navigate = useNavigate();
     const [posts, setPosts] = useState([]);
 
     async function getPosts() {
-        const res = await axios.get("http://localhost:8000/api/feed/", {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-        });
+        try {
+            const res = await axios.get("http://localhost:8000/api/feed/", {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+            });
 
-        console.log(res.status)
-        if (res.status === 200 || res.status === 304) {
-            // console.log("response.data.posts:", res.data.posts);
-            setPosts(res.data.posts);
-        } else {
-            console.log("Tia TODO: display an error saying failed to load posts");
+            if (res.status === 200 || res.status === 304) {
+                // console.log("response.data.posts:", res.data.posts);
+                setPosts(res.data.posts);
+            }
+        } catch (err) {
+            if (err.response.status === 401 || err.response.status === 400) {
+                navigate('/register')
+            }
         }
     }
 

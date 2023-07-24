@@ -16,8 +16,10 @@ import Post from "../../components/Post";
 import EditIcon from "@mui/icons-material/Edit";
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 function Profile() {
+  const navigate = useNavigate();
   const { profileid } = useParams()
   const [userName, setUserName] = useState("");
   const [userId, setUserId] = useState("")
@@ -73,27 +75,34 @@ function Profile() {
   };
 
   useEffect(() => {
-    // Fetch user data
     const fetchUserData = async () => {
-      const res = await axios.get(`http://localhost:8000/api/users/${profileid}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
 
-      console.log(res.status)
-      if (res.status === 200 || res.status === 304) {
-        const userData = res.data.user;
-        console.log("userData:", userData)
-        setUserId(userData._id)
-        setUserName(userData.name);
-        setJobTitle(userData.jobTitle);
-        setBiography(userData.bio);
-        setPosts(userData.posts);
+      try {
+        const res = await axios.get(`http://localhost:8000/api/users/${profileid}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
 
-      setFormValues({name: userData.name, jobTitle: userData.jobTitle, bio: userData.bio})
-      } else {
-        console.log("Tia TODO: display an error saying failed to fetch user data (res.data.error)");
+        console.log(res.status)
+        if (res.status === 200 || res.status === 304) {
+          const userData = res.data.user;
+          console.log("userData:", userData)
+          setUserId(userData._id)
+          setUserName(userData.name);
+          setJobTitle(userData.jobTitle);
+          setBiography(userData.bio);
+          setPosts(userData.posts);
+
+        setFormValues({name: userData.name, jobTitle: userData.jobTitle, bio: userData.bio})
+        } else {
+          console.log("Tia TODO: display an error saying failed to fetch user data (res.data.error)");
+        }
+      } catch (err) {
+        console.log("err", err)
+        if (err.response.status === 401 || err.response.status === 400) {
+          navigate('/register')
+        }
       }
     };
 
