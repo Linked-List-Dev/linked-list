@@ -12,7 +12,6 @@ function Feed() {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const navigate = useNavigate();
-  const [posts, setPosts] = useState([]);
 
     useEffect(() => {
       const handleResize = () => {
@@ -45,7 +44,6 @@ function Feed() {
             }
         }
     }
-  }
 
   const handlePostDelete = (postId) => {
     // Remove the deleted post from the posts array in the state
