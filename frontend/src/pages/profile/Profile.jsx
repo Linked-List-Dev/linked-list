@@ -21,6 +21,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import MobileSideNav from "../../components/Mobile/MobileSideNav";
 import { useNavigate } from "react-router-dom";
+import Footer from "../../components/Footer";
 
 function Profile() {
   const { profileid } = useParams();
@@ -483,6 +484,7 @@ function Profile() {
             Your profile was updated!
           </Alert>
         </Snackbar>
+        <Footer/>
       </ThemeProvider>
     </div>
   );

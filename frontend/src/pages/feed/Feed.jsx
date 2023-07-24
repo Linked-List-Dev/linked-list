@@ -6,6 +6,7 @@ import Post from "../../components/Post";
 import axios from "axios";
 import MobileSideNav from "../../components/Mobile/MobileSideNav";
 import { useNavigate } from "react-router-dom";
+import Footer from "../../components/Footer";
 
 function Feed() {
   const [posts, setPosts] = useState([]);
@@ -170,6 +171,7 @@ function Feed() {
             </Box>
           </Box>
         )}
+        <Footer/>
       </ThemeProvider>
     </div>
   );
