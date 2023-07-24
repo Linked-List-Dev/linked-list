@@ -38,9 +38,9 @@ function Feed() {
     return (
         <div>
             <ThemeProvider theme={AppTheme}>
-                <Box sx={{ display: 'flex', backgroundColor: 'page.secondary' }}>
-                    <NavigationSidePanel onPostCreated={getPosts} sx={{ position: 'fixed' }} />
-                    <Box sx={{ flex: 1, paddingLeft: '2vw', paddingRight: '2vw', paddingTop: '2vh' }}>
+                <Box sx={{ display: 'flex', backgroundColor: 'page.secondary',  maxHeight: '100vh'}}>
+                    <NavigationSidePanel onPostCreated={getPosts} sx={{ position: 'absolute', overflow: 'hidden' }} />
+                    <Box sx={{ flex: 1, paddingLeft: '2vw', paddingRight: '2vw', paddingTop: '2vh', overflow: 'auto' }}>
                         <Stack spacing={3}>
                             {posts.map((post) => (
                                 <Post

@@ -53,7 +53,7 @@ function NavigationSidePanel({ onPostCreated }) {
       return;
     }
 
-    setOpen(false);
+    setSuccessVis(false);
   };
 
   const handleLogOut = () => {
@@ -360,7 +360,7 @@ function NavigationSidePanel({ onPostCreated }) {
 
         <Snackbar
           open={successVis}
-          autoHideDuration={6000}
+          autoHideDuration={3000}
           onClose={handleSnackClose}
         >
           <Alert

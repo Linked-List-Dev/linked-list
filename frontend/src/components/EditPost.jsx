@@ -72,7 +72,7 @@ function EditPost({ _content, _postId, _open, _handleClose, onUpdatePost }) {
       return;
     }
 
-    setOpen(false);
+    setSuccessVis(false);
   };
 
 
@@ -140,7 +140,7 @@ function EditPost({ _content, _postId, _open, _handleClose, onUpdatePost }) {
         </Modal>
         <Snackbar
           open={successVis}
-          autoHideDuration={6000}
+          autoHideDuration={3000}
           onClose={handleSnackClose}
         >
           <Alert

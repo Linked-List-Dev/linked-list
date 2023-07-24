@@ -98,7 +98,7 @@ function Profile() {
   return (
     <div>
       <ThemeProvider theme={AppTheme}>
-        <Box sx={{ display: "flex", backgroundColor: "page.secondary" }}>
+        <Box sx={{ display: "flex", backgroundColor: "page.secondary", maxHeight: '100vh' }}>
           <NavigationSidePanel position="fixed" />
   
           <Box
@@ -107,6 +107,8 @@ function Profile() {
               paddingLeft: "2vw",
               paddingRight: "2vw",
               paddingTop: "2vh",
+              paddingBottom: '2vh',
+              overflow: 'auto'
             }}
           >
             {/* Here goes the profile stuff*/}
