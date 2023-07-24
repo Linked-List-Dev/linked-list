@@ -52,9 +52,12 @@ function Post({
   const [comments, setComments] = useState(_comments);
   const [createdAt, setCreatedAt] = useState(_createdAt)
   const [updatedAt, setUpdatedAt] = useState(_updatedAt)
-
   const [open, setOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false)
+
+    const handleComment = () => {
+        setOpen(true)
+    }
 
   const handleEditOpen = () => {
     setEditOpen(true);
@@ -66,6 +69,7 @@ function Post({
 
   const handleOpen = () => {
     setOpen(true);
+    
   };
 
   const handleClose = () => {
@@ -328,7 +332,7 @@ function Post({
               )}
               {dislikes.length}
             </Button>
-            <Button sx={{color: 'accent.main'}}>
+            <Button sx={{color: 'accent.main'}} onClick={handleComment}>
               <CommentIcon />
             </Button>
             {/* <Button sx={{color: 'accent.main'}}>

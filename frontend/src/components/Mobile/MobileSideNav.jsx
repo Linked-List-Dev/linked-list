@@ -1,36 +1,37 @@
-import * as React from "react";
-import { useState } from "react";
-import LinkedListLogoLight from "../assets/LinkedListLogoLight.svg";
-import AppTheme from "../util/Theme";
+import React, { useState } from "react";
 import {
-  TextField,
-  Stack,
-  ThemeProvider,
-  List,
-  Typography,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
+  Drawer,
+  AppBar,
+  Toolbar,
+  IconButton,
   ListItemText,
   Avatar,
-  Modal,
-  Box,
   Snackbar,
   Alert,
   Button,
+  Typography,
+  ListItem,
+  ListItemButton,
+  Modal,
+  ListItemIcon,
+  TextField,
+  List,
+  Box,
+  Stack,
 } from "@mui/material";
-
+import MenuIcon from "@mui/icons-material/Menu";
+import { ThemeProvider } from "@emotion/react";
+import AppTheme from "../../util/Theme";
+import IconDark from "../../assets/IconDark.svg";
+import { Link } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import SettingsIcon from "@mui/icons-material/Settings";
 import SearchIcon from "@mui/icons-material/Search";
-import InputAdornment from "@mui/material/InputAdornment";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import axios from "axios"
 
-import { Link } from "react-router-dom";
-
-function NavigationSidePanel({ onPostCreated }) {
+function MobileSideNav({ onPostCreated }) {
+  const [isOpen, setIsOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -46,11 +47,10 @@ function NavigationSidePanel({ onPostCreated }) {
     setConfirmOpen(true)
 };
 
-  const navigate = useNavigate();
 
-  const [formValues, setFormValues] = useState({
-    content: "",
-  });
+  const toggleDrawer = () => {
+    setIsOpen(!isOpen);
+  };
 
   const handleSnackClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -60,36 +60,16 @@ function NavigationSidePanel({ onPostCreated }) {
     setSuccessVis(false);
   };
 
+  const [formValues, setFormValues] = useState({
+    content: "",
+  });
+
   const handleLogOut = () => {
-    localStorage.setItem("token", "")
-    localStorage.setItem("id", "")
-    localStorage.setItem("email", "")
-    localStorage.setItem("username", "")
-    navigate('/')
+    //Artem to do log out
   };
-
-  const handleDeleteAccount = async () => {
-    const res = await axios.delete(
-      `http://localhost:8000/api/users/${localStorage.getItem("id")}`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
-    );
-
-    console.log(res.status);
-    if (res.status === 204) {
-      // Tia TODO: create a popup saying that the user got deleted successfully
-    } else {
-      console.log("Tia TODO: display an error saying failed to delete a post (res.data.error)");
-    }
-
-    localStorage.setItem("token", "")
-    localStorage.setItem("id", "")
-    localStorage.setItem("email", "")
-    localStorage.setItem("username", "")
-    navigate('/')
+  const handleDeleteAccount = () => {
+    console.log("deleting account");
+    //artem to do delete account and redirect user to the landing page
   };
 
   const handleChange = (e) => {
@@ -131,83 +111,77 @@ function NavigationSidePanel({ onPostCreated }) {
   return (
     <div>
       <ThemeProvider theme={AppTheme}>
-        <Box height={"100vh"}>
-          <Stack
-            sx={{
-              backgroundColor: "page.main",
-              height: "100vh",
-              paddingTop: "2vh",
-            }}
-          >
+        <AppBar position="fixed" sx={{ backgroundColor: "accent.secondary" }}>
+          <Toolbar>
             <Box component={Link} to="/">
-              <img src={LinkedListLogoLight} height={"50vh"} />
+              <img src={IconDark} height={"50vh"} />
             </Box>
+            <div style={{ marginLeft: "auto" }}>
+              <IconButton edge="start" aria-label="menu" onClick={toggleDrawer}>
+                <MenuIcon fontSize="large" />
+              </IconButton>
+            </div>
+          </Toolbar>
+        </AppBar>
+        <Drawer anchor="top" open={isOpen} onClose={toggleDrawer}>
+          <div
+            role="presentation"
+            onClick={toggleDrawer}
+            onKeyDown={toggleDrawer}
+          >
+            <Stack>
+              <List>
+                <ListItem>
+                  <ListItemButton component={Link} to="/feed">
+                    <ListItemIcon>
+                      <HomeIcon fontSize="large" />
+                    </ListItemIcon>
+                    <ListItemText>
+                      <Typography variant="h4">Home</Typography>
+                    </ListItemText>
+                  </ListItemButton>
+                </ListItem>
 
-            <TextField
-              id="input-with-icon-textfield"
-              variant="filled"
-              sx={{
-                paddingLeft: "2vw",
-                paddingRight: "2vw",
-                paddingTop: "2vh",
-              }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-            />
+                <ListItem>
+                  <ListItemButton onClick={handleOpen}>
+                    <ListItemIcon>
+                      <AddBoxIcon fontSize="large" />
+                    </ListItemIcon>
+                    <ListItemText>
+                      <Typography variant="h4">New Post</Typography>
+                    </ListItemText>
+                  </ListItemButton>
+                </ListItem>
 
-            <List>
-              <ListItem>
-                <ListItemButton component={Link} to="/feed">
-                  <ListItemIcon>
-                    <HomeIcon fontSize="large" />
-                  </ListItemIcon>
-                  <ListItemText>
-                    <Typography variant="h4">Home</Typography>
-                  </ListItemText>
-                </ListItemButton>
-              </ListItem>
+                <ListItem>
+                  <ListItemButton
+                    component={Link}
+                    to={`/profile/${localStorage.getItem("id")}`}
+                  >
+                    <ListItemIcon>
+                      {/*ARTEM TODO GET IMAGE FROM USER CAN USE SRC*/}
+                      <Avatar sx={{ bgcolor: "accent.main" }}>A</Avatar>
+                    </ListItemIcon>
+                    <ListItemText>
+                      <Typography variant="h4">Profile</Typography>
+                    </ListItemText>
+                  </ListItemButton>
+                </ListItem>
 
-              <ListItem>
-                <ListItemButton onClick={handleOpen}>
-                  <ListItemIcon>
-                    <AddBoxIcon fontSize="large" />
-                  </ListItemIcon>
-                  <ListItemText>
-                    <Typography variant="h4">New Post</Typography>
-                  </ListItemText>
-                </ListItemButton>
-              </ListItem>
-
-              <ListItem>
-                <ListItemButton component={Link} to={`/profile/${localStorage.getItem("id")}`}>
-                  <ListItemIcon>
-                    {/*ARTEM TODO GET IMAGE FROM USER CAN USE SRC*/}
-                    <Avatar sx={{ bgcolor: "accent.main" }}> {localStorage.getItem("username")[0]} </Avatar>
-                  </ListItemIcon>
-                  <ListItemText>
-                    <Typography variant="h4">Profile</Typography>
-                  </ListItemText>
-                </ListItemButton>
-              </ListItem>
-
-              <ListItem onClick={openSettingsModal}>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <SettingsIcon fontSize="large" />
-                  </ListItemIcon>
-                  <ListItemText>
-                    <Typography variant="h4">Settings</Typography>
-                  </ListItemText>
-                </ListItemButton>
-              </ListItem>
-            </List>
-          </Stack>
-        </Box>
+                <ListItem onClick={openSettingsModal}>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <SettingsIcon fontSize="large" />
+                    </ListItemIcon>
+                    <ListItemText>
+                      <Typography variant="h4">Settings</Typography>
+                    </ListItemText>
+                  </ListItemButton>
+                </ListItem>
+              </List>
+            </Stack>
+          </div>
+        </Drawer>
 
         <Modal
           open={open}
@@ -215,7 +189,7 @@ function NavigationSidePanel({ onPostCreated }) {
           sx={{
             display: "flex",
             alignItems: "center",
-            justifyContent: "center",
+            justifyContent: "center"
           }}
         >
           <Box
@@ -227,9 +201,14 @@ function NavigationSidePanel({ onPostCreated }) {
               alignItems: "center",
               justifyContent: "center",
               textAlign: "center",
+              "@media (max-width: 768px)": {
+                width: "70vw",
+              }
             }}
           >
-            <Box paddingTop="3vh" paddingBottom="3vh">
+            <Box paddingTop="3vh" paddingBottom="3vh" sx={{"@media (max-width: 768px)": {
+                    width: "70vw",
+                  }}}>
               <Stack
                 spacing={5}
                 direction="row"
@@ -237,14 +216,16 @@ function NavigationSidePanel({ onPostCreated }) {
                 justifyContent="center"
                 paddingTop="2vh"
                 paddingBottom="2vh"
+                
               >
-                <form onSubmit={handleSubmit}>
-                  <Stack alignItems={"center"} spacing={3}>
+                <form onSubmit={handleSubmit} >
+                  <Stack alignItems={"center"} spacing={3} sx={{"@media (max-width: 768px)": {
+                    width: "60vw",
+                  }}}>
                     <Typography variant="h3" color="accent.main">
                       New Post
                     </Typography>
                     <TextField
-                      sx={{ width: "30vw" }}
                       multiline
                       rows={5}
                       variant="outlined"
@@ -269,6 +250,10 @@ function NavigationSidePanel({ onPostCreated }) {
                         "&:hover": {
                           backgroundColor: "accent.secondary",
                         },
+                        whiteSpace: "nowrap",
+                        "@media (max-width: 768px)": {
+                            width: "auto",
+                          }
                       }}
                     >
                       <Typography variant="h4">Post!</Typography>
@@ -278,6 +263,8 @@ function NavigationSidePanel({ onPostCreated }) {
               </Stack>
             </Box>
           </Box>
+
+          
         </Modal>
 
         <Modal
@@ -287,6 +274,7 @@ function NavigationSidePanel({ onPostCreated }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            
           }}
         >
           <Box
@@ -298,6 +286,9 @@ function NavigationSidePanel({ onPostCreated }) {
               alignItems: "center",
               justifyContent: "center",
               textAlign: "center",
+              "@media (max-width: 768px)": {
+                width: "70vw",
+              }
             }}
           >
             <Box paddingTop="3vh" paddingBottom="3vh">
@@ -320,6 +311,9 @@ function NavigationSidePanel({ onPostCreated }) {
                     "&:hover": {
                       backgroundColor: "accent.secondary",
                     },
+                    "@media (max-width: 768px)": {
+                        width: "50vw",
+                      }
                   }}
                   onClick={handleLogOut}
                 >
@@ -329,7 +323,9 @@ function NavigationSidePanel({ onPostCreated }) {
                   variant="outlined"
                   color="error"
                   size="large"
-                  sx={{ width: "20vw" }}
+                  sx={{ width: "20vw", whiteSpace: "nowrap","@media (max-width: 768px)": {
+                    width: "50vw",
+                  } }}
                   onClick={openConfirmationModal}
                 >
                   Delete Account
@@ -357,6 +353,9 @@ function NavigationSidePanel({ onPostCreated }) {
               alignItems: "center",
               justifyContent: "center",
               textAlign: "center",
+              "@media (max-width: 768px)": {
+                width: "70vw",
+              }
             }}
           >
             <Stack
@@ -377,7 +376,9 @@ function NavigationSidePanel({ onPostCreated }) {
                 variant="outlined"
                 color="error"
                 size="large"
-                sx={{ width: "20vw" }}
+                sx={{ width: "20vw", whiteSpace: "nowrap", "@media (max-width: 768px)": {
+                    width: "50vw",
+                  } }}
                 onClick={handleDeleteAccount}
               >
                 Delete Account
@@ -399,10 +400,9 @@ function NavigationSidePanel({ onPostCreated }) {
             Your post was successfully created!
           </Alert>
         </Snackbar>
-
       </ThemeProvider>
     </div>
   );
 }
 
-export default NavigationSidePanel;
+export default MobileSideNav;

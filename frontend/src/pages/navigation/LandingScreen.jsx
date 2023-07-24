@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
 import {
   ThemeProvider, 
   Typography, 
@@ -8,14 +8,37 @@ import {
 } from '@mui/material';
 import NavigationBar from '../../components/NavigationBar'
 import AppTheme from '../../util/Theme'
-import image1 from '../../assets/images/image1.webp'
-import image2 from '../../assets/images/image2.svg'
+import IconLight from '../../assets/IconLight.svg'
+import MobileNav from "../../components/Mobile/MobileNav";
 
 function Landing() {
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup the event listener when the component is unmounted
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
     <div style={{ backgroundColor: '#FDFCFF', minHeight: '100vh' }}>
       <ThemeProvider theme={AppTheme}>
-        <NavigationBar/>
+        {windowWidth >= 768 ? (
+          <Box width={'100vw'}>
+<NavigationBar/>
+          </Box>
+        ) : (
+          <Box width={'100vw'}>
+            <MobileNav/>
+          </Box>)}
+        
         <Box minWidth={'100vw'}> 
           <Stack 
             direction='row' 
@@ -26,8 +49,8 @@ function Landing() {
             <Box
               justifyContent="center"
               alignItems="center"
-              paddingLeft={'2vw'}
-              maxWidth={'50vw'}
+              paddingLeft={'10vw'}
+              paddingRight={'10vw'}
               textAlign={'center'}
               color={'text.main'}
             >
@@ -39,47 +62,23 @@ function Landing() {
                 build connections, and enhance their career prospects.</Typography>
             </Box>
 
-            <Box
-              justifyContent="center"
-              alignItems="center"
-              paddingRight={'2vw'}
-              minWidth={'50vw'}
-              textAlign={'right'}
-              sx={{
-                backgroundImage: `url(${image2})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-              }}
-            >
-            </Box>
           </Stack>
         </Box>
         
         <Box minWidth={'100vw'} paddingTop={'10vh'}> 
           <Stack direction='row' spacing={5}>
-          <Box
-              justifyContent="center"
-              alignItems="center"
-              height="100%"
-              paddingLeft={'2vw'}
-              minWidth={'50vw'}
-              textAlign={'center'}
-            >
-              <img src={image1} style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto' }}/>
-            </Box>
 
             <Box
               justifyContent="center"
               alignItems="center"
               height="100%"
-              paddingRight={'2vw'}
-              maxWidth={'50vw'}
+              paddingRight={'10vw'}
+              paddingLeft={'10vw'}
               textAlign={'center'}
               color={'text.main'}
             >
               <Typography variant='h2'>Key Features</Typography>
-              <ul style={{textAlign: 'left'}}>
+              <ul style={{textAlign: 'center'}}>
                 <Stack spacing={2}>
                   <Typography variant='h4'>
                     <li>

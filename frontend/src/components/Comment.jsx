@@ -31,7 +31,9 @@ function Comment({_content, _authorName, _authorId, _createdAt, _updatedAt}){
     const [content, setContent] = useState(_content)
     const [createdAt, setCreatedAt] = useState(_createdAt)
     const [updatedAt, setUpdatedAt] = useState(_updatedAt)
-  
+    
+
+    
     return(
         <Box sx={{textAlign: 'left', color: 'text.primary'}}>
             <Card  sx={{padding: '2vh',}}>

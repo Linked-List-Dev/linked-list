@@ -14,6 +14,7 @@ function NavigationBar(){
         <div>
             <ThemeProvider theme={AppTheme}>
                 <Box sx={{
+                    width: '98vw',
                     display: 'flex',
                     alignItems: 'center', 
                     color: 'text.main',
@@ -22,11 +23,10 @@ function NavigationBar(){
                     paddingLeft: '2vw',
                     borderBottom: '3px solid #EBEBEB'
                     }}>
-                    <Stack spacing={15} direction="row" alignItems="flex-end">
+                    <Stack spacing={10} direction="row" alignItems="flex-end" >
                     <img src={LinkedListLogoLight} height={'70vh'} />
-                    <Typography variant="h4" sx={{ minWidth: 100, paddingBottom: '.5vh' }}>Explore</Typography>
-                    <Typography variant="h4" sx={{ minWidth: 100, paddingBottom: '.5vh' }}>About</Typography>
-                    <Typography variant="h4" sx={{ minWidth: 100, paddingBottom: '.5vh' }}>Contribution</Typography>
+                    <Typography variant="h4" sx={{ paddingBottom: '.5vh' }}>About</Typography>
+                    <Typography variant="h4" sx={{ paddingBottom: '.5vh' }}>Contribution</Typography>
                     </Stack>
                     <Stack spacing={2} direction="row" sx={{ marginLeft: 'auto', paddingRight: '2vw' }}>
                         <Button variant="outlined" size="large" sx={{
@@ -35,13 +35,13 @@ function NavigationBar(){
                             borderWidth: 3,
                             borderColor: 'accent.main',
                             width: '8vw',
-                            height: '70px',
+                            height: 'auto',
                             textAlign: 'center',
                             textTransform: 'none'
                             }}
                             component={Link}
                             to='/login'>
-                            <Typography variant="h5" sx={{ minWidth: 100 }}>Sign In</Typography>
+                            <Typography variant="h5">Sign In</Typography>
                         </Button>
                         <Button variant="conatined" size="large" sx={{
                             backgroundColor: 'accent.main',
@@ -56,7 +56,7 @@ function NavigationBar(){
                             }}
                             component={Link}
                             to='/register'>
-                        <Typography variant="h5" sx={{ minWidth: 100 }}>Sign Up</Typography>
+                        <Typography variant="h5">Sign Up</Typography>
                         </Button>
                     </Stack>
                 </Box>
