@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Card from "@mui/material/Card";
 import {
   Button,
@@ -51,6 +51,7 @@ function ExpandedPost({
   const [dislikes, setDislikes] = useState(_dislikes);
   const [commentContent, setCommentContent] = useState("");
 
+
   useEffect(() => {
     setContent(_content);
   }, [_content]);
@@ -84,7 +85,7 @@ function ExpandedPost({
       setComments(res.data.post.comments)
       // setOpen(false);
       // setSuccessVis(true)
-      // setCommentContent("");
+      setCommentContent("");
     } else {
       console.log("err.message:", res.data.error);
       // Tia TODO: display response error
@@ -117,6 +118,7 @@ function ExpandedPost({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+
           }}
         >
           <Card
@@ -124,6 +126,9 @@ function ExpandedPost({
               backgroundColor: "page.main",
               borderRadius: 2,
               width: "40vw",
+              "@media (max-width: 768px)": {
+                width: "70vw",
+              }
             }}
           >
             <Stack>
@@ -171,12 +176,6 @@ function ExpandedPost({
                     )}
                     {dislikes.length}
                   </Button>
-                  <Button sx={{ color: "accent.main" }}>
-                    <IosShareIcon />
-                  </Button>
-                  {/* <Button>
-                        <BookmarkBorderIcon />
-                    </Button> */}
                 </CardActions>
               </Box>
 
@@ -201,7 +200,7 @@ function ExpandedPost({
                 >
                   Comments
                 </Typography>
-                <Stack paddingTop={"1vh"}>
+                <Stack paddingTop={"1vh"} sx={{ maxHeight: '50vh',overflow: 'auto'}}>
                   {comments.map((comment) => (
                     <Comment
                       key={comment._id}

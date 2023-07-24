@@ -93,17 +93,23 @@ function EditPost({ _content, _postId, _open, _handleClose, onUpdatePost }) {
               backgroundColor: "page.main",
               borderRadius: 2,
               width: "40vw",
+              "@media (max-width: 768px)": {
+                width: "auto",
+              }
             }}
           >
             <Stack>
               <Box>
                 <CardContent>
                   <Stack alignItems={"center"} spacing={3}>
-                    <Typography variant="h3" color="accent.main">
+                    <Typography variant="h3" color="accent.main" sx={{whiteSpace: "nowrap",
+                }}>
                       Edit Your Post
                     </Typography>
                     <TextField
-                      sx={{ width: "30vw" }}
+                      sx={{ width: "30vw", "@media (max-width: 768px)": {
+                        width: "50vw",
+                      }}}
                       multiline
                       rows={5}
                       variant="outlined"
@@ -128,6 +134,10 @@ function EditPost({ _content, _postId, _open, _handleClose, onUpdatePost }) {
                         "&:hover": {
                           backgroundColor: "accent.secondary",
                         },
+                        whiteSpace: "nowrap",
+                "@media (max-width: 768px)": {
+                  width: "auto",
+                },
                       }}
                     >
                       <Typography variant="h4">Save</Typography>

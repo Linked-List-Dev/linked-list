@@ -1,5 +1,5 @@
-import React from "react"
-import { useState } from "react"
+import React from "react";
+import { useState } from "react";
 import {
   ThemeProvider,
   Typography,
@@ -9,69 +9,73 @@ import {
   Stack,
   TextField,
   Divider,
-} from "@mui/material"
-import AppTheme from "../util/Theme"
-import { Link } from "react-router-dom"
-import IconDark from "../assets/IconDark.svg"
-import facebook from "../assets/socials/facebook.svg"
-import google from "../assets/socials/google.svg"
-import linkedin from "../assets/socials/linkedin.svg"
-import axios from "axios"
-import { useNavigate } from "react-router-dom"
+} from "@mui/material";
+import AppTheme from "../util/Theme";
+import { Link } from "react-router-dom";
+import IconDark from "../assets/IconDark.svg";
+import facebook from "../assets/socials/facebook.svg";
+import google from "../assets/socials/google.svg";
+import linkedin from "../assets/socials/linkedin.svg";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function LoginSide({ openByDefault }) {
-  const [open, setOpen] = useState(openByDefault)
+  const [open, setOpen] = useState(openByDefault);
   const [formValues, setFormValues] = useState({
     email: "",
     password: "",
-  })
-  const [error, setError] = useState("")
+  });
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormValues((prevValues) => ({
       ...prevValues,
       [name]: value,
-    }))
-  }
+    }));
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     const res = await axios.post("http://localhost:8000/api/users/login", {
       email: formValues.email,
-      password: formValues.password
-    })
+      password: formValues.password,
+    });
 
     if (res.status === 200) {
-      console.log("Logged in a user, user's id and token are:", res.data.id, res.data.token)
-      localStorage.setItem("token", res.data.token)
-      localStorage.setItem("id", res.data.id)
-      localStorage.setItem("email", res.data.email)
+      console.log(
+        "Logged in a user, user's id and token are:",
+        res.data.id,
+        res.data.token
+      );
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("id", res.data.id);
+      localStorage.setItem("email", res.data.email);
 
-      navigate('/feed')
+      navigate("/feed");
       // TODO:
       // setTimeout(() => {
       //   setMessage('User logged in successfully');
       //   navigate('/feed');
       // }, 2000);
     } else {
-      console.log("res.data.error:", res.data.error)
-      setError(res.data.error)
+      console.log("res.data.error:", res.data.error);
+      setError(res.data.error);
     }
-  }
+  };
 
   const handleResetError = () => {
-    setError("")
-  }
+    setError("");
+  };
 
   const handleOpen = () => {
-    setOpen(true)
-  }
+    setOpen(true);
+  };
 
   const handleClose = () => {
-    setOpen(false)
-  }
+    setOpen(false);
+  };
 
   return (
     <ThemeProvider theme={AppTheme}>
@@ -103,6 +107,10 @@ function LoginSide({ openByDefault }) {
             alignItems: "center",
             justifyContent: "center",
             color: "white",
+
+            "@media (max-width: 768px)": {
+              width: "100vw",
+            },
           }}
         >
           <Box
@@ -114,8 +122,8 @@ function LoginSide({ openByDefault }) {
           >
             <Typography variant="h1">Welcome Back!</Typography>
             <Typography variant="h4" sx={{ paddingBottom: "2vh" }}>
-              To keep connected with us please log in with your
-              account information.
+              To keep connected with us please log in with your account
+              information.
             </Typography>
             <Button
               variant="outlined"
@@ -127,7 +135,11 @@ function LoginSide({ openByDefault }) {
                 borderRadius: 4,
                 borderWidth: 3,
                 width: "15vw",
-                height: "80px",
+                height: "auto",
+                whiteSpace: "nowrap",
+                "@media (max-width: 768px)": {
+                  width: "auto",
+                },
               }}
               onClick={handleOpen}
             >
@@ -143,6 +155,7 @@ function LoginSide({ openByDefault }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            textAlign: "center",
           }}
         >
           <Box
@@ -153,15 +166,40 @@ function LoginSide({ openByDefault }) {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              textAlign: "center",
+              "@media (max-width: 768px)": {
+                width: "auto",
+                paddingLeft: "3vw",
+                paddingRight: "3vw",
+              },
             }}
           >
-            <Box paddingTop="3vh" paddingBottom="3vh">
-              <Typography color="accent.main" variant="h1">
+            <Box
+              paddingTop="3vh"
+              paddingBottom="3vh"
+              width={"40vw"}
+              sx={{
+                "@media (max-width: 768px)": {
+                  width: "auto",
+                },
+              }}
+            >
+              <Typography
+                color="accent.main"
+                variant="h1"
+                sx={{ whiteSpace: "nowrap" }}
+              >
                 Sign In
               </Typography>
-              <form onSubmit={handleSubmit} >
-                <Stack spacing={3} sx={{ paddingBottom: 3, paddingTop: '2vh' }}>
+              <form onSubmit={handleSubmit}>
+                <Stack
+                  spacing={3}
+                  sx={{
+                    paddingBottom: 3,
+                    paddingTop: "2vh",
+                    paddingRight: "2vw",
+                    paddingLeft: "2vw",
+                  }}
+                >
                   <TextField
                     variant="outlined"
                     name="email"
@@ -171,7 +209,6 @@ function LoginSide({ openByDefault }) {
                     onChange={handleChange}
                     fullWidth
                     required
-                    sx={{ width: "25vw" }}
                   />
                   <TextField
                     variant="outlined"
@@ -201,11 +238,13 @@ function LoginSide({ openByDefault }) {
                       backgroundColor: "accent.secondary",
                     },
                     color: "text.main",
+                    whiteSpace: "nowrap",
+                    "@media (max-width: 768px)": {
+                      width: "auto",
+                    },
                   }}
                 >
-                  <Typography variant="h4">
-                    Sign In
-                  </Typography>
+                  <Typography variant="h4">Sign In</Typography>
                 </Button>
               </form>
             </Box>
@@ -213,7 +252,7 @@ function LoginSide({ openByDefault }) {
         </Modal>
       </Box>
     </ThemeProvider>
-  )
+  );
 }
 
-export default LoginSide
+export default LoginSide;
