@@ -5,45 +5,45 @@ import { Box, Stack, ThemeProvider } from "@mui/material";
 import Post from "../../components/Post";
 import axios from "axios";
 import MobileSideNav from "../../components/Mobile/MobileSideNav";
-
-export function Test() {
-  return (
-    <div sx={{ width: "100vw", height: "100vh", backgroundColor: "red" }}>
-      yippee
-    </div>
-  );
-}
+import { useNavigate } from "react-router-dom";
 
 function Feed() {
   const [posts, setPosts] = useState([]);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
+  const navigate = useNavigate();
+  const [posts, setPosts] = useState([]);
 
-    window.addEventListener("resize", handleResize);
+    useEffect(() => {
+      const handleResize = () => {
+        setWindowWidth(window.innerWidth);
+      };
 
-    // Cleanup the event listener when the component is unmounted
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+      window.addEventListener("resize", handleResize);
 
-  async function getPosts() {
-    const res = await axios.get("http://localhost:8000/api/feed/", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
+      // Cleanup the event listener when the component is unmounted
+      return () => {
+        window.removeEventListener("resize", handleResize);
+      };
+     }, []);
+  
+    async function getPosts() {
+        try {
+            const res = await axios.get("http://localhost:8000/api/feed/", {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+            });
 
-    console.log(res.status);
-    if (res.status === 200 || res.status === 304) {
-      // console.log("response.data.posts:", res.data.posts);
-      setPosts(res.data.posts);
-    } else {
-      console.log("Tia TODO: display an error saying failed to load posts");
+            if (res.status === 200 || res.status === 304) {
+                // console.log("response.data.posts:", res.data.posts);
+                setPosts(res.data.posts);
+            }
+        } catch (err) {
+            if (err.response.status === 401 || err.response.status === 400) {
+                navigate('/register')
+            }
+        }
     }
   }
 

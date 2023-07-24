@@ -44,14 +44,12 @@ function LoginSide({ openByDefault }) {
     });
 
     if (res.status === 200) {
-      console.log(
-        "Logged in a user, user's id and token are:",
-        res.data.id,
-        res.data.token
-      );
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("id", res.data.id);
-      localStorage.setItem("email", res.data.email);
+
+      console.log("Logged in a user, user's id and token are:", res.data.id, res.data.token)
+      localStorage.setItem("token", res.data.token)
+      localStorage.setItem("id", res.data.id)
+      localStorage.setItem("email", res.data.email)
+      localStorage.setItem("username", res.data.name)
 
       navigate("/feed");
       // TODO:

@@ -40,7 +40,7 @@ function Comment({_content, _authorName, _authorId, _createdAt, _updatedAt}){
                 <CardContent>
                 <Stack direction={"row"} spacing={2} paddingBottom={"1vh"}>
                   <Avatar sx={{ width: 40, height: 40 }}>
-                    A
+                    {userName[0]}
                   </Avatar>
                     <Typography variant="h5">{userName}</Typography>
                 </Stack>

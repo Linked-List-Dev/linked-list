@@ -8,6 +8,8 @@ import Feed from "../../models/Feed.js"
 import Post from "../../models/Post.js"
 import { generateAuthToken } from "../../lib/token.js"
 import { requireAuthentication } from "../../middleware/auth.js"
+import dotenv from "dotenv"
+import jwt from "jsonwebtoken"
 
 const router = Router()
 
@@ -46,6 +48,8 @@ router.post("/", async function (req, res, next) {
 
             res.status(201).json({
                 id: createdUser.id,
+                email: createdUser.email,
+                name: createdUser.name,
                 token: token,
                 links: {
                     user: `/users/${createdUser.id}`,
@@ -257,6 +261,7 @@ router.post("/login", async function (req, res, next) {
                 res.status(200).send({
                     id: user._id,
                     email: user.email,
+                    name: user.name,
                     token: token,
                 })
             } else if (!user) {
@@ -275,6 +280,23 @@ router.post("/login", async function (req, res, next) {
         res.status(400).json({
             error: "Request body requires `email` and `password`.",
         })
+    }
+})
+
+router.post("/validatetoken", async function (req, res) {
+    const authHeader = req.get("Authorization") || ""
+    const authHeaderParts = authHeader.split(" ")
+    const token = authHeaderParts[0] === "Bearer" ? authHeaderParts[1] : null
+  
+    if (!token) {
+        return res.json({ isAuthenticated: false })
+    }
+  
+    try {
+        jwt.verify(token, process.env.JWT_SECRET_KEY)
+        res.json({ isAuthenticated: true })
+    } catch (err) {
+        res.json({ isAuthenticated: false })
     }
 })
 
