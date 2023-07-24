@@ -26,6 +26,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import ExpandedPost from "./ExpandedPost";
 import EditPost from "./EditPost";
+import { Link } from "react-router-dom";
 
 function Post({
   _postId,
@@ -286,13 +287,29 @@ function Post({
               </>
             ) : null}
 
-                <Stack direction={"row"} spacing={2} paddingBottom={"1vh"}>
-                <Button>
-                <Avatar
+
+
+          </div>
+          <div style={{ position: "relative", zIndex: 999 }}>
+          <IconButton
+                  style={{ position: "absolute", top: "10px", left: "10px" }}
+                  component={Link}
+                  to={`/profile/${_authorId}`}
+                >
+                  <Avatar
                   src={profilePhoto}
                   sx={{ width: 60, height: 60 }}
                 />
-                </Button>
+                  </IconButton>
+          
+          </div>
+          <CardActionArea onClick={() => handleOpen()}>
+            
+            <CardContent style={{ position: "relative" }}>
+              
+            <Stack direction={"row"} spacing={2} paddingBottom={"1vh"} paddingLeft={'70px'}>
+            
+                
                 
                 <Stack>
                   <Typography variant="h5">{userName}</Typography>
@@ -305,10 +322,6 @@ function Post({
                   </Typography>
                 </Stack>
               </Stack>
-
-          </div>
-          <CardActionArea onClick={() => handleOpen()}>
-            <CardContent style={{ position: "relative" }}>
 
               <Typography variant="h6" color="text.secondary">
                 {description}
