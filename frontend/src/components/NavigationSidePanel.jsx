@@ -156,7 +156,7 @@ function NavigationSidePanel({ onPostCreated }) {
               </ListItem>
 
               <ListItem>
-                <ListItemButton component={Link} to="/profile">
+                <ListItemButton component={Link} to={`/profile/${localStorage.getItem("id")}`}>
                   <ListItemIcon>
                     {/*ARTEM TODO GET IMAGE FROM USER CAN USE SRC*/}
                     <Avatar sx={{ bgcolor: "accent.main" }}>A</Avatar>

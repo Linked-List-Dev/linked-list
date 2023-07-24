@@ -15,9 +15,12 @@ import {
 import Post from "../../components/Post";
 import EditIcon from "@mui/icons-material/Edit";
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 function Profile() {
+  const { profileid } = useParams()
   const [userName, setUserName] = useState("");
+  const [userId, setUserId] = useState("")
   const [jobTitle, setJobTitle] = useState("");
   const [biography, setBiography] = useState("");
   const [posts, setPosts] = useState([]);
@@ -48,7 +51,7 @@ function Profile() {
 
     // Make PUT request to update user data
     const res = await axios.put(
-      `http://localhost:8000/api/users/${localStorage.getItem('id')}`,
+      `http://localhost:8000/api/users/${userId}`,
       formValues,
       {
         headers: {
@@ -72,7 +75,7 @@ function Profile() {
   useEffect(() => {
     // Fetch user data
     const fetchUserData = async () => {
-      const res = await axios.get(`http://localhost:8000/api/users/${localStorage.getItem('id')}`, {
+      const res = await axios.get(`http://localhost:8000/api/users/${profileid}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
@@ -81,6 +84,8 @@ function Profile() {
       console.log(res.status)
       if (res.status === 200 || res.status === 304) {
         const userData = res.data.user;
+        console.log("userData:", userData)
+        setUserId(userData._id)
         setUserName(userData.name);
         setJobTitle(userData.jobTitle);
         setBiography(userData.bio);
@@ -138,19 +143,21 @@ function Profile() {
                       />
                     </Box>
   
-                    <Button
-                      sx={{
-                        position: "absolute",
-                        bottom: "5px",
-                        right: "5px",
-                        bgcolor: "white",
-                        width: "40px",
-                        height: "40px",
-                      }}
-                      onClick={handleOpen}
-                    >
-                      <EditIcon fontSize="large" sx={{ color: "black" }} />
-                    </Button>
+                    {userId === localStorage.getItem('id') ? (
+                      <Button
+                        sx={{
+                          position: "absolute",
+                          bottom: "5px",
+                          right: "5px",
+                          bgcolor: "white",
+                          width: "40px",
+                          height: "40px",
+                        }}
+                        onClick={handleOpen}
+                      >
+                        <EditIcon fontSize="large" sx={{ color: "black" }} />
+                      </Button>
+                    ) : null}
                   </Box>
                 </Box>
                 <Typography variant="h3" color={"text.main"}>
