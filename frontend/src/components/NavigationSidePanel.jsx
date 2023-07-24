@@ -57,11 +57,35 @@ function NavigationSidePanel({ onPostCreated }) {
   };
 
   const handleLogOut = () => {
-    //Artem to do log out
+    localStorage.setItem("token", "")
+    localStorage.setItem("id", "")
+    localStorage.setItem("email", "")
+    localStorage.setItem("username", "")
+    navigate('/')
   };
-  const handleDeleteAccount = () => {
-    console.log("deleting account");
-    //artem to do delete account and redirect user to the landing page
+
+  const handleDeleteAccount = async () => {
+    const res = await axios.delete(
+      `http://localhost:8000/api/users/${localStorage.getItem("id")}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+
+    console.log(res.status);
+    if (res.status === 204) {
+      // Tia TODO: create a popup saying that the user got deleted successfully
+    } else {
+      console.log("Tia TODO: display an error saying failed to delete a post (res.data.error)");
+    }
+
+    localStorage.setItem("token", "")
+    localStorage.setItem("id", "")
+    localStorage.setItem("email", "")
+    localStorage.setItem("username", "")
+    navigate('/')
   };
 
   const handleChange = (e) => {
@@ -159,7 +183,7 @@ function NavigationSidePanel({ onPostCreated }) {
                 <ListItemButton component={Link} to={`/profile/${localStorage.getItem("id")}`}>
                   <ListItemIcon>
                     {/*ARTEM TODO GET IMAGE FROM USER CAN USE SRC*/}
-                    <Avatar sx={{ bgcolor: "accent.main" }}>A</Avatar>
+                    <Avatar sx={{ bgcolor: "accent.main" }}> {localStorage.getItem("username")[0]} </Avatar>
                   </ListItemIcon>
                   <ListItemText>
                     <Typography variant="h4">Profile</Typography>

@@ -46,6 +46,8 @@ router.post("/", async function (req, res, next) {
 
             res.status(201).json({
                 id: createdUser.id,
+                email: createdUser.email,
+                name: createdUser.name,
                 token: token,
                 links: {
                     user: `/users/${createdUser.id}`,
@@ -84,8 +86,10 @@ router.delete("/:userid", requireAuthentication, async function (req, res, next)
             if (!user) {
                 return next()
             }
+            console.log("user:", user)
 
             const userPostIds = user.posts.map((post) => post._id)
+            console.log("userPostIds:", userPostIds)
             // await Post.deleteMany({ _id: { $in: userPostIds } })   //this will work too
 
             // Delete user's posts from the feed
@@ -257,6 +261,7 @@ router.post("/login", async function (req, res, next) {
                 res.status(200).send({
                     id: user._id,
                     email: user.email,
+                    name: user.name,
                     token: token,
                 })
             } else if (!user) {

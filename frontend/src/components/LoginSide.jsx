@@ -48,6 +48,7 @@ function LoginSide({ openByDefault }) {
       localStorage.setItem("token", res.data.token)
       localStorage.setItem("id", res.data.id)
       localStorage.setItem("email", res.data.email)
+      localStorage.setItem("username", res.data.name)
 
       navigate('/feed')
       // TODO:
