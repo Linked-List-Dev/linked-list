@@ -1,49 +1,53 @@
 import React, { useState, useEffect } from "react";
 import NavigationSidePanel from "../../components/NavigationSidePanel";
 import AppTheme from "../../util/Theme";
-import { Box, Stack, ThemeProvider } from "@mui/material";
+import { Box, Stack, ThemeProvider, Typography } from "@mui/material";
 import Post from "../../components/Post";
 import axios from "axios";
 import MobileSideNav from "../../components/Mobile/MobileSideNav";
 import { useNavigate } from "react-router-dom";
+import Footer from "../../components/Footer";
 
 function Feed() {
   const [posts, setPosts] = useState([]);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [message, setMessage] = useState(
+    "There are no posts yet... Want to add one?"
+  );
 
   const navigate = useNavigate();
 
-    useEffect(() => {
-      const handleResize = () => {
-        setWindowWidth(window.innerWidth);
-      };
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
 
-      window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", handleResize);
 
-      // Cleanup the event listener when the component is unmounted
-      return () => {
-        window.removeEventListener("resize", handleResize);
-      };
-     }, []);
-  
-    async function getPosts() {
-        try {
-            const res = await axios.get("http://localhost:8000/api/feed/", {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
+    // Cleanup the event listener when the component is unmounted
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
-            if (res.status === 200 || res.status === 304) {
-                // console.log("response.data.posts:", res.data.posts);
-                setPosts(res.data.posts);
-            }
-        } catch (err) {
-            if (err.response.status === 401 || err.response.status === 400) {
-                navigate('/register')
-            }
-        }
+  async function getPosts() {
+    try {
+      const res = await axios.get("http://localhost:8000/api/feed/", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (res.status === 200 || res.status === 304) {
+        // console.log("response.data.posts:", res.data.posts);
+        setPosts(res.data.posts);
+      }
+    } catch (err) {
+      if (err.response.status === 401 || err.response.status === 400) {
+        navigate("/register");
+      }
     }
+  }
 
   const handlePostDelete = (postId) => {
     // Remove the deleted post from the posts array in the state
@@ -78,27 +82,42 @@ function Feed() {
                 overflow: "auto",
               }}
             >
-              <Stack spacing={3}>
-                {posts.map((post) => (
-                  <Post
-                    key={post._id}
-                    _postId={post._id}
-                    _userName={post.authorName}
-                    _jobTitle={post.authorJobTitle}
-                    _profilePhoto={
-                      "https://images.unsplash.com/photo-1593483316242-efb5420596ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8b3JhbmdlJTIwY2F0fGVufDB8fDB8fHww&w=1000&q=80"
-                    } //todo
-                    _description={post.description}
-                    _likes={post.likes}
-                    _dislikes={post.dislikes}
-                    _authorId={post.authorId}
-                    _comments={post.comments}
-                    _createdAt={post.createdAt}
-                    _updatedAt={post.updatedAt}
-                    onDeletePost={handlePostDelete}
-                  />
-                ))}
-              </Stack>
+              {posts.length === 0 ? (
+                <Typography
+                  variant="h2"
+                  sx={{
+                    position: "absolute",
+                    color: "text.secondary",
+                    textAlign: "center",
+                  }}
+                >
+                  {message}
+                </Typography>
+              ) : (
+                <Box>
+                  <Stack spacing={3}>
+                    {posts.map((post) => (
+                      <Post
+                        key={post._id}
+                        _postId={post._id}
+                        _userName={post.authorName}
+                        _jobTitle={post.authorJobTitle}
+                        _profilePhoto={
+                          "https://images.unsplash.com/photo-1593483316242-efb5420596ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8b3JhbmdlJTIwY2F0fGVufDB8fDB8fHww&w=1000&q=80"
+                        } //todo
+                        _description={post.description}
+                        _likes={post.likes}
+                        _dislikes={post.dislikes}
+                        _authorId={post.authorId}
+                        _comments={post.comments}
+                        _createdAt={post.createdAt}
+                        _updatedAt={post.updatedAt}
+                        onDeletePost={handlePostDelete}
+                      />
+                    ))}
+                  </Stack>
+                </Box>
+              )}
             </Box>
           </Box>
         ) : (
@@ -113,30 +132,46 @@ function Feed() {
                 overflow: "auto",
               }}
             >
-              <Stack spacing={3}>
-                {posts.map((post) => (
-                  <Post
-                    key={post._id}
-                    _postId={post._id}
-                    _userName={post.authorName}
-                    _jobTitle={post.authorJobTitle}
-                    _profilePhoto={
-                      "https://images.unsplash.com/photo-1593483316242-efb5420596ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8b3JhbmdlJTIwY2F0fGVufDB8fDB8fHww&w=1000&q=80"
-                    } //todo
-                    _description={post.description}
-                    _likes={post.likes}
-                    _dislikes={post.dislikes}
-                    _authorId={post.authorId}
-                    _comments={post.comments}
-                    _createdAt={post.createdAt}
-                    _updatedAt={post.updatedAt}
-                    onDeletePost={handlePostDelete}
-                  />
-                ))}
-              </Stack>
+              {posts.length === 0 ? (
+                <Typography
+                  variant="h2"
+                  sx={{
+                    position: "absolute",
+                    color: "text.secondary",
+                    textAlign: "center",
+                  }}
+                >
+                  {message}
+                </Typography>
+              ) : (
+                <Box>
+                  <Stack spacing={3}>
+                    {posts.map((post) => (
+                      <Post
+                        key={post._id}
+                        _postId={post._id}
+                        _userName={post.authorName}
+                        _jobTitle={post.authorJobTitle}
+                        _profilePhoto={
+                          "https://images.unsplash.com/photo-1593483316242-efb5420596ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8b3JhbmdlJTIwY2F0fGVufDB8fDB8fHww&w=1000&q=80"
+                        } //todo
+                        _description={post.description}
+                        _likes={post.likes}
+                        _dislikes={post.dislikes}
+                        _authorId={post.authorId}
+                        _comments={post.comments}
+                        _createdAt={post.createdAt}
+                        _updatedAt={post.updatedAt}
+                        onDeletePost={handlePostDelete}
+                      />
+                    ))}
+                  </Stack>
+                </Box>
+              )}
             </Box>
           </Box>
         )}
+        <Footer/>
       </ThemeProvider>
     </div>
   );
