@@ -30,35 +30,35 @@ function EditComment({ _content, _commentId, _open, _handleClose, onUpdateCommen
   const [content, setContent] = useState(_content);
   const [open, setOpen] = useState(_open);
   const [successVis, setSuccessVis] = useState(false);
-  const [postId, setpostId] = useState(_commentId);
+  const [commentId, setCommentId] = useState(_commentId);
     
   const handleSubmit = async (e) => {
     // edit comment
 
-    // if(!content){
-    //     // if the user sets the message to empty
-    //     // todo warning here...
-    // }
+    if (!content) {
+        return
+        // if the user sets the message to empty
+        // todo warning here...
+    }
 
-    // // TODO update the post
-    // const res = await axios.put(
-    //   `http://localhost:8000/api/posts/${postId}`,
-    //   { description: content },
-    //   {
-    //     headers: {
-    //       Authorization: `Bearer ${localStorage.getItem('token')}`,
-    //     },
-    //   }
-    // );
+    const res = await axios.put(
+      `http://localhost:8000/api/posts/comment/${commentId}`,
+      { newCommentContent: content },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      }
+    );
 
-    // console.log("res.status:", res.status)
-    // if (res.status === 200) {
-    //   // Update the state variable with the updated user data
-    //   onUpdatePost(content)
-    // } else {
-    //   console.log("Tia TODO: display an error saying failed to update post (res.data.error)");
-    //   return
-    // }
+    console.log("res.status:", res.status)
+    if (res.status === 200) {
+      // Update the state variable with the updated user data
+      onUpdateComment(res.data.updatedComment.content)
+    } else {
+      console.log("Tia TODO: display an error saying failed to update post (res.data.error)");
+      return
+    }
 
     setSuccessVis(true);
 

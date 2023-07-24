@@ -27,13 +27,14 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import EditComment from "./EditComment";
 
-function Comment({_key, _content, _authorName, _authorId, _createdAt, _updatedAt}){
+function Comment({_key, _content, _authorName, _authorId, _createdAt, _updatedAt, onCommentDelete}){
     const [userName, setUserName] = useState(_authorName)
     const [content, setContent] = useState(_content)
     const [createdAt, setCreatedAt] = useState(_createdAt)
     const [updatedAt, setUpdatedAt] = useState(_updatedAt)
     const [editOpen, setEditOpen] = useState(false)
-    
+    const [commentId, setCommentId] = useState(_key);
+  
     const handleEditOpen = () => {
       setEditOpen(true);
     };
@@ -42,30 +43,29 @@ function Comment({_key, _content, _authorName, _authorId, _createdAt, _updatedAt
       setEditOpen(false);
     };
 
-    const onUpdateComment = () => {
-
+    const handleCommentUpdate = (newContent) => {
+      setContent(newContent);
     }
 
     const handleDeleteClick = async (e) => {
-      //adjust to do for comments
-      // const res = await axios.delete(
-      //   `http://localhost:8000/api/posts/${postId}`,
-      //   {
-      //     headers: {
-      //       Authorization: `Bearer ${localStorage.getItem("token")}`,
-      //     },
-      //   }
-      // );
+      const res = await axios.delete(
+        `http://localhost:8000/api/posts/comment/${commentId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
   
-      // console.log(res.status);
-      // if (res.status === 204) {
-      //   // Tia TODO: create a popup saying that the post got deleted successfully
-      //   onDeletePost(postId);
-      // } else {
-      //   console.log(
-      //     "Tia TODO: display an error saying failed to delete a post (res.data.error)"
-      //   );
-      // }
+      console.log(res.status);
+      if (res.status === 204) {
+        // Tia TODO: create a popup saying that the post got deleted successfully
+        onCommentDelete(commentId)
+      } else {
+        console.log(
+          "Tia TODO: display an error saying failed to delete a post (res.data.error)"
+        );
+      }
       
       e.stopPropagation();
     };
@@ -109,7 +109,7 @@ function Comment({_key, _content, _authorName, _authorId, _createdAt, _updatedAt
           _commentId={_key}
           _open={editOpen}
           _handleClose={handleEditClose}
-          onUpdateComment={onUpdateComment}/>
+          onUpdateComment={handleCommentUpdate}/>
         </Box>
     )
 }

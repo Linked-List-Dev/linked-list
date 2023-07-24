@@ -108,55 +108,44 @@ function Profile() {
     }
   };
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const res = await axios.get(`http://localhost:8000/api/users/${profileid}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
+  const handlePostDelete = (postId) => {
+    // Remove the deleted post from the posts array in the state
+    setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
+  };
 
-        console.log(res.status)
-        if (res.status === 200 || res.status === 304) {
-          const userData = res.data.user;
-          console.log("userData:", userData)
-          setUserId(userData._id)
-          setUserName(userData.name);
-          setJobTitle(userData.jobTitle);
-          setBiography(userData.bio);
-          setPosts(userData.posts);
+  const fetchUserData = async () => {
+    try {
+      const res = await axios.get(`http://localhost:8000/api/users/${profileid}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
 
-        setFormValues({name: userData.name, jobTitle: userData.jobTitle, bio: userData.bio})
-        } else {
-          console.log("Tia TODO: display an error saying failed to fetch user data (res.data.error)");
-        }
-      } catch (err) {
-        console.log("err", err)
-        if (err.response.status === 401 || err.response.status === 400) {
-          navigate('/register')
-        }
+      console.log(res.status)
+      if (res.status === 200 || res.status === 304) {
+        const userData = res.data.user;
+        console.log("userData:", userData)
+        setUserId(userData._id)
+        setUserName(userData.name);
+        setJobTitle(userData.jobTitle);
+        setBiography(userData.bio);
+        setPosts(userData.posts);
+
+      setFormValues({name: userData.name, jobTitle: userData.jobTitle, bio: userData.bio})
+      } else {
+        console.log("Tia TODO: display an error saying failed to fetch user data (res.data.error)");
       }
-    };
-
+    } catch (err) {
+      console.log("err", err)
+      if (err.response.status === 401 || err.response.status === 400) {
+        navigate('/register')
+      }
+    }
+  };
+  
+  useEffect(() => {
     fetchUserData();
   }, []);
-
-  async function getPosts() {
-    const res = await axios.get("http://localhost:8000/api/feed/", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
-
-    console.log(res.status);
-    if (res.status === 200 || res.status === 304) {
-      // console.log("response.data.posts:", res.data.posts);
-      setPosts(res.data.posts);
-    } else {
-      console.log("Tia TODO: display an error saying failed to load posts");
-    }
-  }
 
   return (
     <div>
@@ -169,7 +158,7 @@ function Profile() {
               maxHeight: "100vh",
             }}
           >
-            <NavigationSidePanel position="fixed" onPostCreated={getPosts}/>
+            <NavigationSidePanel position="fixed" onPostCreated={fetchUserData}/>
             <Box
               sx={{
                 flex: 1,
@@ -266,6 +255,9 @@ function Profile() {
                         _likes={post.likes}
                         _dislikes={post.dislikes}
                         _comments={post.comments}
+                        _createdAt={post.createdAt}
+                        _updatedAt={post.updatedAt}
+                        onDeletePost={handlePostDelete}
                       />
                     ))}
                   </Stack>
@@ -371,6 +363,9 @@ function Profile() {
                         _likes={post.likes}
                         _dislikes={post.dislikes}
                         _comments={post.comments}
+                        _createdAt={post.createdAt}
+                        _updatedAt={post.updatedAt}
+                        onDeletePost={handlePostDelete}
                       />
                     ))}
                   </Stack>

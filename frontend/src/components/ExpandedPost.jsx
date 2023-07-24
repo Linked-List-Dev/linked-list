@@ -104,8 +104,13 @@ function ExpandedPost({
     setLikes(res.likes)
     setDislikes(res.dislikes)
   }
+
+  const handleCommentDelete = (commentId) => {
+    // Remove the deleted comment from the comments array in the state
+    setComments((prevComments) => prevComments.filter((comment) => comment._id !== commentId));
+  }
   
-  const handleChange = (e) => {
+  const handleCommentChange = (e) => {
     setCommentContent(e.target.value);
   };
 
@@ -225,6 +230,7 @@ function ExpandedPost({
                       _authorName={comment.authorName}
                       _createdAt={comment.createdAt}
                       _updatedAt={comment._updatedAt}
+                      onCommentDelete={handleCommentDelete}
                     />
                   ))}
                 </Stack>
@@ -238,7 +244,7 @@ function ExpandedPost({
                     variant="filled"
                     label="Add comment"
                     fullWidth
-                    onChange={handleChange}
+                    onChange={handleCommentChange}
                     value={commentContent}
                   />
                   <Button
