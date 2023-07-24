@@ -41,7 +41,6 @@ function ExpandedPost({
   handleLike,
   handleDislike,
 }) {
-  console.log("rendered ExpandedPost, _likes:", _likes)
   const [content, setContent] = useState(_content);
   const [userName, setUserName] = useState(_userName);
   const [jobTitle, setJobTitle] = useState(_jobTitle);

@@ -12,12 +12,12 @@ function App() {
     return (
         <Routes>
             <Route path="/" element={<Landing/>} />
-            <Route path="*" element={<FourOhFour/>} />
             <Route path="/home" element={<HomeScreen/>}/>
             <Route path="/login" element={<Register openModal={true}/>} />
             <Route path="/register" element={<Register openModal={false}/>} />
-            <Route path="/feed" element={<Feed/>} />
-            <Route path="/profile" element={<Profile/>}/>
+            <Route path="/feed" element={<Feed />} />
+            <Route path='/profile/:profileid' element={<Profile />} />
+            <Route path="*" element={<FourOhFour/>} />
         </Routes>
     )
 }
