@@ -43,16 +43,6 @@ function MobileNav() {
       >
         <Box>
         <img src={LinkedListLogoLight} height={"70vh"} />
-        <Paper>
-        <Button sx={{width: '100vw', color: 'text.main'}}>
-
-        <Typography variant="h4">About</Typography>
-        </Button>
-        <Button sx={{width: '100vw', color: 'text.main'}}>
-
-        <Typography variant="h4">Contribution</Typography>
-        </Button>
-        </Paper>
         </Box>
         
         <Box>
@@ -68,6 +58,7 @@ function MobileNav() {
             height: "70px",
             textAlign: "center",
             textTransform: "none",
+            whiteSpace: "nowrap"
           }}
           component={Link}
           to="/login"
@@ -84,6 +75,7 @@ function MobileNav() {
             height: "70px",
             textAlign: "center",
             textTransform: "none",
+            whiteSpace: "nowrap",
             "&:hover": {
               backgroundColor: "accent.secondary",
             },

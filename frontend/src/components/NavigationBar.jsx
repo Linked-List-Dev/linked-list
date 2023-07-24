@@ -25,8 +25,6 @@ function NavigationBar(){
                     }}>
                     <Stack spacing={10} direction="row" alignItems="flex-end" >
                     <img src={LinkedListLogoLight} height={'70vh'} />
-                    <Typography variant="h4" sx={{ paddingBottom: '.5vh' }}>About</Typography>
-                    <Typography variant="h4" sx={{ paddingBottom: '.5vh' }}>Contribution</Typography>
                     </Stack>
                     <Stack spacing={2} direction="row" sx={{ marginLeft: 'auto', paddingRight: '2vw' }}>
                         <Button variant="outlined" size="large" sx={{
@@ -34,10 +32,11 @@ function NavigationBar(){
                             borderRadius: 4,
                             borderWidth: 3,
                             borderColor: 'accent.main',
-                            width: '8vw',
+                            width: 'auto',
                             height: 'auto',
                             textAlign: 'center',
-                            textTransform: 'none'
+                            textTransform: 'none',
+                            whiteSpace: "nowrap"
                             }}
                             component={Link}
                             to='/login'>
@@ -46,10 +45,11 @@ function NavigationBar(){
                         <Button variant="conatined" size="large" sx={{
                             backgroundColor: 'accent.main',
                             borderRadius: 4,
-                            width: '8vw',
+                            width: 'auto',
                             height: '70px',
                             textAlign: 'center',
                             textTransform: 'none',
+                            whiteSpace: "nowrap",
                             '&:hover': {
                                 backgroundColor: 'accent.secondary'
                               }
