@@ -50,6 +50,7 @@ function ExpandedPost({
   const [likes, setLikes] = useState(_likes);
   const [dislikes, setDislikes] = useState(_dislikes);
   const [commentContent, setCommentContent] = useState("");
+  const [message, setMessage] = useState("There are no comments yet. Would you like to add one?")
 
 
   useEffect(() => {
@@ -189,7 +190,21 @@ function ExpandedPost({
                 }}
               >
                 <Divider sx={{ fontFamily: "Lato" }} />
-                <Typography
+                
+
+                {comments.length === 0 ?  (
+                  <Box height={'100px'} paddingTop={'2vh'} paddingLeft={'2vw'} paddingRight={'2vw'}><Typography
+                  variant="h5"
+                  sx={{
+                    color: "text.secondary",
+                    textAlign: "center",
+                  }}
+                >
+                  {message}
+                </Typography></Box>
+                ) : (
+                <Box>
+                  <Typography
                   variant="h5"
                   sx={{
                     color: "text.secondary",
@@ -213,6 +228,10 @@ function ExpandedPost({
                     />
                   ))}
                 </Stack>
+                  </Box>
+                )}
+
+                
                 <Divider sx={{ fontFamily: "Lato" }} />
                 <Stack direction={"row"}>
                   <TextField
