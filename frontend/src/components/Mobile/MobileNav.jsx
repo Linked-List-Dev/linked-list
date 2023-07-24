@@ -18,6 +18,7 @@ import {
   List,
   Box,
   Stack,
+  Paper,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { ThemeProvider } from "@emotion/react";
@@ -33,25 +34,38 @@ import LinkedListLogoLight from "../../assets/LinkedListLogoLight.svg";
 function MobileNav() {
   return (
     <div>
-      <Box width={"100vw"}>
+        <ThemeProvider theme={AppTheme}>
+        <Box width={"100vw"}>
       <Stack
         alignContent="center"
-        justifyContent="center" // Add justifyContent to center horizontally
+        justifyContent="center" 
         textAlign="center"
       >
+        <Box>
         <img src={LinkedListLogoLight} height={"70vh"} />
+        <Paper>
+        <Button sx={{width: '100vw', color: 'text.main'}}>
+
         <Typography variant="h4">About</Typography>
+        </Button>
+        <Button sx={{width: '100vw', color: 'text.main'}}>
+
         <Typography variant="h4">Contribution</Typography>
-        <Button
+        </Button>
+        </Paper>
+        </Box>
+        
+        <Box>
+            <Button
           variant="outlined"
           size="large"
           sx={{
             color: "accent.main",
-            borderRadius: 4,
+            borderRadius: 1,
             borderWidth: 3,
             borderColor: "accent.main",
-            width: "8vw",
-            height: "auto",
+            width: "100vw",
+            height: "70px",
             textAlign: "center",
             textTransform: "none",
           }}
@@ -65,8 +79,8 @@ function MobileNav() {
           size="large"
           sx={{
             backgroundColor: "accent.main",
-            borderRadius: 4,
-            width: "8vw",
+            borderRadius: 1,
+            width: "100vw",
             height: "70px",
             textAlign: "center",
             textTransform: "none",
@@ -79,8 +93,13 @@ function MobileNav() {
         >
           <Typography variant="h5">Sign Up</Typography>
         </Button>
+        
+        </Box>
+        
       </Stack>
     </Box>
+        </ThemeProvider>
+      
     </div>
   );
 }

@@ -30,7 +30,14 @@ function Landing() {
   return (
     <div style={{ backgroundColor: '#FDFCFF', minHeight: '100vh' }}>
       <ThemeProvider theme={AppTheme}>
-        {windowWidth >= 768 ? (<NavigationBar/>) : (<MobileNav/>)}
+        {windowWidth >= 768 ? (
+          <Box width={'100vw'}>
+<NavigationBar/>
+          </Box>
+        ) : (
+          <Box width={'100vw'}>
+            <MobileNav/>
+          </Box>)}
         
         <Box minWidth={'100vw'}> 
           <Stack 
