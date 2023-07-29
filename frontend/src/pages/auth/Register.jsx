@@ -1,7 +1,7 @@
 import React from "react";
 import LoginSide from "../../components/LoginSide";
 import RegisterSide from "../../components/RegisterSide";
-import { ThemeProvider, Typography, Button, Box, Stack } from "@mui/material";
+import { ThemeProvider, Box } from "@mui/material";
 import AppTheme from "../../util/Theme";
 import Footer from "../../components/Footer";
 

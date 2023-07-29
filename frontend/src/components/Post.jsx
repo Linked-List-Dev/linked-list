@@ -17,15 +17,13 @@ import AppTheme from "../util/Theme";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import CommentIcon from "@mui/icons-material/Comment";
-import IosShareIcon from "@mui/icons-material/IosShare";
-import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
-import ExpandedPost from "./ExpandedPost";
-import EditPost from "./EditPost";
+import ExpandedPost from "./Modals/ExpandedPost";
+import EditPost from "./Modals/EditPost";
 import { Link } from "react-router-dom";
 
 function Post({
@@ -40,7 +38,7 @@ function Post({
   _comments,
   onDeletePost,
   _createdAt,
-  _updatedAt
+  _updatedAt,
 }) {
   const [postId, setPostId] = useState(_postId); // may be used for expanded view later...
   const [userName, setUserName] = useState(_userName);
@@ -51,14 +49,14 @@ function Post({
   const [dislikes, setDislikes] = useState(_dislikes);
   const [authorId, setAuthorId] = useState(_authorId);
   const [comments, setComments] = useState(_comments);
-  const [createdAt, setCreatedAt] = useState(_createdAt)
-  const [updatedAt, setUpdatedAt] = useState(_updatedAt)
+  const [createdAt, setCreatedAt] = useState(_createdAt);
+  const [updatedAt, setUpdatedAt] = useState(_updatedAt);
   const [open, setOpen] = useState(false);
-  const [editOpen, setEditOpen] = useState(false)
+  const [editOpen, setEditOpen] = useState(false);
 
-    const handleComment = () => {
-        setOpen(true)
-    }
+  const handleComment = () => {
+    setOpen(true);
+  };
 
   const handleEditOpen = () => {
     setEditOpen(true);
@@ -70,7 +68,6 @@ function Post({
 
   const handleOpen = () => {
     setOpen(true);
-    
   };
 
   const handleClose = () => {
@@ -96,7 +93,7 @@ function Post({
         "Tia TODO: display an error saying failed to delete a post (res.data.error)"
       );
     }
-    
+
     e.stopPropagation();
   };
 
@@ -126,7 +123,7 @@ function Post({
           setLikes(res.data.likes);
           // Update the dislikes state
           setDislikes(res.data.dislikes);
-          return {likes: res.data.likes, dislikes: res.data.dislikes}
+          return { likes: res.data.likes, dislikes: res.data.dislikes };
         } else {
           console.log("err.message:", res.data.error);
         }
@@ -150,7 +147,7 @@ function Post({
           setLikes(res.data.likes);
           // Update the dislikes state
           setDislikes(res.data.dislikes);
-          return {likes: res.data.likes, dislikes: res.data.dislikes}
+          return { likes: res.data.likes, dislikes: res.data.dislikes };
         } else {
           console.log("err.message:", res.data.error);
         }
@@ -175,7 +172,7 @@ function Post({
         setLikes(res.data.likes);
         // Update the dislikes state
         setDislikes(res.data.dislikes);
-        return {likes: res.data.likes, dislikes: res.data.dislikes}
+        return { likes: res.data.likes, dislikes: res.data.dislikes };
       } else {
         console.log("err.message:", res.data.error);
       }
@@ -204,7 +201,7 @@ function Post({
           setLikes(res.data.likes);
           // Update the dislikes state
           setDislikes(res.data.dislikes);
-          return {likes: res.data.likes, dislikes: res.data.dislikes}
+          return { likes: res.data.likes, dislikes: res.data.dislikes };
         } else {
           console.log("err.message:", res.data.error);
         }
@@ -228,7 +225,7 @@ function Post({
           setLikes(res.data.likes);
           // Update the dislikes state
           setDislikes(res.data.dislikes);
-          return {likes: res.data.likes, dislikes: res.data.dislikes}
+          return { likes: res.data.likes, dislikes: res.data.dislikes };
         } else {
           console.log("err.message:", res.data.error);
         }
@@ -253,7 +250,7 @@ function Post({
         setLikes(res.data.likes);
         // Update the dislikes state
         setDislikes(res.data.dislikes);
-        return {likes: res.data.likes, dislikes: res.data.dislikes}
+        return { likes: res.data.likes, dislikes: res.data.dislikes };
       } else {
         console.log("err.message:", res.data.error);
       }
@@ -286,31 +283,24 @@ function Post({
                 </IconButton>
               </>
             ) : null}
-
-
-
           </div>
           <div style={{ position: "relative", zIndex: 999 }}>
-          <IconButton
-                  style={{ position: "absolute", top: "10px", left: "10px" }}
-                  component={Link}
-                  to={`/profile/${_authorId}`}
-                >
-                  <Avatar
-                  src={profilePhoto}
-                  sx={{ width: 60, height: 60 }}
-                />
-                  </IconButton>
-          
+            <IconButton
+              style={{ position: "absolute", top: "10px", left: "10px" }}
+              component={Link}
+              to={`/profile/${_authorId}`}
+            >
+              <Avatar src={profilePhoto} sx={{ width: 60, height: 60 }} />
+            </IconButton>
           </div>
           <CardActionArea onClick={() => handleOpen()}>
-            
             <CardContent style={{ position: "relative" }}>
-              
-            <Stack direction={"row"} spacing={2} paddingBottom={"1vh"} paddingLeft={'70px'}>
-            
-                
-                
+              <Stack
+                direction={"row"}
+                spacing={2}
+                paddingBottom={"1vh"}
+                paddingLeft={"70px"}
+              >
                 <Stack>
                   <Typography variant="h5">{userName}</Typography>
                   <Typography
@@ -329,7 +319,11 @@ function Post({
             </CardContent>
           </CardActionArea>
           <CardActions>
-            <Button size="small" onClick={handleLike} sx={{color: 'accent.main'}}>
+            <Button
+              size="small"
+              onClick={handleLike}
+              sx={{ color: "accent.main" }}
+            >
               {likes.includes(localStorage.getItem("email")) ? (
                 <ThumbUpAltIcon />
               ) : (
@@ -337,7 +331,11 @@ function Post({
               )}
               {likes.length}
             </Button>
-            <Button size="small" onClick={handleDislike} sx={{color: 'accent.main'}}>
+            <Button
+              size="small"
+              onClick={handleDislike}
+              sx={{ color: "accent.main" }}
+            >
               {dislikes.includes(localStorage.getItem("email")) ? (
                 <ThumbDownAltIcon />
               ) : (
@@ -345,15 +343,9 @@ function Post({
               )}
               {dislikes.length}
             </Button>
-            <Button sx={{color: 'accent.main'}} onClick={handleComment}>
+            <Button sx={{ color: "accent.main" }} onClick={handleComment}>
               <CommentIcon /> {comments.length}
             </Button>
-            {/* <Button sx={{color: 'accent.main'}}>
-              <IosShareIcon />
-            </Button> */}
-            {/* <Button>
-                        <BookmarkBorderIcon />
-                    </Button> */}
           </CardActions>
         </Card>
         <Box>

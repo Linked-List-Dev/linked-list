@@ -3,7 +3,6 @@ import { useState } from "react";
 import LinkedListLogoLight from "../assets/LinkedListLogoLight.svg";
 import AppTheme from "../util/Theme";
 import {
-  TextField,
   Stack,
   ThemeProvider,
   List,
@@ -13,22 +12,21 @@ import {
   ListItemIcon,
   ListItemText,
   Avatar,
-  Modal,
   Box,
   Snackbar,
   Alert,
-  Button,
 } from "@mui/material";
 
 import HomeIcon from "@mui/icons-material/Home";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import SettingsIcon from "@mui/icons-material/Settings";
-import SearchIcon from "@mui/icons-material/Search";
-import InputAdornment from "@mui/material/InputAdornment";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 import { Link } from "react-router-dom";
+import NewPostModal from "./Modals/NewPostModal";
+import SettingsModal from "./Modals/SettingsModal";
+import ConfirmationMessageModal from "./Modals/ConfirmationMessageModal";
 
 function NavigationSidePanel({ onPostCreated }) {
   const [open, setOpen] = useState(false);
@@ -42,9 +40,9 @@ function NavigationSidePanel({ onPostCreated }) {
   const closeConfirmationModal = () => setConfirmOpen(false);
 
   const openConfirmationModal = () => {
-    setSettingsOpen(false) 
-    setConfirmOpen(true)
-};
+    setSettingsOpen(false);
+    setConfirmOpen(true);
+  };
 
   const navigate = useNavigate();
 
@@ -61,11 +59,11 @@ function NavigationSidePanel({ onPostCreated }) {
   };
 
   const handleLogOut = () => {
-    localStorage.setItem("token", "")
-    localStorage.setItem("id", "")
-    localStorage.setItem("email", "")
-    localStorage.setItem("username", "")
-    navigate('/')
+    localStorage.setItem("token", "");
+    localStorage.setItem("id", "");
+    localStorage.setItem("email", "");
+    localStorage.setItem("username", "");
+    navigate("/");
   };
 
   const handleDeleteAccount = async () => {
@@ -82,14 +80,16 @@ function NavigationSidePanel({ onPostCreated }) {
     if (res.status === 204) {
       // Tia TODO: create a popup saying that the user got deleted successfully
     } else {
-      console.log("Tia TODO: display an error saying failed to delete a post (res.data.error)");
+      console.log(
+        "Tia TODO: display an error saying failed to delete a post (res.data.error)"
+      );
     }
 
-    localStorage.setItem("token", "")
-    localStorage.setItem("id", "")
-    localStorage.setItem("email", "")
-    localStorage.setItem("username", "")
-    navigate('/')
+    localStorage.setItem("token", "");
+    localStorage.setItem("id", "");
+    localStorage.setItem("email", "");
+    localStorage.setItem("username", "");
+    navigate("/");
   };
 
   const handleChange = (e) => {
@@ -120,7 +120,7 @@ function NavigationSidePanel({ onPostCreated }) {
       // return res.data.id;
       onPostCreated();
       setOpen(false);
-      setSuccessVis(true)
+      setSuccessVis(true);
       formValues.content = "";
     } else {
       console.log("err.message:", res.data.error);
@@ -167,10 +167,16 @@ function NavigationSidePanel({ onPostCreated }) {
               </ListItem>
 
               <ListItem>
-                <ListItemButton component={Link} to={`/profile/${localStorage.getItem("id")}`}>
+                <ListItemButton
+                  component={Link}
+                  to={`/profile/${localStorage.getItem("id")}`}
+                >
                   <ListItemIcon>
                     {/*ARTEM TODO GET IMAGE FROM USER CAN USE SRC*/}
-                    <Avatar sx={{ bgcolor: "accent.main" }}> {localStorage.getItem("username")[0]} </Avatar>
+                    <Avatar sx={{ bgcolor: "accent.main" }}>
+                      {" "}
+                      {localStorage.getItem("username")[0]}{" "}
+                    </Avatar>
                   </ListItemIcon>
                   <ListItemText>
                     <Typography variant="h4">Profile</Typography>
@@ -192,182 +198,26 @@ function NavigationSidePanel({ onPostCreated }) {
           </Stack>
         </Box>
 
-        <Modal
+        <NewPostModal
           open={open}
-          onClose={handleClose}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Box
-            sx={{
-              backgroundColor: "page.main",
-              borderRadius: 5,
-              width: "40vw",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              textAlign: "center",
-            }}
-          >
-            <Box paddingTop="3vh" paddingBottom="3vh">
-              <Stack
-                spacing={5}
-                direction="row"
-                alignItems="center"
-                justifyContent="center"
-                paddingTop="2vh"
-                paddingBottom="2vh"
-              >
-                <form onSubmit={handleSubmit}>
-                  <Stack alignItems={"center"} spacing={3}>
-                    <Typography variant="h3" color="accent.main">
-                      New Post
-                    </Typography>
-                    <TextField
-                      sx={{ width: "30vw" }}
-                      multiline
-                      rows={5}
-                      variant="outlined"
-                      name="content"
-                      label="What's on your mind?"
-                      value={formValues.content}
-                      onChange={handleChange}
-                      fullWidth
-                      required
-                    />
+          handleClose={handleClose}
+          handleSubmit={handleSubmit}
+          handleChange={handleChange}
+          formValues={formValues}
+        />
 
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      size="large"
-                      sx={{
-                        backgroundColor: "accent.main",
-                        textTransform: "none",
-                        borderRadius: 4,
-                        width: "7vw",
-                        height: "auto",
-                        "&:hover": {
-                          backgroundColor: "accent.secondary",
-                        },
-                      }}
-                    >
-                      <Typography variant="h4">Post!</Typography>
-                    </Button>
-                  </Stack>
-                </form>
-              </Stack>
-            </Box>
-          </Box>
-        </Modal>
+        <SettingsModal
+          settingsOpen={settingsOpen}
+          closeSettingsModal={closeSettingsModal}
+          handleLogOut={handleLogOut}
+          openConfirmationModal={openConfirmationModal}
+        />
 
-        <Modal
-          open={settingsOpen}
-          onClose={closeSettingsModal}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Box
-            sx={{
-              backgroundColor: "page.main",
-              borderRadius: 5,
-              width: "40vw",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              textAlign: "center",
-            }}
-          >
-            <Box paddingTop="3vh" paddingBottom="3vh">
-              <Stack
-                spacing={5}
-                alignItems="center"
-                justifyContent="center"
-                paddingTop="2vh"
-                paddingBottom="2vh"
-              >
-                <Typography variant="h3" color="accent.main">
-                  Settings
-                </Typography>
-                <Button
-                  variant="contained"
-                  size="large"
-                  sx={{
-                    width: "20vw",
-                    backgroundColor: "accent.main",
-                    "&:hover": {
-                      backgroundColor: "accent.secondary",
-                    },
-                  }}
-                  onClick={handleLogOut}
-                >
-                  Log Out
-                </Button>
-                <Button
-                  variant="outlined"
-                  color="error"
-                  size="large"
-                  sx={{ width: "20vw" }}
-                  onClick={openConfirmationModal}
-                >
-                  Delete Account
-                </Button>
-              </Stack>
-            </Box>
-          </Box>
-        </Modal>
-
-        <Modal
-          open={confirmOpen}
-          onClose={closeConfirmationModal}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Box
-            sx={{
-              backgroundColor: "page.main",
-              borderRadius: 5,
-              width: "40vw",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              textAlign: "center",
-            }}
-          >
-            <Stack
-              paddingTop={"2vh"}
-              paddingBottom={"2vh"}
-              alignItems="center"
-              justifyContent="center"
-              spacing={5}
-            >
-              <Stack>
-                <Typography variant="h3">Delete Account</Typography>
-                <Typography>
-                  Are you sure you want to do this? This action is not
-                  reversable.
-                </Typography>
-              </Stack>
-              <Button
-                variant="outlined"
-                color="error"
-                size="large"
-                sx={{ width: "20vw" }}
-                onClick={handleDeleteAccount}
-              >
-                Delete Account
-              </Button>
-            </Stack>
-          </Box>
-        </Modal>
+        <ConfirmationMessageModal
+          confirmOpen={confirmOpen}
+          closeConfirmationModal={closeConfirmationModal}
+          handleDeleteAccount={handleDeleteAccount}
+        />
 
         <Snackbar
           open={successVis}
@@ -382,7 +232,6 @@ function NavigationSidePanel({ onPostCreated }) {
             Your post was successfully created!
           </Alert>
         </Snackbar>
-
       </ThemeProvider>
     </div>
   );

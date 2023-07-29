@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Card from "@mui/material/Card";
 import {
   Button,
@@ -14,18 +14,13 @@ import {
   Modal,
   Box,
 } from "@mui/material";
-import AppTheme from "../util/Theme";
+import AppTheme from "../../util/Theme";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
-import CommentIcon from "@mui/icons-material/Comment";
-import IosShareIcon from "@mui/icons-material/IosShare";
-import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
-import Comment from "./Comment";
+import Comment from "../Comment";
 
 function ExpandedPost({
   _postId,
@@ -50,8 +45,9 @@ function ExpandedPost({
   const [likes, setLikes] = useState(_likes);
   const [dislikes, setDislikes] = useState(_dislikes);
   const [commentContent, setCommentContent] = useState("");
-  const [message, setMessage] = useState("There are no comments yet. Would you like to add one?")
-
+  const [message, setMessage] = useState(
+    "There are no comments yet. Would you like to add one?"
+  );
 
   useEffect(() => {
     setContent(_content);
@@ -72,7 +68,7 @@ function ExpandedPost({
       "http://localhost:8000/api/posts/comment",
       {
         commentContent: commentContent,
-        postId: postId
+        postId: postId,
       },
       {
         headers: {
@@ -83,7 +79,7 @@ function ExpandedPost({
 
     console.log(res.status);
     if (res.status === 200) {
-      setComments(res.data.post.comments)
+      setComments(res.data.post.comments);
       // setOpen(false);
       // setSuccessVis(true)
       setCommentContent("");
@@ -94,22 +90,24 @@ function ExpandedPost({
   };
 
   const handleLikeFromExpanded = async (e) => {
-    const res = await handleLike()
-    setLikes(res.likes)
-    setDislikes(res.dislikes)
-  }
+    const res = await handleLike();
+    setLikes(res.likes);
+    setDislikes(res.dislikes);
+  };
 
   const handleDislikeFromExpanded = async (e) => {
-    const res = await handleDislike()
-    setLikes(res.likes)
-    setDislikes(res.dislikes)
-  }
+    const res = await handleDislike();
+    setLikes(res.likes);
+    setDislikes(res.dislikes);
+  };
 
   const handleCommentDelete = (commentId) => {
     // Remove the deleted comment from the comments array in the state
-    setComments((prevComments) => prevComments.filter((comment) => comment._id !== commentId));
-  }
-  
+    setComments((prevComments) =>
+      prevComments.filter((comment) => comment._id !== commentId)
+    );
+  };
+
   const handleCommentChange = (e) => {
     setCommentContent(e.target.value);
   };
@@ -124,7 +122,6 @@ function ExpandedPost({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-
           }}
         >
           <Card
@@ -134,7 +131,7 @@ function ExpandedPost({
               width: "40vw",
               "@media (max-width: 768px)": {
                 width: "70vw",
-              }
+              },
             }}
           >
             <Stack>
@@ -195,49 +192,57 @@ function ExpandedPost({
                 }}
               >
                 <Divider sx={{ fontFamily: "Lato" }} />
-                
 
-                {comments.length === 0 ?  (
-                  <Box height={'100px'} paddingTop={'2vh'} paddingLeft={'2vw'} paddingRight={'2vw'}><Typography
-                  variant="h5"
-                  sx={{
-                    color: "text.secondary",
-                    textAlign: "center",
-                  }}
-                >
-                  {message}
-                </Typography></Box>
+                {comments.length === 0 ? (
+                  <Box
+                    height={"100px"}
+                    paddingTop={"2vh"}
+                    paddingLeft={"2vw"}
+                    paddingRight={"2vw"}
+                  >
+                    <Typography
+                      variant="h5"
+                      sx={{
+                        color: "text.secondary",
+                        textAlign: "center",
+                      }}
+                    >
+                      {message}
+                    </Typography>
+                  </Box>
                 ) : (
-                <Box>
-                  <Typography
-                  variant="h5"
-                  sx={{
-                    color: "text.secondary",
-                    textAlign: "left",
-                    paddingLeft: "1vw",
-                    paddingTop: "1vh",
-                  }}
-                >
-                  Comments
-                </Typography>
-                <Stack paddingTop={"1vh"} sx={{ maxHeight: '50vh',overflow: 'auto'}}>
-                  {comments.map((comment) => (
-                    <Comment
-                    key={comment._id}
-                      _key={comment._id}
-                      _content={comment.content}
-                      _authorId={comment.authorId}
-                      _authorName={comment.authorName}
-                      _createdAt={comment.createdAt}
-                      _updatedAt={comment._updatedAt}
-                      onCommentDelete={handleCommentDelete}
-                    />
-                  ))}
-                </Stack>
+                  <Box>
+                    <Typography
+                      variant="h5"
+                      sx={{
+                        color: "text.secondary",
+                        textAlign: "left",
+                        paddingLeft: "1vw",
+                        paddingTop: "1vh",
+                      }}
+                    >
+                      Comments
+                    </Typography>
+                    <Stack
+                      paddingTop={"1vh"}
+                      sx={{ maxHeight: "50vh", overflow: "auto" }}
+                    >
+                      {comments.map((comment) => (
+                        <Comment
+                          key={comment._id}
+                          _key={comment._id}
+                          _content={comment.content}
+                          _authorId={comment.authorId}
+                          _authorName={comment.authorName}
+                          _createdAt={comment.createdAt}
+                          _updatedAt={comment._updatedAt}
+                          onCommentDelete={handleCommentDelete}
+                        />
+                      ))}
+                    </Stack>
                   </Box>
                 )}
 
-                
                 <Divider sx={{ fontFamily: "Lato" }} />
                 <Stack direction={"row"}>
                   <TextField

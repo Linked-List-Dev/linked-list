@@ -11,8 +11,6 @@ import {
   Snackbar,
   Alert,
   Button,
-  TextField,
-  Modal,
 } from "@mui/material";
 import Post from "../../components/Post";
 import EditIcon from "@mui/icons-material/Edit";
@@ -20,15 +18,17 @@ import EditIcon from "@mui/icons-material/Edit";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import MobileSideNav from "../../components/Mobile/MobileSideNav";
-import { useNavigate } from "react-router-dom";
 import Footer from "../../components/Footer";
+import EditProfileModal from "../../components/Modals/EditProfileModal";
 
 function Profile() {
   const { profileid } = useParams();
   const [userName, setUserName] = useState("");
   const [userId, setUserId] = useState("");
   const [jobTitle, setJobTitle] = useState("New user");
-  const [biography, setBiography] = useState("There's no bio yet... Click the edit button to add one!");
+  const [biography, setBiography] = useState(
+    "There's no bio yet... Click the edit button to add one!"
+  );
   const [posts, setPosts] = useState([]);
   const [profileImage, setProfileImage] = useState(
     "https://images.unsplash.com/photo-1593483316242-efb5420596ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8b3JhbmdlJTIwY2F0fGVufDB8fDB8fHww&w=1000&q=80"
@@ -100,7 +100,7 @@ function Profile() {
       setJobTitle(res.data.jobTitle);
       setBiography(res.data.bio);
       setOpen(false);
-      setSuccessVis(true)
+      setSuccessVis(true);
     } else {
       console.log(
         "Tia TODO: display an error saying failed to update user info (res.data.error)"
@@ -115,34 +115,43 @@ function Profile() {
 
   const fetchUserData = async () => {
     try {
-      const res = await axios.get(`http://localhost:8000/api/users/${profileid}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
+      const res = await axios.get(
+        `http://localhost:8000/api/users/${profileid}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
-      console.log(res.status)
+      console.log(res.status);
       if (res.status === 200 || res.status === 304) {
         const userData = res.data.user;
-        console.log("userData:", userData)
-        setUserId(userData._id)
+        console.log("userData:", userData);
+        setUserId(userData._id);
         setUserName(userData.name);
         setJobTitle(userData.jobTitle);
         setBiography(userData.bio);
         setPosts(userData.posts);
 
-      setFormValues({name: userData.name, jobTitle: userData.jobTitle, bio: userData.bio})
+        setFormValues({
+          name: userData.name,
+          jobTitle: userData.jobTitle,
+          bio: userData.bio,
+        });
       } else {
-        console.log("Tia TODO: display an error saying failed to fetch user data (res.data.error)");
+        console.log(
+          "Tia TODO: display an error saying failed to fetch user data (res.data.error)"
+        );
       }
     } catch (err) {
-      console.log("err", err)
+      console.log("err", err);
       if (err.response.status === 401 || err.response.status === 400) {
-        navigate('/register')
+        navigate("/register");
       }
     }
   };
-  
+
   useEffect(() => {
     fetchUserData();
   }, []);
@@ -158,7 +167,10 @@ function Profile() {
               maxHeight: "100vh",
             }}
           >
-            <NavigationSidePanel position="fixed" onPostCreated={fetchUserData}/>
+            <NavigationSidePanel
+              position="fixed"
+              onPostCreated={fetchUserData}
+            />
             <Box
               sx={{
                 flex: 1,
@@ -375,97 +387,11 @@ function Profile() {
           </Box>
         )}
 
-        <Modal
+        <EditProfileModal
           open={open}
-          onClose={handleClose}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Box
-            sx={{
-              backgroundColor: "page.main",
-              borderRadius: 5,
-              width: "40vw",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              textAlign: "center",
-              "@media (max-width: 768px)": {
-                width: "70vw",
-              }
-            }}
-          >
-            <Box paddingTop="3vh" paddingBottom="3vh" sx={{"@media (max-width: 768px)": {
-                  width: "70vw",
-                }}}>
-              <Stack
-                spacing={5}
-                direction="row"
-                alignItems="center"
-                justifyContent="center"
-                paddingTop="2vh"
-                paddingBottom="2vh"
-                
-              >
-                <form onSubmit={handleSubmit} >
-                  <Stack alignItems={"center"} spacing={3} width={'30vw'}>
-                    <Typography variant="h3" color="accent.main">
-                      Edit Profile
-                    </Typography>
-                    <TextField
-                      variant="outlined"
-                      name="name"
-                      label="Display Name"
-                      value={formValues.name}
-                      onChange={handleChange}
-                      fullWidth
-                    />
-
-                    <TextField
-                      variant="outlined"
-                      name="jobTitle"
-                      label="Job Title"
-                      value={formValues.jobTitle}
-                      onChange={handleChange}
-                      fullWidth
-                    />
-
-                    <TextField
-                      rows={5}
-                      variant="outlined"
-                      name="bio"
-                      label="Biography"
-                      value={formValues.bio}
-                      onChange={handleChange}
-                      multiline
-                      fullWidth
-                    />
-
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      size="large"
-                      sx={{
-                        backgroundColor: "accent.main",
-                        textTransform: "none",
-                        width: "auto",
-                        height: "auto",
-                        "&:hover": {
-                          backgroundColor: "accent.secondary",
-                        },
-                      }}
-                    >
-                      <Typography variant="h4">Save changes</Typography>
-                    </Button>
-                  </Stack>
-                </form>
-              </Stack>
-            </Box>
-          </Box>
-        </Modal>
+          handleClose={handleClose}
+          handleSubmit={handleChange}
+        />
         <Snackbar
           open={successVis}
           autoHideDuration={3000}
@@ -479,7 +405,7 @@ function Profile() {
             Your profile was updated!
           </Alert>
         </Snackbar>
-        <Footer/>
+        <Footer />
       </ThemeProvider>
     </div>
   );

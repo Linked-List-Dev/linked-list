@@ -9,9 +9,6 @@ import {
   Stack,
 } from "@mui/material";
 import AppTheme from "../util/Theme";
-import facebook from "../assets/socials/facebook.svg";
-import google from "../assets/socials/google.svg";
-import linkedin from "../assets/socials/linkedin.svg";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -55,7 +52,7 @@ function RegisterSide() {
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("id", res.data.id);
         localStorage.setItem("email", res.data.email);
-        localStorage.setItem("username", res.data.name)
+        localStorage.setItem("username", res.data.name);
 
         navigate("/feed");
         // TODO:
@@ -96,7 +93,7 @@ function RegisterSide() {
               color: "text.main",
               "@media (max-width: 768px)": {
                 width: "100vw",
-              }
+              },
             }}
           >
             <Box
@@ -180,8 +177,8 @@ function RegisterSide() {
                       backgroundColor: "accent.secondary",
                     },
                     "@media (max-width: 768px)": {
-                        width: "auto",
-                      }
+                      width: "auto",
+                    },
                   }}
                 >
                   <Typography variant="h4">Sign Up</Typography>
