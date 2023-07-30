@@ -279,7 +279,7 @@ function Profile() {
           </Box>
         ) : (
           <Box>
-            <MobileSideNav onPostCreated={getPosts} />
+            <MobileSideNav onPostCreated={fetchUserData} />
             <Box
               sx={{
                 flex: 1,
@@ -391,6 +391,7 @@ function Profile() {
           open={open}
           handleClose={handleClose}
           handleSubmit={handleChange}
+          formValues={formValues}
         />
         <Snackbar
           open={successVis}

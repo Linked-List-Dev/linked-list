@@ -342,7 +342,7 @@ router.post("/comment/", requireAuthentication, async function (req, res, next) 
         // Push the new comment into the post.comments array
         postToCommentOn.comments.push(newComment)
 
-        // Save the updated post
+        // Save the updated post for feed
         const updatedPost = await postToCommentOn.save()
 
         const feed = await Feed.findOne({ _id: process.env.FEED_ID })
@@ -352,6 +352,15 @@ router.post("/comment/", requireAuthentication, async function (req, res, next) 
         feed.posts[postIndex] = updatedPost
 
         await feed.save()
+
+        // Save the updated post for user record
+        const user = await User.findById(userid)
+        const userPostIndex = user.posts.findIndex(
+            (post) => post._id.toString() === postId.toString()
+        )
+
+        user.posts[userPostIndex] = updatedPost
+        await user.save()
 
         return res.status(200).json({
             message: "New comment successfully added!",
@@ -410,6 +419,14 @@ router.put("/comment/:commentid", requireAuthentication, async function (req, re
 
         await feed.save()
 
+        // Save the updated post for user record
+        const user = await User.findById(userid)
+        const userPostIndex = user.posts.findIndex(
+            (post) => post._id.toString() === updatedPost._id.toString()
+        )
+        user.posts[userPostIndex] = updatedPost
+        await user.save()
+
         return res.status(200).json({
             message: "Comment successfully updated!",
             updatedComment,
@@ -459,6 +476,14 @@ router.delete("/comment/:commentid", requireAuthentication, async function (req,
         feed.posts[postIndex] = updatedPost
         await feed.save()
 
+        // Save the updated post for user record
+        const user = await User.findById(userid)
+        const userPostIndex = user.posts.findIndex(
+            (post) => post._id.toString() === updatedPost._id.toString()
+        )
+        user.posts[userPostIndex] = updatedPost
+        await user.save()
+        
         await Comment.findByIdAndDelete(commentId)
 
         res.status(204).end()

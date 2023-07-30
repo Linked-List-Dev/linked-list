@@ -8,7 +8,7 @@ import {
   Modal,
 } from "@mui/material";
 
-function EditProfileModal({ open, handleClose, handleChange, handleSubmit }) {
+function EditProfileModal({ open, handleClose, handleChange, handleSubmit, formValues }) {
   return (
     <Modal
       open={open}
