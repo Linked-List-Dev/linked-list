@@ -14,9 +14,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    // profileAvatarPicture: {            //to be implemented
-    //     type:
-    // },
+    profilePictureId: {
+        type: String,           // Store the link to the profile picture as a string
+        required: false
+    },
     // profileBackgroundPicture: {        //to be implemented
     //     type:
     // },

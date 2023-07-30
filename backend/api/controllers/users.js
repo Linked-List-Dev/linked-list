@@ -6,10 +6,16 @@ import joi from "joi"
 import User from "../../models/User.js"
 import Feed from "../../models/Feed.js"
 import Post from "../../models/Post.js"
+import { saveProfilePhotoFile, getProfilePhotoDownloadStreamById, deleteProfilePhotoById } from "../../models/ProfileImage.js"
 import { generateAuthToken } from "../../lib/token.js"
 import { requireAuthentication } from "../../middleware/auth.js"
 import dotenv from "dotenv"
 import jwt from "jsonwebtoken"
+import multer from "multer"
+import crypto from "node:crypto"
+import { fileURLToPath } from "url"
+import { dirname, join } from "path"
+import fs from "fs"
 
 const router = Router()
 
@@ -297,6 +303,123 @@ router.post("/validatetoken", async function (req, res) {
         res.json({ isAuthenticated: true })
     } catch (err) {
         res.json({ isAuthenticated: false })
+    }
+})
+
+const imageTypes = {
+    "image/jpeg": "jpg",
+    "image/png": "png"
+}
+
+// Get the current file URL and convert it to a file path
+const __filename = fileURLToPath(import.meta.url)
+
+// Get the directory name of the current file
+const __dirname = dirname(__filename)
+
+const upload = multer({
+    storage: multer.diskStorage({
+        destination: `${__dirname}/uploads`,
+        filename: (req, file, callback) => {
+            const filename = crypto.pseudoRandomBytes(16).toString("hex")
+            const extension = imageTypes[file.mimetype]
+            callback(null, `${filename}.${extension}`)
+        }
+    }),
+    fileFilter: (req, file, callback) => {
+        callback(null, !!imageTypes[file.mimetype])
+    }
+})
+
+router.post('/profileImage', requireAuthentication, upload.single('file'), async function (req, res, next) {
+    // console.log("  -- req.file:", req.file)
+    const userid = req.user._id
+
+    const user = await User.findById(userid)
+
+    if (!user) {
+        return next()
+    }
+
+    if (req.file) {
+        try {
+            const photo = {
+                contentType: req.file.mimetype,
+                filename: req.file.filename,
+                path: req.file.path,
+                userid: userid,
+            }
+
+            const id = await saveProfilePhotoFile(photo)
+
+            if (user.profilePictureId) {
+                //delete the old picture
+                await deleteProfilePhotoById(user.profilePictureId)
+            }
+
+            user.profilePictureId = id
+            await user.save()
+
+            res.status(201).send({
+                id: id
+            })
+        } catch (err) {
+            return res.status(500).json({ error: err.message })
+        }
+    } else {
+        res.status(400).send({
+            error: "Request is not a valid photo object, make sure to provide the file!"
+        })
+    }
+})
+
+router.get("/profileImage/:id", requireAuthentication, async function (req, res, next) {
+    const profileImageId = req.params.id
+
+    try {
+        const downloadStream = await getProfilePhotoDownloadStreamById(profileImageId)
+
+        downloadStream
+            .on("error", function (err) {
+                if (err.code === "ENOENT") {
+                    next()
+                } else {
+                    return res.status(500).json({ error: err.message })
+                }
+            })
+            .on("file", function (file) {
+                res.status(200).type(file.metadata.contentType)
+            })
+            .pipe(res)
+    } catch (err) {
+        return res.status(500).json({ error: err.message })
+    }
+})
+
+router.delete("/profileImage/:id", requireAuthentication, async function (req, res, next) {
+    const profilePictureId = req.params.id
+    const userid = req.user._id
+
+    const user = await User.findById(userid)
+
+    if (user.profilePictureId === profilePictureId) {
+        try {
+            const deleted = await deleteProfilePhotoById(profilePictureId)
+            if (!deleted) {
+                return res.status(404).json({ error: "Profile photo not found" })
+            }
+
+            user.profilePictureId = ''
+            await user.save()
+
+            return res.status(204).end()
+        } catch (err) {
+            return res.status(500).json({ error: err.message })
+        }
+    } else {
+        res.status(403).json({
+            error: `You don't have permissions to delete profile pictures of other users!`,
+        })
     }
 })
 

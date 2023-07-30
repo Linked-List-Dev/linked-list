@@ -1,4 +1,5 @@
 backend/node_modules
+backend/api/controllers/uploads/
 frontend/node_modules
 .env
 .DS_Store
