@@ -4,6 +4,8 @@ import { ThemeProvider } from "@emotion/react";
 import AppTheme from "../util/Theme";
 
 function Footer() {
+  const currentYear = new Date().getFullYear()
+
   return (
     <div>
       <ThemeProvider theme={AppTheme}>
@@ -16,7 +18,7 @@ function Footer() {
               variant="body1"
               sx={{ flexGrow: 1, textAlign: "center" }}
             >
-              © 2023 LinkedList. All rights reserved.
+              © {currentYear} Flores & Kolpakov. All rights reserved.
             </Typography>
           </Toolbar>
         </AppBar>
