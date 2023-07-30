@@ -7,16 +7,21 @@ function Footer() {
   return (
     <div>
       <ThemeProvider theme={AppTheme}>
-      <AppBar position="static" sx={{ top: "auto", bottom: 0, backgroundColor: 'accent.main' }}>
-      <Toolbar>
-        <Typography variant="body1" sx={{ flexGrow: 1, textAlign: "center" }}>
-          © 2023 LinkedList. All rights reserved.
-        </Typography>
-      </Toolbar>
-    </AppBar>
+        <AppBar
+          position="static"
+          sx={{ top: "auto", bottom: 0, backgroundColor: "accent.main" }}
+        >
+          <Toolbar>
+            <Typography
+              variant="body1"
+              sx={{ flexGrow: 1, textAlign: "center" }}
+            >
+              © 2023 LinkedList. All rights reserved.
+            </Typography>
+          </Toolbar>
+        </AppBar>
       </ThemeProvider>
     </div>
-    
   );
 }
 

@@ -171,7 +171,7 @@ function Feed() {
             </Box>
           </Box>
         )}
-        <Footer/>
+        <Footer />
       </ThemeProvider>
     </div>
   );

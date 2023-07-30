@@ -3,61 +3,50 @@ import { useState } from "react";
 import Card from "@mui/material/Card";
 import {
   Button,
-  TextField,
-  CardActions,
-  ThemeProvider,
+  TextField, ThemeProvider,
   Alert,
   Typography,
   Stack,
   CardContent,
   Snackbar,
   Modal,
-  Box,
+  Box
 } from "@mui/material";
-import AppTheme from "../util/Theme";
-import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
-import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
-import CommentIcon from "@mui/icons-material/Comment";
-import IosShareIcon from "@mui/icons-material/IosShare";
-import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
-import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
-import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import AppTheme from "../../util/Theme";
 import axios from "axios";
 
-function EditComment({ _content, _commentId, _open, _handleClose, onUpdateComment }) {
+function EditPost({ _content, _postId, _open, _handleClose, onUpdatePost }) {
   const [content, setContent] = useState(_content);
   const [open, setOpen] = useState(_open);
   const [successVis, setSuccessVis] = useState(false);
-  const [commentId, setCommentId] = useState(_commentId);
-    
-  const handleSubmit = async (e) => {
-    // edit comment
+  const [postId, setpostId] = useState(_postId);
 
+  const handleSubmit = async (e) => {
     if (!content) {
-        return
-        // if the user sets the message to empty
-        // todo warning here...
+      // if the user sets the message to empty
+      // todo warning here...
     }
 
+    // TODO update the post
     const res = await axios.put(
-      `http://localhost:8000/api/posts/comment/${commentId}`,
-      { newCommentContent: content },
+      `http://localhost:8000/api/posts/${postId}`,
+      { description: content },
       {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       }
     );
 
-    console.log("res.status:", res.status)
+    console.log("res.status:", res.status);
     if (res.status === 200) {
       // Update the state variable with the updated user data
-      onUpdateComment(res.data.updatedComment.content)
+      onUpdatePost(content);
     } else {
-      console.log("Tia TODO: display an error saying failed to update post (res.data.error)");
-      return
+      console.log(
+        "Tia TODO: display an error saying failed to update post (res.data.error)"
+      );
+      return;
     }
 
     setSuccessVis(true);
@@ -76,7 +65,6 @@ function EditComment({ _content, _commentId, _open, _handleClose, onUpdateCommen
 
     setSuccessVis(false);
   };
-
 
   return (
     <div>
@@ -97,21 +85,27 @@ function EditComment({ _content, _commentId, _open, _handleClose, onUpdateCommen
               width: "40vw",
               "@media (max-width: 768px)": {
                 width: "auto",
-              }
+              },
             }}
           >
             <Stack>
               <Box>
                 <CardContent>
                   <Stack alignItems={"center"} spacing={3}>
-                    <Typography variant="h3" color="accent.main" sx={{whiteSpace: "nowrap",
-                }}>
-                      Edit Comment
+                    <Typography
+                      variant="h3"
+                      color="accent.main"
+                      sx={{ whiteSpace: "nowrap" }}
+                    >
+                      Edit Your Post
                     </Typography>
                     <TextField
-                      sx={{ width: "30vw", "@media (max-width: 768px)": {
-                        width: "50vw",
-                      }}}
+                      sx={{
+                        width: "30vw",
+                        "@media (max-width: 768px)": {
+                          width: "50vw",
+                        },
+                      }}
                       multiline
                       rows={5}
                       variant="outlined"
@@ -137,9 +131,9 @@ function EditComment({ _content, _commentId, _open, _handleClose, onUpdateCommen
                           backgroundColor: "accent.secondary",
                         },
                         whiteSpace: "nowrap",
-                "@media (max-width: 768px)": {
-                  width: "auto",
-                },
+                        "@media (max-width: 768px)": {
+                          width: "auto",
+                        },
                       }}
                     >
                       <Typography variant="h4">Save</Typography>
@@ -160,13 +154,12 @@ function EditComment({ _content, _commentId, _open, _handleClose, onUpdateCommen
             severity="success"
             sx={{ width: "100%" }}
           >
-            Comment saved successfully!
+            Post saved successfully!
           </Alert>
         </Snackbar>
-        
       </ThemeProvider>
     </div>
   );
 }
 
-export default EditComment;
+export default EditPost;

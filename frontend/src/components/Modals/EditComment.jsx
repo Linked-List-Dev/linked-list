@@ -14,7 +14,7 @@ import {
   Modal,
   Box,
 } from "@mui/material";
-import AppTheme from "../util/Theme";
+import AppTheme from "../../util/Theme";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import CommentIcon from "@mui/icons-material/Comment";
@@ -26,22 +26,24 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 
-function EditPost({ _content, _postId, _open, _handleClose, onUpdatePost }) {
+function EditComment({ _content, _commentId, _open, _handleClose, onUpdateComment }) {
   const [content, setContent] = useState(_content);
   const [open, setOpen] = useState(_open);
   const [successVis, setSuccessVis] = useState(false);
-  const [postId, setpostId] = useState(_postId);
+  const [commentId, setCommentId] = useState(_commentId);
     
   const handleSubmit = async (e) => {
-    if(!content){
+    // edit comment
+
+    if (!content) {
+        return
         // if the user sets the message to empty
         // todo warning here...
     }
 
-    // TODO update the post
     const res = await axios.put(
-      `http://localhost:8000/api/posts/${postId}`,
-      { description: content },
+      `http://localhost:8000/api/posts/comment/${commentId}`,
+      { newCommentContent: content },
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -52,7 +54,7 @@ function EditPost({ _content, _postId, _open, _handleClose, onUpdatePost }) {
     console.log("res.status:", res.status)
     if (res.status === 200) {
       // Update the state variable with the updated user data
-      onUpdatePost(content)
+      onUpdateComment(res.data.updatedComment.content)
     } else {
       console.log("Tia TODO: display an error saying failed to update post (res.data.error)");
       return
@@ -104,7 +106,7 @@ function EditPost({ _content, _postId, _open, _handleClose, onUpdatePost }) {
                   <Stack alignItems={"center"} spacing={3}>
                     <Typography variant="h3" color="accent.main" sx={{whiteSpace: "nowrap",
                 }}>
-                      Edit Your Post
+                      Edit Comment
                     </Typography>
                     <TextField
                       sx={{ width: "30vw", "@media (max-width: 768px)": {
@@ -158,7 +160,7 @@ function EditPost({ _content, _postId, _open, _handleClose, onUpdatePost }) {
             severity="success"
             sx={{ width: "100%" }}
           >
-            Post saved successfully!
+            Comment saved successfully!
           </Alert>
         </Snackbar>
         
@@ -167,4 +169,4 @@ function EditPost({ _content, _postId, _open, _handleClose, onUpdatePost }) {
   );
 }
 
-export default EditPost;
+export default EditComment;

@@ -1,23 +1,12 @@
 import React from "react";
 import { useState } from "react";
-import {
-  ThemeProvider,
-  Typography,
-  Button,
-  Box,
-  Modal,
-  Stack,
-  TextField,
-  Divider,
-} from "@mui/material";
+import { ThemeProvider, Typography, Button, Box } from "@mui/material";
 import AppTheme from "../util/Theme";
 import { Link } from "react-router-dom";
 import IconDark from "../assets/IconDark.svg";
-import facebook from "../assets/socials/facebook.svg";
-import google from "../assets/socials/google.svg";
-import linkedin from "../assets/socials/linkedin.svg";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import SignInModal from "./Modals/SignInModal";
 
 function LoginSide({ openByDefault }) {
   const [open, setOpen] = useState(openByDefault);
@@ -37,6 +26,7 @@ function LoginSide({ openByDefault }) {
   };
 
   const handleSubmit = async (e) => {
+    console.log(formValues);
     e.preventDefault();
     const res = await axios.post("http://localhost:8000/api/users/login", {
       email: formValues.email,
@@ -44,12 +34,15 @@ function LoginSide({ openByDefault }) {
     });
 
     if (res.status === 200) {
-
-      console.log("Logged in a user, user's id and token are:", res.data.id, res.data.token)
-      localStorage.setItem("token", res.data.token)
-      localStorage.setItem("id", res.data.id)
-      localStorage.setItem("email", res.data.email)
-      localStorage.setItem("username", res.data.name)
+      console.log(
+        "Logged in a user, user's id and token are:",
+        res.data.id,
+        res.data.token
+      );
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("id", res.data.id);
+      localStorage.setItem("email", res.data.email);
+      localStorage.setItem("username", res.data.name);
 
       navigate("/feed");
       // TODO:
@@ -146,108 +139,15 @@ function LoginSide({ openByDefault }) {
           </Box>
         </Box>
 
-        <Modal
+        <SignInModal
+          error={error}
           open={open}
-          onClose={handleClose}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            textAlign: "center",
-          }}
-        >
-          <Box
-            sx={{
-              backgroundColor: "page.main",
-              borderRadius: 10,
-              width: "40vw",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              "@media (max-width: 768px)": {
-                width: "auto",
-                paddingLeft: "3vw",
-                paddingRight: "3vw",
-              },
-            }}
-          >
-            <Box
-              paddingTop="3vh"
-              paddingBottom="3vh"
-              width={"40vw"}
-              sx={{
-                "@media (max-width: 768px)": {
-                  width: "auto",
-                },
-              }}
-            >
-              <Typography
-                color="accent.main"
-                variant="h1"
-                sx={{ whiteSpace: "nowrap" }}
-              >
-                Sign In
-              </Typography>
-              <form onSubmit={handleSubmit}>
-                <Stack
-                  spacing={3}
-                  sx={{
-                    paddingBottom: 3,
-                    paddingTop: "2vh",
-                    paddingRight: "2vw",
-                    paddingLeft: "2vw",
-                  }}
-                >
-                  <TextField
-                    variant="outlined"
-                    name="email"
-                    label="Email"
-                    type="email"
-                    value={formValues.email}
-                    onChange={handleChange}
-                    fullWidth
-                    required
-                  />
-                  <TextField
-                    variant="outlined"
-                    name="password"
-                    label="Password"
-                    type="password"
-                    value={formValues.password}
-                    onChange={handleChange}
-                    fullWidth
-                    required
-                    error={Boolean(error)}
-                    helperText={error}
-                    onFocus={handleResetError}
-                  />
-                </Stack>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  size="large"
-                  sx={{
-                    backgroundColor: "accent.main",
-                    textTransform: "none",
-                    borderRadius: 4,
-                    width: "10vw",
-                    height: "80px",
-                    "&:hover": {
-                      backgroundColor: "accent.secondary",
-                    },
-                    color: "text.main",
-                    whiteSpace: "nowrap",
-                    "@media (max-width: 768px)": {
-                      width: "auto",
-                    },
-                  }}
-                >
-                  <Typography variant="h4">Sign In</Typography>
-                </Button>
-              </form>
-            </Box>
-          </Box>
-        </Modal>
+          handleClose={handleClose}
+          handleChange={handleChange}
+          handleResetError={handleResetError}
+          handleSubmit={handleSubmit}
+          formValues={formValues}
+        />
       </Box>
     </ThemeProvider>
   );
