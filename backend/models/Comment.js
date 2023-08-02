@@ -14,9 +14,9 @@ const commentSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        authorProfilePicutureId: {
-            type: String,       //TODO
-            required: false,
+        authorProfilePictureId: {
+            type: String,
+            required: true,
         }
     },
     {

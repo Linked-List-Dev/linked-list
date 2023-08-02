@@ -357,9 +357,42 @@ router.post('/profileImage', requireAuthentication, upload.single('file'), async
                 await deleteProfilePhotoById(user.profilePictureId)
             }
 
-            user.profilePictureId = id
-            await user.save()
+            const updatedUser = await User.findByIdAndUpdate(
+                userid,
+                {
+                    $set: {
+                        profilePictureId: id
+                    },
+                },
+                { new: true }
+            )
 
+            // iterate though the posts and update authorName, and authorJobTitle if they have changed
+            await Post.updateMany(
+                { authorEmail: updatedUser.email },
+                {
+                    $set: {
+                        profilePictureId: id
+                    },
+                }
+            )
+
+            await User.findByIdAndUpdate(req.params.userid, {
+                $set: {
+                    "posts.$[].authorProfilePictureId": id
+                },
+            })
+
+            await Feed.updateMany(
+                { "posts.authorEmail": updatedUser.email },
+                {
+                    $set: {
+                        "posts.$[post].authorProfilePictureId": id
+                    },
+                },
+                { arrayFilters: [{ "post.authorEmail": updatedUser.email }] }
+            )
+            
             res.status(201).send({
                 id: id
             })

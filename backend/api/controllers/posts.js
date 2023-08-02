@@ -38,6 +38,7 @@ router.post("/", requireAuthentication, async function (req, res, next) {
             authorName: username,
             authorEmail: email,
             authorJobTitle: user.jobTitle ? user.jobTitle : "looking for job",
+            authorProfilePictureId: user.profilePictureId ? user.profilePictureId : "",
             authorId: userid,
         })
 
@@ -57,6 +58,7 @@ router.post("/", requireAuthentication, async function (req, res, next) {
             description: createdPost.description,
             author: createdPost.authorName,
             authorJobTitle: createdPost.authorJobTitle,
+            authorProfilePictureId: createdPost.authorProfilePictureId,
             authorId: userid,
         })
     } catch (err) {
@@ -483,7 +485,7 @@ router.delete("/comment/:commentid", requireAuthentication, async function (req,
         )
         user.posts[userPostIndex] = updatedPost
         await user.save()
-        
+
         await Comment.findByIdAndDelete(commentId)
 
         res.status(204).end()

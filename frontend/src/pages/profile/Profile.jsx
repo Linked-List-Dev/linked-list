@@ -31,12 +31,12 @@ function Profile() {
     "There's no bio yet... Click the edit button to add one!"
   );
   const [posts, setPosts] = useState([]);
-  const [profileImage, setProfileImage] = useState(
-    "https://images.unsplash.com/photo-1593483316242-efb5420596ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8b3JhbmdlJTIwY2F0fGVufDB8fDB8fHww&w=1000&q=80"
-  );
+  const [profileImage, setProfileImage] = useState("");
   const [headPhoto, setHeaderPhoto] = useState(
     "https://images.pexels.com/photos/1796730/pexels-photo-1796730.jpeg?cs=srgb&dl=pexels-chait-goli-1796730.jpg&fm=jpg"
   );
+
+  const [loading, setLoading] = useState(true);
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -48,9 +48,51 @@ function Profile() {
   const handleOpenEdit = () => setEditOpen(true)
   const handleCloseEdit = () => setEditOpen(false)
 
-  const onFileUpload = (file) => {
+  const handleFileUpload = async (file) => {
+    console.log("file:", file)
 
-  }
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await axios.post(
+        `http://localhost:8000/api/users/profileImage`,
+        formData, // Use the FormData object as the request data
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            'Content-Type': 'multipart/form-data', // Set the content type to 'multipart/form-data'
+          },
+        }
+      );
+
+      if (res.status === 201) {
+        const profileImageFetch = await axios.get(
+          `http://localhost:8000/api/users/profileImage/${res.data.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            responseType: 'arraybuffer', // Set the responseType to arraybuffer
+          }
+        );
+
+        if (profileImageFetch.status === 200 || profileImageFetch.status === 304) {
+          // Create a blob from the file data
+          const blob = new Blob([profileImageFetch.data], {
+            type: profileImageFetch.headers['content-type'],
+          });
+
+          // Convert the blob to a URL (blob URL)
+          const blobUrl = URL.createObjectURL(blob);
+          setProfileImage(blobUrl);
+          setLoading(false);
+        }
+      }
+    } catch (error) {
+      console.error('Error uploading the file:', error);
+    }
+  };
 
   const handleSnackClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -109,6 +151,7 @@ function Profile() {
       setJobTitle(res.data.jobTitle);
       setBiography(res.data.bio);
       setOpen(false);
+      setProfilePictureId(res.data.profilePictureId)
       setSuccessVis(true);
     } else {
       console.log(
@@ -148,6 +191,29 @@ function Profile() {
           jobTitle: userData.jobTitle,
           bio: userData.bio,
         });
+
+        const profileImageFetch = await axios.get(
+          `http://localhost:8000/api/users/profileImage/${userData.profilePictureId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            responseType: 'arraybuffer', // Set the responseType to arraybuffer
+          }
+        );
+
+        if (profileImageFetch.status === 200 || profileImageFetch.status === 304) {
+          // Create a blob from the file data
+          const blob = new Blob([profileImageFetch.data], {
+            type: profileImageFetch.headers['content-type'],
+          });
+
+          // Convert the blob to a URL (blob URL)
+          const blobUrl = URL.createObjectURL(blob);
+          setProfileImage(blobUrl);
+          setLoading(false);
+        }
+
       } else {
         console.log(
           "Tia TODO: display an error saying failed to fetch user data (res.data.error)"
@@ -266,13 +332,13 @@ function Profile() {
                   <Typography variant="h4">Posts</Typography>
                   <Stack spacing={3}>
                     {posts.map((post) => (
-                      <Post
+                      !loading && <Post
                         key={post._id}
                         _postId={post._id}
                         _userName={post.authorName}
                         _authorId={post.authorId}
                         _jobTitle={post.authorJobTitle}
-                        _profilePhoto={profileImage}
+                        _authorProfilePhoto={profileImage}
                         _description={post.description}
                         _likes={post.likes}
                         _dislikes={post.dislikes}
@@ -374,13 +440,13 @@ function Profile() {
                   <Typography variant="h4">Posts</Typography>
                   <Stack spacing={3}>
                     {posts.map((post) => (
-                      <Post
+                      !loading && <Post
                         key={post._id}
                         _postId={post._id}
                         _userName={post.authorName}
                         _authorId={post.authorId}
                         _jobTitle={post.authorJobTitle}
-                        _profilePhoto={profileImage}
+                        _authorProfilePhoto={profileImage}
                         _description={post.description}
                         _likes={post.likes}
                         _dislikes={post.dislikes}
@@ -397,7 +463,7 @@ function Profile() {
           </Box>
         )}
 
-        <EditPhotoModal open={editOpen} onClose={handleCloseEdit} onFileUpload={onFileUpload}/>
+        <EditPhotoModal open={editOpen} onClose={handleCloseEdit} onFileUpload={handleFileUpload} />
         <EditProfileModal
           open={open}
           handleClose={handleClose}

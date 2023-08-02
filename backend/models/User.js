@@ -16,11 +16,8 @@ const userSchema = new mongoose.Schema({
     },
     profilePictureId: {
         type: String,           // Store the link to the profile picture as a string
-        required: false
+        required: true
     },
-    // profileBackgroundPicture: {        //to be implemented
-    //     type:
-    // },
     bio: {
         type: String,
         required: false

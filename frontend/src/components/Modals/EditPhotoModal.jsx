@@ -19,7 +19,6 @@ const EditPhotoModal = ({ open, onClose, onFileUpload }) => {
   };
 
   const handleUpload = () => {
-    console.log("Upload the file kronk")
     if (selectedFile) {
       onFileUpload(selectedFile);
       setSelectedFile(null);

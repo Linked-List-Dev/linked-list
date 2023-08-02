@@ -1,5 +1,4 @@
-import * as React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Card from "@mui/material/Card";
 import {
   Button,
@@ -30,7 +29,7 @@ function Post({
   _postId,
   _userName,
   _jobTitle,
-  _profilePhoto,
+  _authorProfilePhoto,
   _description,
   _likes,
   _dislikes,
@@ -40,10 +39,11 @@ function Post({
   _createdAt,
   _updatedAt,
 }) {
+  console.log("_authorProfilePhoto:", _authorProfilePhoto)
   const [postId, setPostId] = useState(_postId); // may be used for expanded view later...
   const [userName, setUserName] = useState(_userName);
   const [jobTitle, setJobTitle] = useState(_jobTitle);
-  const [profilePhoto, setProfilePhoto] = useState(_profilePhoto);
+  const [authorProfilePhoto, setAuthorProfilePhoto] = useState(_authorProfilePhoto);
   const [description, setDescription] = useState(_description);
   const [likes, setLikes] = useState(_likes);
   const [dislikes, setDislikes] = useState(_dislikes);
@@ -290,7 +290,7 @@ function Post({
               component={Link}
               to={`/profile/${_authorId}`}
             >
-              <Avatar src={profilePhoto} sx={{ width: 60, height: 60 }} />
+              <Avatar src={authorProfilePhoto} sx={{ width: 60, height: 60 }} />
             </IconButton>
           </div>
           <CardActionArea onClick={() => handleOpen()}>
@@ -354,7 +354,7 @@ function Post({
             _content={description}
             _userName={userName}
             _jobTitle={jobTitle}
-            _profilePhoto={profilePhoto}
+            _profilePhoto={authorProfilePhoto}
             _likes={likes}
             _dislikes={dislikes}
             _comments={comments}

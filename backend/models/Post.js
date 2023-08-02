@@ -33,8 +33,8 @@ const postSchema = new mongoose.Schema(
             type: String,       //user's title
             required: false,
         },
-        authorProfilePicutureId: {
-            type: String,       //TODO
+        authorProfilePictureId: {
+            type: String,
             required: false,
         },
         comments: {
