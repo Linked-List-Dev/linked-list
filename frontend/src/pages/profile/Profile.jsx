@@ -20,6 +20,7 @@ import { useParams } from "react-router-dom";
 import MobileSideNav from "../../components/Mobile/MobileSideNav";
 import Footer from "../../components/Footer";
 import EditProfileModal from "../../components/Modals/EditProfileModal";
+import EditPhotoModal from "../../components/Modals/EditPhotoModal";
 
 function Profile() {
   const { profileid } = useParams();
@@ -42,6 +43,14 @@ function Profile() {
   const handleClose = () => setOpen(false);
   const [successVis, setSuccessVis] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [editOpen, setEditOpen] = useState(false);
+
+  const handleOpenEdit = () => setEditOpen(true)
+  const handleCloseEdit = () => setEditOpen(false)
+
+  const onFileUpload = (file) => {
+
+  }
 
   const handleSnackClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -207,6 +216,7 @@ function Profile() {
                             border: "white 4px solid",
                             borderColor: "page.main",
                           }}
+                          onClick={handleOpenEdit}
                         />
                       </Box>
 
@@ -387,6 +397,7 @@ function Profile() {
           </Box>
         )}
 
+        <EditPhotoModal open={editOpen} onClose={handleCloseEdit} onFileUpload={onFileUpload}/>
         <EditProfileModal
           open={open}
           handleClose={handleClose}
