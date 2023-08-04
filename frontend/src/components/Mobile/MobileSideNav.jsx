@@ -7,14 +7,12 @@ import {
   ListItemText,
   Avatar,
   Snackbar,
-  Alert,
-  Typography,
+  Alert, Typography,
   ListItem,
-  ListItemButton,
-  ListItemIcon,
+  ListItemButton, ListItemIcon,
   List,
   Box,
-  Stack,
+  Stack
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { ThemeProvider } from "@emotion/react";

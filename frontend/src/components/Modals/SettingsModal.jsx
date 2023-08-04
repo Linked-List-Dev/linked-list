@@ -8,7 +8,8 @@ function SettingsModal({
   openConfirmationModal,
 }) {
   return (
-    <Modal
+    <Box>
+<Modal
       open={settingsOpen}
       onClose={closeSettingsModal}
       sx={{
@@ -78,6 +79,8 @@ function SettingsModal({
         </Box>
       </Box>
     </Modal>
+    </Box>
+    
   );
 }
 

@@ -31,6 +31,7 @@ function ExpandedPost({
   _likes,
   _dislikes,
   _comments,
+  _updatedAt,
   open,
   handleClose,
   handleLike,
@@ -45,6 +46,7 @@ function ExpandedPost({
   const [likes, setLikes] = useState(_likes);
   const [dislikes, setDislikes] = useState(_dislikes);
   const [commentContent, setCommentContent] = useState("");
+  const [updatedAt, setUpdatedAt] = useState("");
   const [message, setMessage] = useState(
     "There are no comments yet. Would you like to add one?"
   );
@@ -60,6 +62,22 @@ function ExpandedPost({
   useEffect(() => {
     setDislikes(_dislikes);
   }, [_dislikes]);
+
+  useEffect(() => {
+    if (_updatedAt) {
+      // Parse the input timestamp to a JavaScript Date object
+      const dateObject = new Date(_updatedAt);
+
+      // Format the date to "dd:mm" (day and month)
+      const formattedDate = dateObject.toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
+
+      setUpdatedAt(formattedDate);
+    }
+  }, [_updatedAt]);
 
   const handleCreateComment = async (e) => {
     console.log(commentContent);
@@ -154,31 +172,45 @@ function ExpandedPost({
                   </Stack>
                   <Typography variant="h5">{content}</Typography>
                 </CardContent>
-                <CardActions>
-                  <Button
-                    size="small"
-                    onClick={handleLikeFromExpanded}
-                    sx={{ color: "accent.main" }}
+                <CardActions
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Box>
+                    <Button
+                      size="small"
+                      onClick={handleLikeFromExpanded}
+                      sx={{ color: "accent.main" }}
+                    >
+                      {likes.includes(localStorage.getItem("email")) ? (
+                        <ThumbUpAltIcon />
+                      ) : (
+                        <ThumbUpOffAltIcon />
+                      )}
+                      {likes.length}
+                    </Button>
+                    <Button
+                      size="small"
+                      onClick={handleDislikeFromExpanded}
+                      sx={{ color: "accent.main" }}
+                    >
+                      {dislikes.includes(localStorage.getItem("email")) ? (
+                        <ThumbDownAltIcon />
+                      ) : (
+                        <ThumbDownOffAltIcon />
+                      )}
+                      {dislikes.length}
+                    </Button>
+                  </Box>
+
+                  <Typography
+                    variant="caption"
+                    sx={{ color: "text.secondary" }}
                   >
-                    {likes.includes(localStorage.getItem("email")) ? (
-                      <ThumbUpAltIcon />
-                    ) : (
-                      <ThumbUpOffAltIcon />
-                    )}
-                    {likes.length}
-                  </Button>
-                  <Button
-                    size="small"
-                    onClick={handleDislikeFromExpanded}
-                    sx={{ color: "accent.main" }}
-                  >
-                    {dislikes.includes(localStorage.getItem("email")) ? (
-                      <ThumbDownAltIcon />
-                    ) : (
-                      <ThumbDownOffAltIcon />
-                    )}
-                    {dislikes.length}
-                  </Button>
+                    {updatedAt}
+                  </Typography>
                 </CardActions>
               </Box>
 
@@ -235,7 +267,8 @@ function ExpandedPost({
                           _authorId={comment.authorId}
                           _authorName={comment.authorName}
                           _createdAt={comment.createdAt}
-                          _updatedAt={comment._updatedAt}
+                          _updatedAt={comment.updatedAt}
+                          _profilePhoto={comment.authorProfilePictureId}
                           onCommentDelete={handleCommentDelete}
                         />
                       ))}

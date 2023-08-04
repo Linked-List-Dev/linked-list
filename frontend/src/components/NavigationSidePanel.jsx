@@ -3,6 +3,7 @@ import { useState } from "react";
 import LinkedListLogoLight from "../assets/LinkedListLogoLight.svg";
 import AppTheme from "../util/Theme";
 import {
+  TextField,
   Stack,
   ThemeProvider,
   List,
@@ -12,21 +13,24 @@ import {
   ListItemIcon,
   ListItemText,
   Avatar,
+  Modal,
   Box,
   Snackbar,
   Alert,
+  Button,
 } from "@mui/material";
 
 import HomeIcon from "@mui/icons-material/Home";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import SettingsIcon from "@mui/icons-material/Settings";
+import SearchIcon from "@mui/icons-material/Search";
+import InputAdornment from "@mui/material/InputAdornment";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 import { Link } from "react-router-dom";
 import NewPostModal from "./Modals/NewPostModal";
 import SettingsModal from "./Modals/SettingsModal";
-import ConfirmationMessageModal from "./Modals/ConfirmationMessageModal";
 
 function NavigationSidePanel({ onPostCreated }) {
   const [open, setOpen] = useState(false);
@@ -211,12 +215,6 @@ function NavigationSidePanel({ onPostCreated }) {
           closeSettingsModal={closeSettingsModal}
           handleLogOut={handleLogOut}
           openConfirmationModal={openConfirmationModal}
-        />
-
-        <ConfirmationMessageModal
-          confirmOpen={confirmOpen}
-          closeConfirmationModal={closeConfirmationModal}
-          handleDeleteAccount={handleDeleteAccount}
         />
 
         <Snackbar

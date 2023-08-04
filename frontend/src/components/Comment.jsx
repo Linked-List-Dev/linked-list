@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Card from "@mui/material/Card";
 import {
   Avatar, Typography,
@@ -20,14 +20,16 @@ function Comment({
   _authorId,
   _createdAt,
   _updatedAt,
+  _profilePhoto,
   onCommentDelete,
 }) {
   const [userName, setUserName] = useState(_authorName);
   const [content, setContent] = useState(_content);
   const [createdAt, setCreatedAt] = useState(_createdAt);
-  const [updatedAt, setUpdatedAt] = useState(_updatedAt);
+  const [updatedAt, setUpdatedAt] = useState("");
   const [editOpen, setEditOpen] = useState(false);
   const [commentId, setCommentId] = useState(_key);
+  const [profilePhoto, setProfilePhoto] = useState(_profilePhoto);
 
   const handleEditOpen = () => {
     setEditOpen(true);
@@ -64,9 +66,26 @@ function Comment({
     e.stopPropagation();
   };
 
+  useEffect(() => {
+    if (_updatedAt) {
+      // Parse the input timestamp to a JavaScript Date object
+      const dateObject = new Date(_updatedAt);
+
+      // Format the date to "dd:mm" (day and month)
+      const formattedDate = dateObject.toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
+
+      setUpdatedAt(formattedDate);
+    }
+  }, [_updatedAt]);
+
   return (
     <Box sx={{ textAlign: "left", color: "text.primary" }}>
-      <Card sx={{ padding: "2vh" }}>
+
+      <Card >
         <div style={{ position: "relative", zIndex: 999 }}>
           {_authorId.toString() === localStorage.getItem("id") ? ( //only author can edit/delete their posts
             <>
@@ -84,13 +103,19 @@ function Comment({
               </IconButton>
             </>
           ) : null}
+
         </div>
-        <CardContent>
+        <CardContent sx={{ display: 'block' }}>
           <Stack direction={"row"} spacing={2} paddingBottom={"1vh"}>
-            <Avatar sx={{ width: 40, height: 40 }}>{userName[0]}</Avatar>
+            <Avatar sx={{ width: 40, height: 40 }} >{userName[0]}</Avatar>
             <Typography variant="h5">{userName}</Typography>
           </Stack>
           <Typography>{content}</Typography>
+          <Box sx={{textAlign: 'right'}}>
+
+            <Typography variant="caption" sx={{color: "text.secondary", textAlign: 'right' }}>{updatedAt}</Typography>
+          </Box>
+
         </CardContent>
       </Card>
 

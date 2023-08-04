@@ -39,7 +39,7 @@ function Post({
   _createdAt,
   _updatedAt,
 }) {
-  console.log("_authorProfilePhoto:", _authorProfilePhoto)
+  console.log("_authorProfilePhoto: ebebbe", _authorProfilePhoto)
   const [postId, setPostId] = useState(_postId); // may be used for expanded view later...
   const [userName, setUserName] = useState(_userName);
   const [jobTitle, setJobTitle] = useState(_jobTitle);
@@ -49,8 +49,8 @@ function Post({
   const [dislikes, setDislikes] = useState(_dislikes);
   const [authorId, setAuthorId] = useState(_authorId);
   const [comments, setComments] = useState(_comments);
-  const [createdAt, setCreatedAt] = useState(_createdAt);
-  const [updatedAt, setUpdatedAt] = useState(_updatedAt);
+  const [createdAt, setCreatedAt] = useState('');
+  const [updatedAt, setUpdatedAt] = useState('');
   const [open, setOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
 
@@ -262,11 +262,28 @@ function Post({
     setDescription(newDescription);
   };
 
+  useEffect(() => {
+    if (_updatedAt) {
+      // Parse the input timestamp to a JavaScript Date object
+      const dateObject = new Date(_updatedAt);
+
+      // Format the date to "dd:mm" (day and month)
+      const formattedDate = dateObject.toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
+
+      setUpdatedAt(formattedDate);
+    }
+  }, [_updatedAt]);
+
   return (
     <div>
       <ThemeProvider theme={AppTheme}>
         <Card sx={{ bgcolor: "page.main" }}>
           <div style={{ position: "relative", zIndex: 999 }}>
+          
             {authorId.toString() === localStorage.getItem("id") ? ( //only author can edit/delete their posts
               <>
                 <IconButton
@@ -346,6 +363,7 @@ function Post({
             <Button sx={{ color: "accent.main" }} onClick={handleComment}>
               <CommentIcon /> {comments.length}
             </Button>
+            <Typography variant="caption" sx={{ position: "absolute", right: "40px", color: "text.secondary" }}>{updatedAt}</Typography>
           </CardActions>
         </Card>
         <Box>
@@ -358,6 +376,7 @@ function Post({
             _likes={likes}
             _dislikes={dislikes}
             _comments={comments}
+            _updatedAt={_updatedAt}
             open={open}
             handleClose={handleClose}
             handleDislike={handleDislike}
