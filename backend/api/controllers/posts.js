@@ -337,7 +337,6 @@ router.post("/comment/", requireAuthentication, async function (req, res, next) 
             authorProfilePictureId: authorPictureId
         })
     } catch (err) {
-        console.log("err.message", err.message)
         return res.status(500).json({ error: err.message })
     }
 })
