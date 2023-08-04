@@ -258,7 +258,6 @@ function Profile() {
                 overflow: "auto",
               }}
             >
-              {/* Here goes the profile stuff*/}
               <Stack spacing={5}>
                 <Box>
                   <Box
@@ -393,6 +392,7 @@ function Profile() {
                             border: "white 4px solid",
                             borderColor: "page.main",
                           }}
+                          onClick={handleOpenEdit}
                         />
                       </Box>
 
