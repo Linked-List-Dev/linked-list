@@ -44,10 +44,6 @@ router.post("/", requireAuthentication, async function (req, res, next) {
 
         const createdPost = await postToCreate.save()
 
-        //associate the created post with an author
-        user.posts.push(createdPost)
-        await user.save()
-
         //save the post in the global feed
         const feed = await Feed.findById(process.env.FEED_ID)
         feed.posts.push(createdPost)
@@ -100,17 +96,6 @@ router.put("/:postid", requireAuthentication, async function (req, res, next) {
             feed.posts[postIndexInFeed] = postToEdit
         }
 
-        // update the post within the user's profile page
-        const user = await User.findById(userid)
-        const postIndexInProfile = user.posts.findIndex(
-            (post) => post._id.toString() === req.params.postid.toString()
-        )
-
-        if (postIndexInProfile !== -1) {
-            user.posts[postIndexInProfile] = postToEdit
-        }
-
-        await user.save()
         await feed.save()
         const editedPost = await postToEdit.save()
 
@@ -179,18 +164,6 @@ router.delete("/:postid", requireAuthentication, async function (req, res, next)
         })
 
         await feed.save()
-
-        const user = await User.findById(userid)
-
-        const postIndexInUser = user.posts.findIndex(
-            (userPost) => userPost._id.toString() === req.params.postid.toString()
-        )
-        if (postIndexInUser !== -1) {
-            user.posts.splice(postIndexInUser, 1)
-        }
-
-        await user.save()
-
         await Post.findByIdAndDelete(req.params.postid)
 
         res.status(204).end()
@@ -320,6 +293,7 @@ router.post("/comment/", requireAuthentication, async function (req, res, next) 
     const userid = req.user._id
     const username = req.user.name
     const email = req.user.email
+    const authorPictureId = req.user.profilePictureId
 
     const { postId, commentContent } = req.body
 
@@ -337,6 +311,7 @@ router.post("/comment/", requireAuthentication, async function (req, res, next) 
             content: commentContent,
             authorName: username,
             authorId: userid,
+            authorProfilePictureId: authorPictureId
         })
 
         const newComment = await commentToCreate.save()
@@ -355,21 +330,14 @@ router.post("/comment/", requireAuthentication, async function (req, res, next) 
 
         await feed.save()
 
-        // Save the updated post for user record
-        const user = await User.findById(userid)
-        const userPostIndex = user.posts.findIndex(
-            (post) => post._id.toString() === postId.toString()
-        )
-
-        user.posts[userPostIndex] = updatedPost
-        await user.save()
-
         return res.status(200).json({
             message: "New comment successfully added!",
             id: newComment._id,
             post: updatedPost,
+            authorProfilePictureId: authorPictureId
         })
     } catch (err) {
+        console.log("err.message", err.message)
         return res.status(500).json({ error: err.message })
     }
 })
@@ -400,7 +368,7 @@ router.put("/comment/:commentid", requireAuthentication, async function (req, re
         commentToUpdate.content = newCommentContent
 
         // Save the updated comment
-        const updatedComment = await commentToUpdate.save();
+        const updatedComment = await commentToUpdate.save()
 
         // Find the post that contains the updated comment
         const postContainingComment = await Post.findOne({ "comments._id": commentId })
@@ -420,14 +388,6 @@ router.put("/comment/:commentid", requireAuthentication, async function (req, re
         feed.posts[postIndex] = updatedPost
 
         await feed.save()
-
-        // Save the updated post for user record
-        const user = await User.findById(userid)
-        const userPostIndex = user.posts.findIndex(
-            (post) => post._id.toString() === updatedPost._id.toString()
-        )
-        user.posts[userPostIndex] = updatedPost
-        await user.save()
 
         return res.status(200).json({
             message: "Comment successfully updated!",
@@ -458,7 +418,7 @@ router.delete("/comment/:commentid", requireAuthentication, async function (req,
                 .json({ error: "You can only delete your own comments!" })
         }
 
-        const postContainingComment = await Post.findOne({ "comments._id": commentId });
+        const postContainingComment = await Post.findOne({ "comments._id": commentId })
 
         const commentIndex = postContainingComment.comments.findIndex(
             (comment) => comment._id.toString() === commentId.toString()
@@ -468,8 +428,8 @@ router.delete("/comment/:commentid", requireAuthentication, async function (req,
             postContainingComment.comments.splice(commentIndex, 1)
         }
 
-         // Save the updated post
-         const updatedPost = await postContainingComment.save()
+        // Save the updated post
+        const updatedPost = await postContainingComment.save()
 
         const feed = await Feed.findOne({ _id: process.env.FEED_ID })
         const postIndex = feed.posts.findIndex(
@@ -477,14 +437,6 @@ router.delete("/comment/:commentid", requireAuthentication, async function (req,
         )
         feed.posts[postIndex] = updatedPost
         await feed.save()
-
-        // Save the updated post for user record
-        const user = await User.findById(userid)
-        const userPostIndex = user.posts.findIndex(
-            (post) => post._id.toString() === updatedPost._id.toString()
-        )
-        user.posts[userPostIndex] = updatedPost
-        await user.save()
 
         await Comment.findByIdAndDelete(commentId)
 

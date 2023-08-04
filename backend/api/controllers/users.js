@@ -5,6 +5,7 @@ import { isValidObjectId } from "mongoose"
 import joi from "joi"
 import User from "../../models/User.js"
 import Feed from "../../models/Feed.js"
+import Comment from "../../models/Comment.js"
 import Post from "../../models/Post.js"
 import { saveProfilePhotoFile, getProfilePhotoDownloadStreamById, deleteProfilePhotoById } from "../../models/ProfileImage.js"
 import { generateAuthToken } from "../../lib/token.js"
@@ -46,7 +47,10 @@ router.post("/", async function (req, res, next) {
             const userToCreate = new User({
                 ...req.body,
                 password: await bcrypt.hash(req.body.password, 10),
+                profilePictureId: ''
             })
+
+            console.log("userToCreate:", userToCreate)
 
             const createdUser = await userToCreate.save()
 
@@ -71,12 +75,21 @@ router.post("/", async function (req, res, next) {
 router.get("/:userid", requireAuthentication, async function (req, res, next) {
     try {
         const user = await User.findById(req.params.userid).select("-password")
+        
 
         if (!user) {
             return res.status(400).json({ error: "User not found" })
         } else {
+            const feed = await Feed.findById(process.env.FEED_ID)
+
+            // Filter posts where the authorId matches the user's _id
+            const userPosts = feed.posts.filter(post =>
+                post.authorId.toString() === req.params.userid.toString()
+            )
+
             return res.status(200).json({
                 user: user,
+                userPosts: userPosts
             })
         }
     } catch (err) {
@@ -89,37 +102,56 @@ router.delete("/:userid", requireAuthentication, async function (req, res, next)
     // console.log("req.user.id:", req.user._id)
     if (req.user._id === req.params.userid) {
         try {
+            const userId = req.params.userid
             const user = await User.findById(req.params.userid)
 
             if (!user) {
                 return next()
             }
 
-            const userPostIds = user.posts.map((post) => post._id)
+            const feed = await Feed.findById(process.env.FEED_ID)
+            const userPosts = feed.posts.filter(post =>
+                post.authorId.toString() === userId
+            )
+
             // await Post.deleteMany({ _id: { $in: userPostIds } })   //this will work too
 
             // Delete user's posts from the feed
-            for (const postId of userPostIds) {
+            for (const post of userPosts) {
+                const postId = post._id
                 await Post.findByIdAndDelete(postId.toString())
 
-                const feed = await Feed.findById(process.env.FEED_ID)
-
                 const postIndex = feed.posts.findIndex(
-                    (post) => post._id.toString() === postId.toString()
+                    post => post._id.toString() === postId.toString()
                 )
 
                 if (postIndex !== -1) {
                     feed.posts.splice(postIndex, 1)
                 }
-
-                feed.posts.sort(
-                    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-                )
-
-                await feed.save()
             }
 
+            // Delete the user's comments on every post
+            for (const post of feed.posts) {
+                const commentsToDelete = post.comments.filter(
+                    comment => comment.authorId.toString() === userId
+                )
+
+                for (const comment of commentsToDelete) {
+                    const commentId = comment._id
+                    await Comment.findByIdAndDelete(commentId.toString())
+
+                    const commentIndex = post.comments.findIndex(
+                        comment => comment._id.toString() === commentId.toString()
+                    )
+
+                    if (commentIndex !== -1) {
+                        post.comments.splice(commentIndex, 1)
+                    }
+                }
+            }
+            
             await User.findByIdAndDelete(req.params.userid)
+            await feed.save()
 
             res.status(204).end()
         } catch (err) {
@@ -165,13 +197,6 @@ router.put("/:userid", requireAuthentication, async function (req, res, next) {
                     },
                 }
             )
-
-            await User.findByIdAndUpdate(req.params.userid, {
-                $set: {
-                    "posts.$[].authorName": updatedUser.name,
-                    "posts.$[].authorJobTitle": updatedUser.jobTitle,
-                },
-            })
 
             await Feed.updateMany(
                 { "posts.authorEmail": userToUpdate.email },
@@ -377,12 +402,6 @@ router.post('/profileImage', requireAuthentication, upload.single('file'), async
                 }
             )
 
-            await User.findByIdAndUpdate(req.params.userid, {
-                $set: {
-                    "posts.$[].authorProfilePictureId": id
-                },
-            })
-
             await Feed.updateMany(
                 { "posts.authorEmail": updatedUser.email },
                 {
@@ -443,7 +462,27 @@ router.delete("/profileImage/:id", requireAuthentication, async function (req, r
             }
 
             user.profilePictureId = ''
-            await user.save()
+            const updatedUser = await user.save()
+
+            // iterate though the posts and update authorName, and authorJobTitle if they have changed
+            await Post.updateMany(
+                { authorEmail: updatedUser.email },
+                {
+                    $set: {
+                        profilePictureId: ''
+                    },
+                }
+            )
+
+            await Feed.updateMany(
+                { "posts.authorEmail": updatedUser.email },
+                {
+                    $set: {
+                        "posts.$[post].authorProfilePictureId": ''
+                    },
+                },
+                { arrayFilters: [{ "post.authorEmail": updatedUser.email }] }
+            )
 
             return res.status(204).end()
         } catch (err) {

@@ -103,7 +103,7 @@ function Feed() {
         setLoading(false);
         clearInterval(loadingTimer);
       }
-    }, 100);
+    }, 300);
   
     // Cleanup the interval if the component unmounts or if the posts change
     return () => {

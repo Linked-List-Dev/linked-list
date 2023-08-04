@@ -17,6 +17,7 @@ const commentSchema = new mongoose.Schema(
         authorProfilePictureId: {
             type: String,
             required: true,
+            default: ''
         }
     },
     {

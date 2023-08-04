@@ -1,5 +1,4 @@
 import mongoose from "mongoose"
-import Post from "./Post.js"
 
 const userSchema = new mongoose.Schema({
     email: {
@@ -16,7 +15,8 @@ const userSchema = new mongoose.Schema({
     },
     profilePictureId: {
         type: String,           // Store the link to the profile picture as a string
-        required: true
+        default: '',
+        required: false
     },
     bio: {
         type: String,
@@ -26,9 +26,17 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: false
     },
-    posts: {
-        type: [Post.Schema],
+    followers: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'User',
         default: [],
+        required: false
+    },
+    following: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'User',
+        default: [],
+        required: false
     },
 })
 

@@ -151,7 +151,6 @@ function Profile() {
       setJobTitle(res.data.jobTitle);
       setBiography(res.data.bio);
       setOpen(false);
-      setProfilePictureId(res.data.profilePictureId)
       setSuccessVis(true);
     } else {
       console.log(
@@ -179,12 +178,13 @@ function Profile() {
       console.log(res.status);
       if (res.status === 200 || res.status === 304) {
         const userData = res.data.user;
-        console.log("userData:", userData);
+        const userPosts = res.data.userPosts;
+        console.log("userPosts:", userPosts)
         setUserId(userData._id);
         setUserName(userData.name);
         setJobTitle(userData.jobTitle);
         setBiography(userData.bio);
-        setPosts(userData.posts);
+        setPosts(userPosts);
 
         setFormValues({
           name: userData.name,
@@ -192,32 +192,33 @@ function Profile() {
           bio: userData.bio,
         });
 
-        const profileImageFetch = await axios.get(
-          `http://localhost:8000/api/users/profileImage/${userData.profilePictureId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-            responseType: 'arraybuffer', // Set the responseType to arraybuffer
+        if (userData.profilePictureId !== '') {
+          const profileImageFetch = await axios.get(
+            `http://localhost:8000/api/users/profileImage/${userData.profilePictureId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+              responseType: 'arraybuffer', // Set the responseType to arraybuffer
+            }
+          );
+
+          if (profileImageFetch.status === 200 || profileImageFetch.status === 304) {
+            // Create a blob from the file data
+            const blob = new Blob([profileImageFetch.data], {
+              type: profileImageFetch.headers['content-type'],
+            });
+
+            // Convert the blob to a URL (blob URL)
+            const blobUrl = URL.createObjectURL(blob);
+            setProfileImage(blobUrl);
+            setLoading(false);
+          } else {
+            console.log(
+              "Tia TODO: display an error saying failed to fetch user data (res.data.error)"
+            );
           }
-        );
-
-        if (profileImageFetch.status === 200 || profileImageFetch.status === 304) {
-          // Create a blob from the file data
-          const blob = new Blob([profileImageFetch.data], {
-            type: profileImageFetch.headers['content-type'],
-          });
-
-          // Convert the blob to a URL (blob URL)
-          const blobUrl = URL.createObjectURL(blob);
-          setProfileImage(blobUrl);
-          setLoading(false);
         }
-
-      } else {
-        console.log(
-          "Tia TODO: display an error saying failed to fetch user data (res.data.error)"
-        );
       }
     } catch (err) {
       console.log("err", err);
@@ -225,6 +226,7 @@ function Profile() {
         navigate("/register");
       }
     }
+      
   };
 
   useEffect(() => {
