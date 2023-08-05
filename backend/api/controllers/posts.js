@@ -146,6 +146,11 @@ router.delete("/:postid", requireAuthentication, async function (req, res, next)
                 .json({ error: "You can only delete your own posts!" })
         }
 
+        // Delete all the comments associated with the post
+        for (const comment of post.comments) {
+            await Comment.findByIdAndDelete(comment._id.toString())
+        }
+
         // delete the post from the global feed
         const feed = await Feed.findById(process.env.FEED_ID)
 
