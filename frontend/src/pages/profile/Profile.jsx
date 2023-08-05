@@ -41,9 +41,9 @@ function Profile() {
     bio: "",
     jobTitle: "",
   });
+  
   const [openFollowingModal, setOpenFollowingModal] = useState(false)
   const closeFollowingModal = () => setOpenFollowingModal(false)
-
   const [loading, setLoading] = useState(true);
 
   const [open, setOpen] = useState(false);
@@ -127,7 +127,7 @@ function Profile() {
   }, []);
 
   const handleSubmit = async (e, values) => {
-    console.log("HANDLE SUBMIT", values);
+    console.log('HANDLE SUBMIT', values);
 
     // Make PUT request to update user data
     const res = await axios.put(
