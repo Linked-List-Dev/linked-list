@@ -5,6 +5,7 @@ import {
   Typography,
   Modal,
   Box,
+  TextareaAutosize,
   Button,
 } from "@mui/material";
 
@@ -50,18 +51,18 @@ function NewPostModal({
                 <Typography variant="h3" color="accent.main">
                   New Post
                 </Typography>
-                <TextField
-                  sx={{ width: "30vw" }}
-                  multiline
-                  rows={5}
-                  variant="outlined"
-                  name="content"
-                  label="What's on your mind?"
-                  value={formValues.content}
-                  onChange={handleChange}
-                  fullWidth
-                  required
-                />
+                
+        <TextField
+          multiline
+          rows={5}
+          variant="outlined"
+          name="content"
+          label="What's on your mind?"
+          value={formValues.content}
+          onChange={handleChange}
+          fullWidth
+          required
+        />
 
                 <Button
                   type="submit"
