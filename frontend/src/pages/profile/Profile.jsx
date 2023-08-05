@@ -12,6 +12,7 @@ import {
   Alert,
   Button,
   Menu,
+  IconButton,
   MenuItem,
 } from "@mui/material";
 import Post from "../../components/Post";
@@ -308,14 +309,34 @@ function Profile() {
                           }}
                           onClick={handleOpenEdit}
                         />
+                        <IconButton
+                          sx={{
+                            position: "absolute",
+                            bottom: 20,
+                            left: 140,
+                            bgcolor: "white",
+                          }}
+                          onClick={handleOpenEdit}
+                        >
+                          <EditIcon />
+                        </IconButton>
                       </Box>
+                    </Box>
+                  </Box>
+                  <Stack direction={"row"} justifyContent="space-between">
+                    <Box>
+                      <Typography variant="h3" color={"text.main"}>
+                        {userName}
+                      </Typography>
+                      <Typography variant="h6" color={"text.secondary"}>
+                        {jobTitle}
+                      </Typography>
+                    </Box>
 
+                    <Box sx={{ ml: "auto", paddingTop: "2vh" }}>
                       {userId === localStorage.getItem("id") ? (
                         <Button
                           sx={{
-                            position: "absolute",
-                            bottom: "5px",
-                            right: "5px",
                             bgcolor: "white",
                             width: "fit-content",
                             height: "40px",
@@ -332,55 +353,48 @@ function Profile() {
                           />
                           Edit Profile
                         </Button>
-                      ) : null}
-                    </Box>
-                  </Box>
-                  <Stack direction={"row"} justifyContent="space-between">
-                    <Box>
-                      <Typography variant="h3" color={"text.main"}>
-                        {userName}
-                      </Typography>
-                      <Typography variant="h6" color={"text.secondary"}>
-                        {jobTitle}
-                      </Typography>
-                    </Box>
-
-                    <Box sx={{ ml: "auto", paddingTop: "2vh" }}>
-                      <Button
-                        variant="contained"
-                        onClick={handleFollow}
-                        sx={{
-                          backgroundColor: "accent.main",
-                          "&:hover": {
-                            backgroundColor: "accent.secondary",
-                          },
-                        }}
-                      >
-                        Follow
-                      </Button>
-                      <Button
-                        onClick={handleClick}
-                        startIcon={<ArrowDropDownIcon />}
-                        variant="contained"
-                        sx={{
-                          backgroundColor: "accent.main",
-                          "&:hover": {
-                            backgroundColor: "accent.secondary",
-                          },
-                        }}
-                      >
-                        Following
-                      </Button>
-                      <Menu
-                        anchorEl={anchorEl}
-                        open={Boolean(anchorEl)}
-                        onClose={handleElClose}
-                      >
-                        <MenuItem onClick={handleShowFollowingModal}>
-                          View Following
-                        </MenuItem>
-                        <MenuItem onClick={handleUnfollow}>Unfollow</MenuItem>
-                      </Menu>
+                      ) : (
+                        <Box>
+                          {" "}
+                          <Button
+                            variant="contained"
+                            onClick={handleFollow}
+                            sx={{
+                              backgroundColor: "accent.main",
+                              "&:hover": {
+                                backgroundColor: "accent.secondary",
+                              },
+                            }}
+                          >
+                            Follow
+                          </Button>
+                          <Button
+                            onClick={handleClick}
+                            startIcon={<ArrowDropDownIcon />}
+                            variant="contained"
+                            sx={{
+                              backgroundColor: "accent.main",
+                              "&:hover": {
+                                backgroundColor: "accent.secondary",
+                              },
+                            }}
+                          >
+                            Following
+                          </Button>
+                          <Menu
+                            anchorEl={anchorEl}
+                            open={Boolean(anchorEl)}
+                            onClose={handleElClose}
+                          >
+                            <MenuItem onClick={handleShowFollowingModal}>
+                              View Following
+                            </MenuItem>
+                            <MenuItem onClick={handleUnfollow}>
+                              Unfollow
+                            </MenuItem>
+                          </Menu>
+                        </Box>
+                      )}
                     </Box>
                   </Stack>
                 </Box>
@@ -441,6 +455,7 @@ function Profile() {
                 paddingTop: "67px",
                 paddingBottom: "2vh",
                 overflow: "auto",
+                backgroundColor: "page.secondary",
               }}
             >
               <Stack spacing={5}>
@@ -470,23 +485,18 @@ function Profile() {
                           }}
                           onClick={handleOpenEdit}
                         />
-                      </Box>
-
-                      {userId === localStorage.getItem("id") ? (
-                        <Button
+                        <IconButton
                           sx={{
                             position: "absolute",
-                            bottom: "5px",
-                            right: "5px",
+                            bottom: 20,
+                            left: 120,
                             bgcolor: "white",
-                            width: "40px",
-                            height: "40px",
                           }}
-                          onClick={handleOpen}
+                          onClick={handleOpenEdit}
                         >
-                          <EditIcon fontSize="large" sx={{ color: "black" }} />
-                        </Button>
-                      ) : null}
+                          <EditIcon />
+                        </IconButton>
+                      </Box>
                     </Box>
                   </Box>
                   <Stack direction={"row"} justifyContent="space-between">
@@ -500,41 +510,68 @@ function Profile() {
                     </Box>
 
                     <Box sx={{ ml: "auto", paddingTop: "2vh" }}>
-                      <Button
-                        variant="contained"
-                        onClick={handleFollow}
-                        sx={{
-                          backgroundColor: "accent.main",
-                          "&:hover": {
-                            backgroundColor: "accent.secondary",
-                          },
-                        }}
-                      >
-                        Follow
-                      </Button>
-                      <Button
-                        onClick={handleClick}
-                        startIcon={<ArrowDropDownIcon />}
-                        variant="contained"
-                        sx={{
-                          backgroundColor: "accent.main",
-                          "&:hover": {
-                            backgroundColor: "accent.secondary",
-                          },
-                        }}
-                      >
-                        Following
-                      </Button>
-                      <Menu
-                        anchorEl={anchorEl}
-                        open={Boolean(anchorEl)}
-                        onClose={handleElClose}
-                      >
-                        <MenuItem onClick={handleShowFollowingModal}>
-                          View Following
-                        </MenuItem>
-                        <MenuItem onClick={handleUnfollow}>Unfollow</MenuItem>
-                      </Menu>
+                      {userId === localStorage.getItem("id") ? (
+                        <Button
+                          sx={{
+                            bgcolor: "white",
+                            width: "fit-content",
+                            height: "40px",
+                            display: "flex",
+                            alignItems: "center",
+                            padding: "0 10px",
+                            color: "text.main",
+                            whiteSpace: "nowrap",
+                          }}
+                          onClick={handleOpen}
+                        >
+                          <EditIcon
+                            fontSize="small"
+                            sx={{ color: "black", marginRight: "5px" }}
+                          />
+                          Edit Profile
+                        </Button>
+                      ) : (
+                        <Box>
+                          {" "}
+                          <Button
+                            variant="contained"
+                            onClick={handleFollow}
+                            sx={{
+                              backgroundColor: "accent.main",
+                              "&:hover": {
+                                backgroundColor: "accent.secondary",
+                              },
+                            }}
+                          >
+                            Follow
+                          </Button>
+                          <Button
+                            onClick={handleClick}
+                            startIcon={<ArrowDropDownIcon />}
+                            variant="contained"
+                            sx={{
+                              backgroundColor: "accent.main",
+                              "&:hover": {
+                                backgroundColor: "accent.secondary",
+                              },
+                            }}
+                          >
+                            Following
+                          </Button>
+                          <Menu
+                            anchorEl={anchorEl}
+                            open={Boolean(anchorEl)}
+                            onClose={handleElClose}
+                          >
+                            <MenuItem onClick={handleShowFollowingModal}>
+                              View Following
+                            </MenuItem>
+                            <MenuItem onClick={handleUnfollow}>
+                              Unfollow
+                            </MenuItem>
+                          </Menu>
+                        </Box>
+                      )}
                     </Box>
                   </Stack>
                 </Box>
