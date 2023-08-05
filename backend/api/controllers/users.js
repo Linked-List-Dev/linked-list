@@ -412,6 +412,9 @@ router.post('/profileImage', requireAuthentication, upload.single('file'), async
                 { arrayFilters: [{ "post.authorEmail": updatedUser.email }] }
             )
             
+            // After saving the photo in MongoDB, delete the uploaded image from the local folder
+            fs.unlinkSync(req.file.path)
+
             res.status(201).send({
                 id: id
             })
@@ -420,7 +423,7 @@ router.post('/profileImage', requireAuthentication, upload.single('file'), async
         }
     } else {
         res.status(400).send({
-            error: "Request is not a valid photo object, make sure to provide the file!"
+            error: "The photo you upload should be in png/jpeg format!"
         })
     }
 })
@@ -495,4 +498,118 @@ router.delete("/profileImage/:id", requireAuthentication, async function (req, r
     }
 })
 
+router.post("/follow/:userid", requireAuthentication, async function (req, res, next) {
+    const userid = req.user._id
+
+    if (userid.toString() !== req.params.userid.toString()) {
+        try {
+            const followerUser = await User.findById(userid)
+            const userToFollow = await User.findById(req.params.userid)
+
+            if (!userToFollow) {
+                return res.status(404).json({ error: "User to follow not found!" })
+            }
+
+            // Check if the user is already being followed
+            if (userToFollow.followers.includes(userid)) {
+                return res.status(400).json({ error: "You already follow the given user!" })
+            }
+
+            userToFollow.followers.push(userid)
+            const followedUser = await userToFollow.save()
+
+            followerUser.following.push(followedUser._id)
+            const userThatFollowed = await followerUser.save()
+
+            return res.status(200).json({
+                message: "User successfully followed!",
+                followedUserFollowers: followedUser.followers,
+                followerUserFollowings: userThatFollowed.following
+            })
+        } catch (err) {
+            return res.status(500).json({ error: err.message })
+        }
+    } else {
+        return res.status(400).send({
+            error: "You can't follow yourself!"
+        })
+    }
+})
+
+router.post("/unfollow/:userid", requireAuthentication, async function (req, res, next) {
+    const userid = req.user._id
+
+    if (userid.toString() !== req.params.userid.toString()) {
+        try {
+            const unfollowerUser = await User.findById(userid)
+            const userToUnfollow = await User.findById(req.params.userid)
+
+            if (!userToUnfollow) {
+                return res.status(404).json({ error: "User to unfollow not found!" })
+            }
+
+            // Check if the user is being followed
+            if (!userToUnfollow.followers.includes(userid)) {
+                return res.status(400).json({ error: "You don't follow the given user!" })
+            }
+
+            // Remove the unfollower from the userToUnfollow's followers array
+            const followerIndex = userToUnfollow.followers.indexOf(userid)
+            userToUnfollow.followers.splice(followerIndex, 1)
+            await userToUnfollow.save()
+
+            // Remove the userToUnfollow from the unfollowerUser's following array
+            const followingIndex = unfollowerUser.following.indexOf(req.params.userid)
+            unfollowerUser.following.splice(followingIndex, 1)
+            await unfollowerUser.save()
+
+            return res.status(200).json({
+                message: "User successfully unfollowed!",
+                followedUserFollowers: userToUnfollow.followers,
+                followerUserFollowings: unfollowerUser.following,
+              })
+        } catch (err) {
+            return res.status(500).json({ error: err.message })
+        }
+    } else {
+        return res.status(400).send({
+            error: "You can't unfollow yourself!"
+        })
+    }
+})
+
+router.get("/following/:userid", requireAuthentication, async function (req, res, next) {
+    try {
+        const user = await User.findById(req.params.userid)
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found!" })
+        }
+
+        // Get the users that the current user is following
+        const following = await User.find({ _id: { $in: user.following } }).select("_id name profilePictureId")
+
+        return res.status(200).json({ following })
+    } catch (err) {
+        return res.status(500).json({ error: err.message })
+    }
+})  
+
+router.get("/followers/:userid", requireAuthentication, async function (req, res, next) {
+    try {
+        const user = await User.findById(req.params.userid)
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found!" })
+        }
+
+        // Get the followers of the user
+        const followers = await User.find({ _id: { $in: user.followers } }).select("_id name profilePictureId")
+
+        return res.status(200).json({ followers })
+    } catch (err) {
+        return res.status(500).json({ error: err.message })
+    }
+})
+  
 export default router
