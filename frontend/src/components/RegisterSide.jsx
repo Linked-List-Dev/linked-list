@@ -53,6 +53,7 @@ function RegisterSide() {
         localStorage.setItem("id", res.data.id);
         localStorage.setItem("email", res.data.email);
         localStorage.setItem("username", res.data.name);
+        localStorage.setItem("profilePictureId", res.data.profileImageId);
 
         navigate("/feed");
         // TODO:

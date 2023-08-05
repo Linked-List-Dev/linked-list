@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Drawer,
   AppBar,
@@ -35,6 +35,50 @@ function MobileSideNav({ onPostCreated }) {
   const handleClose = () => setOpen(false);
   const openSettingsModal = () => setSettingsOpen(true);
   const closeSettingsModal = () => setSettingsOpen(false);
+  const [profileImage, setProfileImage] = useState("");
+
+  const getFirstLetter = () => {
+    const userName = localStorage.getItem("username");
+    return userName ? userName[0] : '';
+  };
+
+  const fetchProfilePicture = async () => {
+    try {
+      const profileImageFetch = await axios.get(
+        `http://localhost:8000/api/users/profileImage/${localStorage.getItem("profilePictureId")}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          responseType: "arraybuffer", // Set the responseType to arraybuffer
+        }
+      );
+
+      if (
+        profileImageFetch.status === 200 ||
+        profileImageFetch.status === 304
+      ) {
+        // Create a blob from the file data
+        const blob = new Blob([profileImageFetch.data], {
+          type: profileImageFetch.headers["content-type"],
+        });
+
+        // Convert the blob to a URL (blob URL)
+        const blobUrl = URL.createObjectURL(blob);
+        setProfileImage(blobUrl);
+        console.log("NAVVVV: ", blobUrl)
+      } else {
+        console.log(
+          "Tia TODO: display an error saying failed to fetch user data (res.data.error)"
+        );
+      }
+    } catch (err) {
+      console.log("err", err);
+      if (err.response.status === 401 || err.response.status === 400) {
+        navigate("/register");
+      }
+    }
+  };
 
   const toggleDrawer = () => {
     setIsOpen(!isOpen);
@@ -53,7 +97,12 @@ function MobileSideNav({ onPostCreated }) {
   });
 
   const handleLogOut = () => {
-    //Artem to do log out
+    localStorage.setItem("token", "");
+    localStorage.setItem("id", "");
+    localStorage.setItem("email", "");
+    localStorage.setItem("username", "");
+    localStorage.setItem("profilePictureId", "");
+    navigate("/");
   };
   const handleDeleteAccount = () => {
     console.log("deleting account");
@@ -95,6 +144,10 @@ function MobileSideNav({ onPostCreated }) {
       // Tia TODO: display the error
     }
   };
+
+  useEffect(() => {
+    fetchProfilePicture();
+  }, []);
 
   return (
     <div>
@@ -147,8 +200,13 @@ function MobileSideNav({ onPostCreated }) {
                     to={`/profile/${localStorage.getItem("id")}`}
                   >
                     <ListItemIcon>
-                      {/*ARTEM TODO GET IMAGE FROM USER CAN USE SRC*/}
-                      <Avatar sx={{ bgcolor: "accent.main" }}>A</Avatar>
+                      <Avatar
+                        alt="Profile Picture"
+                        src={profileImage} // Set the source of the image to the blobUrl
+                        sx={{ bgcolor: "accent.main" }}
+                      >
+                        {profileImage ? null : getFirstLetter()}
+                      </Avatar>
                     </ListItemIcon>
                     <ListItemText>
                       <Typography variant="h4">Profile</Typography>

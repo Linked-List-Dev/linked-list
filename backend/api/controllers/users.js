@@ -61,6 +61,7 @@ router.post("/", async function (req, res, next) {
                 email: createdUser.email,
                 name: createdUser.name,
                 token: token,
+                profileImageId: createdUser.profilePictureId,
                 links: {
                     user: `/users/${createdUser.id}`,
                 },
@@ -294,6 +295,7 @@ router.post("/login", async function (req, res, next) {
                     email: user.email,
                     name: user.name,
                     token: token,
+                    profileImageId: user.profilePictureId
                 })
             } else if (!user) {
                 return res

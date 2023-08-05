@@ -1,5 +1,4 @@
-import * as React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import LinkedListLogoLight from "../assets/LinkedListLogoLight.svg";
 import AppTheme from "../util/Theme";
 import {
@@ -40,10 +39,52 @@ function NavigationSidePanel({ onPostCreated }) {
   const handleClose = () => setOpen(false);
   const openSettingsModal = () => setSettingsOpen(true);
   const closeSettingsModal = () => setSettingsOpen(false);
-
-  
+  const [profileImage, setProfileImage] = useState("");
 
   const navigate = useNavigate();
+
+  const getFirstLetter = () => {
+    const userName = localStorage.getItem("username");
+    return userName ? userName[0] : '';
+  };
+
+  const fetchProfilePicture = async () => {
+    try {
+      const profileImageFetch = await axios.get(
+        `http://localhost:8000/api/users/profileImage/${localStorage.getItem("profilePictureId")}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          responseType: "arraybuffer", // Set the responseType to arraybuffer
+        }
+      );
+
+      if (
+        profileImageFetch.status === 200 ||
+        profileImageFetch.status === 304
+      ) {
+        // Create a blob from the file data
+        const blob = new Blob([profileImageFetch.data], {
+          type: profileImageFetch.headers["content-type"],
+        });
+
+        // Convert the blob to a URL (blob URL)
+        const blobUrl = URL.createObjectURL(blob);
+        setProfileImage(blobUrl);
+        console.log("NAVVVV: ", blobUrl)
+      } else {
+        console.log(
+          "Tia TODO: display an error saying failed to fetch user data (res.data.error)"
+        );
+      }
+    } catch (err) {
+      console.log("err", err);
+      if (err.response.status === 401 || err.response.status === 400) {
+        navigate("/register");
+      }
+    }
+  };
 
   const [formValues, setFormValues] = useState({
     content: "",
@@ -53,7 +94,6 @@ function NavigationSidePanel({ onPostCreated }) {
     if (reason === "clickaway") {
       return;
     }
-
     setSuccessVis(false);
   };
 
@@ -62,6 +102,7 @@ function NavigationSidePanel({ onPostCreated }) {
     localStorage.setItem("id", "");
     localStorage.setItem("email", "");
     localStorage.setItem("username", "");
+    localStorage.setItem("profilePictureId", "");
     navigate("/");
   };
 
@@ -101,6 +142,10 @@ function NavigationSidePanel({ onPostCreated }) {
     }
   };
 
+  useEffect(() => {
+    fetchProfilePicture();
+  }, []);
+
   return (
     <div>
       <ThemeProvider theme={AppTheme}>
@@ -113,10 +158,10 @@ function NavigationSidePanel({ onPostCreated }) {
             }}
           >
             <Box component={Link} to="/" sx={{
-        display: 'flex',
-        justifyContent: 'center', // Align horizontally to center
-        alignItems: 'center',    // Align vertically to center
-      }}>
+                display: 'flex',
+                justifyContent: 'center',   // Align horizontally to center
+                alignItems: 'center',       // Align vertically to center
+              }}>
               <img src={LinkedListLogoLight} height={"45vh"} sx={{paddingRight: '2', paddingLeft: '2'}}/>
             </Box>
 
@@ -149,10 +194,12 @@ function NavigationSidePanel({ onPostCreated }) {
                   to={`/profile/${localStorage.getItem("id")}`}
                 >
                   <ListItemIcon>
-                    {/*ARTEM TODO GET IMAGE FROM USER CAN USE SRC*/}
-                    <Avatar sx={{ bgcolor: "accent.main" }}>
-                      {" "}
-                      {localStorage.getItem("username")[0]}{" "}
+                    <Avatar
+                      alt="Profile Picture"
+                      src={profileImage} // Set the source of the image to the blobUrl
+                      sx={{ bgcolor: "accent.main" }}
+                    >
+                      {profileImage ? null : getFirstLetter()}
                     </Avatar>
                   </ListItemIcon>
                   <ListItemText>

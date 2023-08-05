@@ -75,6 +75,7 @@ function Profile() {
       );
 
       if (res.status === 201) {
+        localStorage.setItem("profilePictureId", res.data.id);
         const profileImageFetch = await axios.get(
           `http://localhost:8000/api/users/profileImage/${res.data.id}`,
           {

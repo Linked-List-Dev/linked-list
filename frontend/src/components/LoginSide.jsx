@@ -39,10 +39,12 @@ function LoginSide({ openByDefault }) {
         res.data.id,
         res.data.token
       );
+
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("id", res.data.id);
       localStorage.setItem("email", res.data.email);
       localStorage.setItem("username", res.data.name);
+      localStorage.setItem("profilePictureId", res.data.profileImageId);
 
       navigate("/feed");
       // TODO:
