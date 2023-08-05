@@ -1,14 +1,52 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Typography, Modal, Box, Stack } from "@mui/material";
+import ConfirmationMessageModal from "./ConfirmationMessageModal";
 
 function SettingsModal({
   settingsOpen,
   closeSettingsModal,
   handleLogOut,
-  openConfirmationModal,
 }) {
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
+  const openSettingsModal = () => setSettingsOpen(true);
+  const closeConfirmationModal = () => setConfirmOpen(false);
+
+  const openConfirmationModal = () => {
+    console.log('hi')
+    closeSettingsModal()
+    setConfirmOpen(true);
+  };
+
+  const handleDeleteAccount = async () => {
+    const res = await axios.delete(
+      `http://localhost:8000/api/users/${localStorage.getItem("id")}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+
+    console.log(res.status);
+    if (res.status === 204) {
+      // Tia TODO: create a popup saying that the user got deleted successfully
+    } else {
+      console.log(
+        "Tia TODO: display an error saying failed to delete a post (res.data.error)"
+      );
+    }
+
+    localStorage.setItem("token", "");
+    localStorage.setItem("id", "");
+    localStorage.setItem("email", "");
+    localStorage.setItem("username", "");
+    navigate("/");
+  };
+
   return (
-    <Modal
+    <Box>
+<Modal
       open={settingsOpen}
       onClose={closeSettingsModal}
       sx={{
@@ -78,6 +116,9 @@ function SettingsModal({
         </Box>
       </Box>
     </Modal>
+    <ConfirmationMessageModal confirmOpen={confirmOpen} handleDeleteAccount={handleDeleteAccount} closeConfirmationModal={closeConfirmationModal}/>
+    </Box>
+    
   );
 }
 

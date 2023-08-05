@@ -11,7 +11,7 @@ import {
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import AppTheme from "../../util/Theme";
 
-const EditPhotoModal = ({ open, onClose, onFileUpload }) => {
+function EditPhotoModal ({ open, onClose, onFileUpload }) {
   const [selectedFile, setSelectedFile] = useState(null);
 
   const handleFileChange = (event) => {
@@ -73,11 +73,13 @@ const EditPhotoModal = ({ open, onClose, onFileUpload }) => {
                 <label htmlFor="file-input">
                   <Box
                     border={1}
-                    borderColor="primary.main"
+                    borderColor={selectedFile ? "green" : "primary.main"}
                     borderRadius="borderRadius"
                     p={2}
                     textAlign="center"
                     component="div"
+                    paddingLeft={'2vw'}
+                    paddingRight={'2vw'}
                   >
                     <Input
                       id="file-input"
@@ -87,7 +89,11 @@ const EditPhotoModal = ({ open, onClose, onFileUpload }) => {
                       inputProps={{ "aria-label": "Upload file" }}
                     />
                     <CloudUploadIcon fontSize="large" />
-                    <p>Click anywhere to upload a file</p>
+                    {selectedFile ? (
+            <p>File uploaded: {selectedFile.name}</p>
+          ) : (
+            <p>Click anywhere to upload a file</p>
+          )}
                   </Box>
                 </label>
               </Box>

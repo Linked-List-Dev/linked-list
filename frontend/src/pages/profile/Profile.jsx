@@ -35,6 +35,11 @@ function Profile() {
   const [headPhoto, setHeaderPhoto] = useState(
     "https://images.pexels.com/photos/1796730/pexels-photo-1796730.jpeg?cs=srgb&dl=pexels-chait-goli-1796730.jpg&fm=jpg"
   );
+  const [formValues, setFormValues] = useState({
+    name: "",
+    bio: "",
+    jobTitle: "",
+  });
 
   const [loading, setLoading] = useState(true);
 
@@ -115,28 +120,13 @@ function Profile() {
     };
   }, []);
 
-  const [formValues, setFormValues] = useState({
-    name: "",
-    bio: "",
-    jobTitle: "",
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormValues((prevValues) => ({
-      ...prevValues,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log(formValues);
+  const handleSubmit = async (e, values) => {
+    console.log('HANDLE SUBMIT', values);
 
     // Make PUT request to update user data
     const res = await axios.put(
       `http://localhost:8000/api/users/${userId}`,
-      formValues,
+      values,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -154,7 +144,7 @@ function Profile() {
       setSuccessVis(true);
     } else {
       console.log(
-        "Tia TODO: display an error saying failed to update user info (res.data.error)"
+        res.data.error // change to snackbar
       );
     }
   };
@@ -258,7 +248,6 @@ function Profile() {
                 overflow: "auto",
               }}
             >
-              {/* Here goes the profile stuff*/}
               <Stack spacing={5}>
                 <Box>
                   <Box
@@ -393,6 +382,7 @@ function Profile() {
                             border: "white 4px solid",
                             borderColor: "page.main",
                           }}
+                          onClick={handleOpenEdit}
                         />
                       </Box>
 
@@ -469,8 +459,8 @@ function Profile() {
         <EditProfileModal
           open={open}
           handleClose={handleClose}
-          handleSubmit={handleChange}
-          formValues={formValues}
+          initValues={formValues}
+          handleSubmit={handleSubmit}
         />
         <Snackbar
           open={successVis}

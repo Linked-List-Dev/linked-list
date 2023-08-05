@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -8,7 +8,33 @@ import {
   Modal,
 } from "@mui/material";
 
-function EditProfileModal({ open, handleClose, handleChange, handleSubmit, formValues }) {
+function EditProfileModal({ open, handleClose, handleSubmit, initValues }) {
+  const [formValues, setFormValues] = useState("")
+  // ({
+  //   name: "",
+  //   bio: "",
+  //   jobTitle: "",
+  // });
+
+  useEffect(() => {
+    setFormValues(initValues);
+  }, [initValues]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues((prevValues) => ({
+      ...prevValues,
+      [name]: value,
+    }));
+  };
+
+  const localSubmit = (e) => {
+    e.preventDefault()
+    console.log('LOCAL SUBMIT', formValues)
+    handleSubmit(e, formValues)
+    handleClose()
+}
+
   return (
     <Modal
       open={open}
@@ -50,7 +76,7 @@ function EditProfileModal({ open, handleClose, handleChange, handleSubmit, formV
             paddingTop="2vh"
             paddingBottom="2vh"
           >
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={localSubmit}>
               <Stack alignItems={"center"} spacing={3} width={"30vw"}>
                 <Typography variant="h3" color="accent.main">
                   Edit Profile

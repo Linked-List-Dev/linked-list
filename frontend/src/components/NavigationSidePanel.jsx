@@ -3,6 +3,7 @@ import { useState } from "react";
 import LinkedListLogoLight from "../assets/LinkedListLogoLight.svg";
 import AppTheme from "../util/Theme";
 import {
+  TextField,
   Stack,
   ThemeProvider,
   List,
@@ -12,37 +13,35 @@ import {
   ListItemIcon,
   ListItemText,
   Avatar,
+  Modal,
   Box,
   Snackbar,
   Alert,
+  Button,
 } from "@mui/material";
 
 import HomeIcon from "@mui/icons-material/Home";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import SettingsIcon from "@mui/icons-material/Settings";
+import SearchIcon from "@mui/icons-material/Search";
+import InputAdornment from "@mui/material/InputAdornment";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 import { Link } from "react-router-dom";
 import NewPostModal from "./Modals/NewPostModal";
 import SettingsModal from "./Modals/SettingsModal";
-import ConfirmationMessageModal from "./Modals/ConfirmationMessageModal";
 
 function NavigationSidePanel({ onPostCreated }) {
   const [open, setOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [confirmOpen, setConfirmOpen] = useState(false);
   const [successVis, setSuccessVis] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const openSettingsModal = () => setSettingsOpen(true);
   const closeSettingsModal = () => setSettingsOpen(false);
-  const closeConfirmationModal = () => setConfirmOpen(false);
 
-  const openConfirmationModal = () => {
-    setSettingsOpen(false);
-    setConfirmOpen(true);
-  };
+  
 
   const navigate = useNavigate();
 
@@ -59,32 +58,6 @@ function NavigationSidePanel({ onPostCreated }) {
   };
 
   const handleLogOut = () => {
-    localStorage.setItem("token", "");
-    localStorage.setItem("id", "");
-    localStorage.setItem("email", "");
-    localStorage.setItem("username", "");
-    navigate("/");
-  };
-
-  const handleDeleteAccount = async () => {
-    const res = await axios.delete(
-      `http://localhost:8000/api/users/${localStorage.getItem("id")}`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
-    );
-
-    console.log(res.status);
-    if (res.status === 204) {
-      // Tia TODO: create a popup saying that the user got deleted successfully
-    } else {
-      console.log(
-        "Tia TODO: display an error saying failed to delete a post (res.data.error)"
-      );
-    }
-
     localStorage.setItem("token", "");
     localStorage.setItem("id", "");
     localStorage.setItem("email", "");
@@ -210,13 +183,6 @@ function NavigationSidePanel({ onPostCreated }) {
           settingsOpen={settingsOpen}
           closeSettingsModal={closeSettingsModal}
           handleLogOut={handleLogOut}
-          openConfirmationModal={openConfirmationModal}
-        />
-
-        <ConfirmationMessageModal
-          confirmOpen={confirmOpen}
-          closeConfirmationModal={closeConfirmationModal}
-          handleDeleteAccount={handleDeleteAccount}
         />
 
         <Snackbar

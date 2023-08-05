@@ -6,7 +6,9 @@ function ConfirmationMessageModal({
   closeConfirmationModal,
   handleDeleteAccount,
 }) {
-  <Modal
+  
+  return (
+<Modal
     open={confirmOpen}
     onClose={closeConfirmationModal}
     sx={{
@@ -59,7 +61,9 @@ function ConfirmationMessageModal({
         </Button>
       </Stack>
     </Box>
-  </Modal>;
+  </Modal>
+  )
+  
 }
 
 export default ConfirmationMessageModal;

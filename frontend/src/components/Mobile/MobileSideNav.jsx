@@ -7,14 +7,12 @@ import {
   ListItemText,
   Avatar,
   Snackbar,
-  Alert,
-  Typography,
+  Alert, Typography,
   ListItem,
-  ListItemButton,
-  ListItemIcon,
+  ListItemButton, ListItemIcon,
   List,
   Box,
-  Stack,
+  Stack
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { ThemeProvider } from "@emotion/react";
@@ -27,24 +25,16 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import axios from "axios";
 import NewPostModal from "../Modals/NewPostModal";
 import SettingsModal from "../Modals/SettingsModal";
-import ConfirmationMessageModal from "../Modals/ConfirmationMessageModal";
 
 function MobileSideNav({ onPostCreated }) {
   const [isOpen, setIsOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [confirmOpen, setConfirmOpen] = useState(false);
   const [successVis, setSuccessVis] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const openSettingsModal = () => setSettingsOpen(true);
   const closeSettingsModal = () => setSettingsOpen(false);
-  const closeConfirmationModal = () => setConfirmOpen(false);
-
-  const openConfirmationModal = () => {
-    setSettingsOpen(false);
-    setConfirmOpen(true);
-  };
 
   const toggleDrawer = () => {
     setIsOpen(!isOpen);
@@ -193,13 +183,6 @@ function MobileSideNav({ onPostCreated }) {
           settingsOpen={settingsOpen}
           closeSettingsModal={closeSettingsModal}
           handleLogOut={handleLogOut}
-          openConfirmationModal={openConfirmationModal}
-        />
-
-        <ConfirmationMessageModal
-          confirmOpen={confirmOpen}
-          closeConfirmationModal={closeConfirmationModal}
-          handleDeleteAccount={handleDeleteAccount}
         />
 
         <Snackbar
