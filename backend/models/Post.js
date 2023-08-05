@@ -36,6 +36,7 @@ const postSchema = new mongoose.Schema(
         authorProfilePictureId: {
             type: String,
             required: false,
+            default: ''
         },
         comments: {
             type: [Comment.schema],

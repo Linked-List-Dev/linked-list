@@ -15,8 +15,6 @@ const router = Router()
 
 router.post("/", requireAuthentication, async function (req, res, next) {
     const userid = req.user._id
-    const username = req.user.name
-    const email = req.user.email
 
     // console.log("userid:", userid)
     // console.log("username:", username)
@@ -35,8 +33,8 @@ router.post("/", requireAuthentication, async function (req, res, next) {
         //create the post iteslf and save it
         const postToCreate = new Post({
             description: description,
-            authorName: username,
-            authorEmail: email,
+            authorName: user.name,
+            authorEmail: user.email,
             authorJobTitle: user.jobTitle ? user.jobTitle : "looking for job",
             authorProfilePictureId: user.profilePictureId ? user.profilePictureId : "",
             authorId: userid,
@@ -291,13 +289,11 @@ router.post("/dislike/", requireAuthentication, async function (req, res, next) 
 
 router.post("/comment/", requireAuthentication, async function (req, res, next) {
     const userid = req.user._id
-    const username = req.user.name
-    const email = req.user.email
-    const authorPictureId = req.user.profilePictureId
 
     const { postId, commentContent } = req.body
 
     try {
+        const user = await User.findById(userid)
         const postToCommentOn = await Post.findById(postId)
 
         if (!postToCommentOn) {
@@ -309,9 +305,9 @@ router.post("/comment/", requireAuthentication, async function (req, res, next) 
         // Create a new comment
         const commentToCreate = new Comment({
             content: commentContent,
-            authorName: username,
+            authorName: user.name,
             authorId: userid,
-            authorProfilePictureId: authorPictureId
+            authorProfilePictureId: user.profilePictureId
         })
 
         const newComment = await commentToCreate.save()
@@ -334,17 +330,16 @@ router.post("/comment/", requireAuthentication, async function (req, res, next) 
             message: "New comment successfully added!",
             id: newComment._id,
             post: updatedPost,
-            authorProfilePictureId: authorPictureId
+            authorProfilePictureId: user.profilePictureId
         })
     } catch (err) {
+        console.log("err:", err.message)
         return res.status(500).json({ error: err.message })
     }
 })
 
 router.put("/comment/:commentid", requireAuthentication, async function (req, res, next) {
     const userid = req.user._id
-    const username = req.user.name
-    const email = req.user.email
 
     const commentId = req.params.commentid
     const { newCommentContent } = req.body
@@ -371,7 +366,7 @@ router.put("/comment/:commentid", requireAuthentication, async function (req, re
 
         // Find the post that contains the updated comment
         const postContainingComment = await Post.findOne({ "comments._id": commentId })
-        // Update the comment content within the post's comments array
+            // Update the comment content within the post's comments array
             const updatedPostComments = postContainingComment.comments.map((comment) =>
             comment._id.toString() === commentId ? { ...comment, content: updatedComment.content } : comment
         )

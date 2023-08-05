@@ -50,8 +50,6 @@ router.post("/", async function (req, res, next) {
                 profilePictureId: ''
             })
 
-            console.log("userToCreate:", userToCreate)
-
             const createdUser = await userToCreate.save()
 
             const token = generateAuthToken(createdUser)
@@ -399,7 +397,7 @@ router.post('/profileImage', requireAuthentication, upload.single('file'), async
                 { authorEmail: updatedUser.email },
                 {
                     $set: {
-                        profilePictureId: id
+                        authorProfilePictureId: id
                     },
                 }
             )
