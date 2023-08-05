@@ -21,6 +21,7 @@ import MobileSideNav from "../../components/Mobile/MobileSideNav";
 import Footer from "../../components/Footer";
 import EditProfileModal from "../../components/Modals/EditProfileModal";
 import EditPhotoModal from "../../components/Modals/EditPhotoModal";
+import ShowFollowingModal from "../../components/Modals/ShowFollowingModal";
 
 function Profile() {
   const { profileid } = useParams();
@@ -40,7 +41,9 @@ function Profile() {
     bio: "",
     jobTitle: "",
   });
-
+  
+  const [openFollowingModal, setOpenFollowingModal] = useState(false)
+  const closeFollowingModal = () => setOpenFollowingModal(false)
   const [loading, setLoading] = useState(true);
 
   const [open, setOpen] = useState(false);
@@ -50,14 +53,14 @@ function Profile() {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [editOpen, setEditOpen] = useState(false);
 
-  const handleOpenEdit = () => setEditOpen(true)
-  const handleCloseEdit = () => setEditOpen(false)
+  const handleOpenEdit = () => setEditOpen(true);
+  const handleCloseEdit = () => setEditOpen(false);
 
   const handleFileUpload = async (file) => {
-    console.log("file:", file)
+    console.log("file:", file);
 
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
 
     try {
       const res = await axios.post(
@@ -66,7 +69,7 @@ function Profile() {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
-            'Content-Type': 'multipart/form-data', // Set the content type to 'multipart/form-data'
+            "Content-Type": "multipart/form-data", // Set the content type to 'multipart/form-data'
           },
         }
       );
@@ -78,14 +81,17 @@ function Profile() {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
-            responseType: 'arraybuffer', // Set the responseType to arraybuffer
+            responseType: "arraybuffer", // Set the responseType to arraybuffer
           }
         );
 
-        if (profileImageFetch.status === 200 || profileImageFetch.status === 304) {
+        if (
+          profileImageFetch.status === 200 ||
+          profileImageFetch.status === 304
+        ) {
           // Create a blob from the file data
           const blob = new Blob([profileImageFetch.data], {
-            type: profileImageFetch.headers['content-type'],
+            type: profileImageFetch.headers["content-type"],
           });
 
           // Convert the blob to a URL (blob URL)
@@ -95,7 +101,7 @@ function Profile() {
         }
       }
     } catch (error) {
-      console.error('Error uploading the file:', error);
+      console.error("Error uploading the file:", error);
     }
   };
 
@@ -169,7 +175,7 @@ function Profile() {
       if (res.status === 200 || res.status === 304) {
         const userData = res.data.user;
         const userPosts = res.data.userPosts;
-        console.log("userPosts:", userPosts)
+        console.log("userPosts:", userPosts);
         setUserId(userData._id);
         setUserName(userData.name);
         setJobTitle(userData.jobTitle);
@@ -182,21 +188,24 @@ function Profile() {
           bio: userData.bio,
         });
 
-        if (userData.profilePictureId !== '') {
+        if (userData.profilePictureId !== "") {
           const profileImageFetch = await axios.get(
             `http://localhost:8000/api/users/profileImage/${userData.profilePictureId}`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
               },
-              responseType: 'arraybuffer', // Set the responseType to arraybuffer
+              responseType: "arraybuffer", // Set the responseType to arraybuffer
             }
           );
 
-          if (profileImageFetch.status === 200 || profileImageFetch.status === 304) {
+          if (
+            profileImageFetch.status === 200 ||
+            profileImageFetch.status === 304
+          ) {
             // Create a blob from the file data
             const blob = new Blob([profileImageFetch.data], {
-              type: profileImageFetch.headers['content-type'],
+              type: profileImageFetch.headers["content-type"],
             });
 
             // Convert the blob to a URL (blob URL)
@@ -216,12 +225,20 @@ function Profile() {
         navigate("/register");
       }
     }
-      
   };
 
   useEffect(() => {
     fetchUserData();
   }, []);
+
+  // ARTEM TODO: both buttons are there but only show the relevant one.
+  const handleFollow = () => {
+    console.log("followed")
+  }
+
+  const handleUnfollow = () => {
+    console.log("unfollowed")
+  }
 
   return (
     <div>
@@ -294,12 +311,28 @@ function Profile() {
                       ) : null}
                     </Box>
                   </Box>
-                  <Typography variant="h3" color={"text.main"}>
-                    {userName}
-                  </Typography>
-                  <Typography variant="h6" color={"text.secondary"}>
-                    {jobTitle}
-                  </Typography>
+                  <Stack direction={"row"} justifyContent="space-between">
+                    <Box>
+                      <Typography variant="h3" color={"text.main"}>
+                        {userName}
+                      </Typography>
+                      <Typography variant="h6" color={"text.secondary"}>
+                        {jobTitle}
+                      </Typography>
+                    </Box>
+
+                    <Box sx={{ ml: 'auto', paddingTop: '2vh' }}>
+                      <Button variant='contained' onClick={handleFollow}>Follow</Button>
+                      <Button variant='outlined' color="error" onClick={handleUnfollow}>Unfollow</Button>
+                    </Box>
+                  </Stack>
+                  <Button onClick={() => {
+                    console.log("show following")
+                    setOpenFollowingModal(true)
+                  }}
+                  > 
+                  View following 
+                  </Button>
                 </Box>
 
                 <Box>
@@ -322,23 +355,26 @@ function Profile() {
                 <Box>
                   <Typography variant="h4">Posts</Typography>
                   <Stack spacing={3}>
-                    {posts.map((post) => (
-                      !loading && <Post
-                        key={post._id}
-                        _postId={post._id}
-                        _userName={post.authorName}
-                        _authorId={post.authorId}
-                        _jobTitle={post.authorJobTitle}
-                        _authorProfilePhoto={profileImage}
-                        _description={post.description}
-                        _likes={post.likes}
-                        _dislikes={post.dislikes}
-                        _comments={post.comments}
-                        _createdAt={post.createdAt}
-                        _updatedAt={post.updatedAt}
-                        onDeletePost={handlePostDelete}
-                      />
-                    ))}
+                    {posts.map(
+                      (post) =>
+                        !loading && (
+                          <Post
+                            key={post._id}
+                            _postId={post._id}
+                            _userName={post.authorName}
+                            _authorId={post.authorId}
+                            _jobTitle={post.authorJobTitle}
+                            _authorProfilePhoto={profileImage}
+                            _description={post.description}
+                            _likes={post.likes}
+                            _dislikes={post.dislikes}
+                            _comments={post.comments}
+                            _createdAt={post.createdAt}
+                            _updatedAt={post.updatedAt}
+                            onDeletePost={handlePostDelete}
+                          />
+                        )
+                    )}
                   </Stack>
                 </Box>
               </Stack>
@@ -403,12 +439,27 @@ function Profile() {
                       ) : null}
                     </Box>
                   </Box>
-                  <Typography variant="h3" color={"text.main"}>
-                    {userName}
-                  </Typography>
-                  <Typography variant="h6" color={"text.secondary"}>
-                    {jobTitle}
-                  </Typography>
+                  <Stack direction={"row"} justifyContent="space-between">
+                    <Box>
+                      <Typography variant="h3" color={"text.main"}>
+                        {userName}
+                      </Typography>
+                      <Typography variant="h6" color={"text.secondary"}>
+                        {jobTitle}
+                      </Typography>
+                    </Box>
+
+                    <Box sx={{ ml: 'auto', paddingTop: '2vh' }}>
+                      <Button variant='contained' onClick={handleFollow}>Follow</Button>
+                      <Button variant='outlined' color="error" onClick={handleUnfollow}>Unfollow</Button>
+                    </Box>
+                  </Stack>
+                  <Button onClick={() => {
+                    console.log("show following")
+                  }}
+                  > 
+                  View following 
+                  </Button>
                 </Box>
 
                 <Box>
@@ -431,23 +482,26 @@ function Profile() {
                 <Box>
                   <Typography variant="h4">Posts</Typography>
                   <Stack spacing={3}>
-                    {posts.map((post) => (
-                      !loading && <Post
-                        key={post._id}
-                        _postId={post._id}
-                        _userName={post.authorName}
-                        _authorId={post.authorId}
-                        _jobTitle={post.authorJobTitle}
-                        _authorProfilePhoto={profileImage}
-                        _description={post.description}
-                        _likes={post.likes}
-                        _dislikes={post.dislikes}
-                        _comments={post.comments}
-                        _createdAt={post.createdAt}
-                        _updatedAt={post.updatedAt}
-                        onDeletePost={handlePostDelete}
-                      />
-                    ))}
+                    {posts.map(
+                      (post) =>
+                        !loading && (
+                          <Post
+                            key={post._id}
+                            _postId={post._id}
+                            _userName={post.authorName}
+                            _authorId={post.authorId}
+                            _jobTitle={post.authorJobTitle}
+                            _authorProfilePhoto={profileImage}
+                            _description={post.description}
+                            _likes={post.likes}
+                            _dislikes={post.dislikes}
+                            _comments={post.comments}
+                            _createdAt={post.createdAt}
+                            _updatedAt={post.updatedAt}
+                            onDeletePost={handlePostDelete}
+                          />
+                        )
+                    )}
                   </Stack>
                 </Box>
               </Stack>
@@ -455,7 +509,13 @@ function Profile() {
           </Box>
         )}
 
-        <EditPhotoModal open={editOpen} onClose={handleCloseEdit} onFileUpload={handleFileUpload} />
+        <ShowFollowingModal open={openFollowingModal} handleClose={closeFollowingModal}/>
+
+        <EditPhotoModal
+          open={editOpen}
+          onClose={handleCloseEdit}
+          onFileUpload={handleFileUpload}
+        />
         <EditProfileModal
           open={open}
           handleClose={handleClose}

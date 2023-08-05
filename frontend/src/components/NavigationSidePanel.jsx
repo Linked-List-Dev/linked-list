@@ -112,8 +112,12 @@ function NavigationSidePanel({ onPostCreated }) {
               paddingTop: "2vh",
             }}
           >
-            <Box component={Link} to="/">
-              <img src={LinkedListLogoLight} height={"50vh"} />
+            <Box component={Link} to="/" sx={{
+        display: 'flex',
+        justifyContent: 'center', // Align horizontally to center
+        alignItems: 'center',    // Align vertically to center
+      }}>
+              <img src={LinkedListLogoLight} height={"45vh"} sx={{paddingRight: '2', paddingLeft: '2'}}/>
             </Box>
 
             <List>
