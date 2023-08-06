@@ -14,6 +14,8 @@ import {
   Menu,
   IconButton,
   MenuItem,
+  Backdrop,
+  CircularProgress
 } from "@mui/material";
 import Post from "../../components/Post";
 import EditIcon from "@mui/icons-material/Edit";
@@ -259,6 +261,12 @@ function Profile() {
 
   return (
     <div>
+      <Backdrop
+  sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+  open={loading}
+>
+  <CircularProgress color="inherit" />
+  </Backdrop>
       <ThemeProvider theme={AppTheme}>
         {windowWidth >= 768 ? (
           <Box

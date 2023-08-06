@@ -10,6 +10,8 @@ import {
   Stack,
   CardContent,
   IconButton,
+  Backdrop,
+  CircularProgress,
   Box,
 } from "@mui/material";
 import AppTheme from "../util/Theme";
@@ -53,6 +55,23 @@ function Post({
   const [updatedAt, setUpdatedAt] = useState('');
   const [open, setOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+
+  
+
+  useEffect(() => {
+    console.log('hello')
+  }, [_postId,
+    _userName,
+    _jobTitle,
+    _authorProfilePhoto,
+    _description,
+    _likes,
+    _dislikes,
+    _authorId,
+    _comments,
+    onDeletePost,
+    _createdAt,
+    _updatedAt,])
 
   const handleComment = () => {
     setOpen(true);
@@ -281,7 +300,10 @@ function Post({
   return (
     <div>
       <ThemeProvider theme={AppTheme}>
+      
+
         <Card sx={{ bgcolor: "page.main" }}>
+        
           <div style={{ position: "relative", zIndex: 999 }}>
           
             {authorId.toString() === localStorage.getItem("id") ? ( //only author can edit/delete their posts
@@ -363,8 +385,9 @@ function Post({
             <Button sx={{ color: "accent.main" }} onClick={handleComment}>
               <CommentIcon /> {comments.length}
             </Button>
-            <Typography variant="caption" sx={{ position: "relative",  color: "text.secondary" }}>{updatedAt}</Typography>
+            <Typography variant="caption" sx={{ position: "relative", right: "0px", color: "text.secondary" }}>{updatedAt}</Typography>
           </CardActions>
+          
         </Card>
         <Box>
           <ExpandedPost
@@ -390,6 +413,7 @@ function Post({
             onUpdatePost={handlePostUpdate}
           />
         </Box>
+        
       </ThemeProvider>
     </div>
   );
