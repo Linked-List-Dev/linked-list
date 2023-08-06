@@ -13,12 +13,14 @@ function Register({ openModal }) {
           sx={{
             display: "flex",
             width: "100vw",
+            overflow: 'scroll',
+            maxHeight: '100vh',
             // Add media query to stack components at 100vw on small screens
             "@media (max-width: 768px)": {
-              width: "100vw",
               flexDirection: "column",
               alignContent: "center",
               textAlign: "center",
+              overflow: 'scroll',
             },
           }}
         >
