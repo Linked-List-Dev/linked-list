@@ -363,7 +363,7 @@ function Post({
             <Button sx={{ color: "accent.main" }} onClick={handleComment}>
               <CommentIcon /> {comments.length}
             </Button>
-            <Typography variant="caption" sx={{ position: "absolute", right: "40px", color: "text.secondary" }}>{updatedAt}</Typography>
+            <Typography variant="caption" sx={{ position: "relative",  color: "text.secondary" }}>{updatedAt}</Typography>
           </CardActions>
         </Card>
         <Box>

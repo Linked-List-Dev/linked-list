@@ -10,7 +10,7 @@ function Footer() {
     <div>
       <ThemeProvider theme={AppTheme}>
         <Box
-          position="absolute"
+          position="static"
           sx={{ top: "auto", bottom: 0, backgroundColor: "accent.main", width: '100vw' }}
         >
           <Toolbar>

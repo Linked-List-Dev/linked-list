@@ -30,6 +30,8 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import NewPostModal from "./Modals/NewPostModal";
 import SettingsModal from "./Modals/SettingsModal";
+import Feed from "../pages/feed/Feed";
+import Footer from "./Footer";
 
 function NavigationSidePanel({ onPostCreated }) {
   const [open, setOpen] = useState(false);
@@ -45,13 +47,15 @@ function NavigationSidePanel({ onPostCreated }) {
 
   const getFirstLetter = () => {
     const userName = localStorage.getItem("username");
-    return userName ? userName[0] : '';
+    return userName ? userName[0] : "";
   };
 
   const fetchProfilePicture = async () => {
     try {
       const profileImageFetch = await axios.get(
-        `http://localhost:8000/api/users/profileImage/${localStorage.getItem("profilePictureId")}`,
+        `http://localhost:8000/api/users/profileImage/${localStorage.getItem(
+          "profilePictureId"
+        )}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -72,7 +76,7 @@ function NavigationSidePanel({ onPostCreated }) {
         // Convert the blob to a URL (blob URL)
         const blobUrl = URL.createObjectURL(blob);
         setProfileImage(blobUrl);
-        console.log("NAVVVV: ", blobUrl)
+        console.log("NAVVVV: ", blobUrl);
       } else {
         console.log(
           "Tia TODO: display an error saying failed to fetch user data (res.data.error)"
@@ -154,15 +158,23 @@ function NavigationSidePanel({ onPostCreated }) {
             sx={{
               backgroundColor: "page.main",
               height: "100vh",
-              paddingTop: "2vh",
+              paddingTop: "2vh"
             }}
           >
-            <Box component={Link} to="/" sx={{
-                display: 'flex',
-                justifyContent: 'center',   // Align horizontally to center
-                alignItems: 'center',       // Align vertically to center
-              }}>
-              <img src={LinkedListLogoLight} height={"45vh"} sx={{paddingRight: '2', paddingLeft: '2'}}/>
+            <Box
+              component={Link}
+              to="/"
+              sx={{
+                display: "flex",
+                justifyContent: "center", // Align horizontally to center
+                alignItems: "center", // Align vertically to center
+              }}
+            >
+              <img
+                src={LinkedListLogoLight}
+                height={"45vh"}
+                sx={{ paddingRight: "2", paddingLeft: "2" }}
+              />
             </Box>
 
             <List>
@@ -219,6 +231,7 @@ function NavigationSidePanel({ onPostCreated }) {
                 </ListItemButton>
               </ListItem>
             </List>
+            
           </Stack>
         </Box>
 

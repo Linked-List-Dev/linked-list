@@ -442,10 +442,20 @@ function Profile() {
                   </Stack>
                 </Box>
               </Stack>
+              <Box sx={{textAlign: 'center', justifyContent: 'center', alignItems: 'center', paddingTop: '2vh', color: '#cfcaca'}}>
+                  <Typography >
+                © {new Date().getFullYear()} Flores & Kolpakov. All rights
+                reserved.
+              </Typography>
+                  </Box>
             </Box>
           </Box>
         ) : (
-          <Box>
+          <Box sx={{
+            display: "flex",
+            backgroundColor: "page.secondary",
+            maxHeight: "100vh",
+          }}>
             <MobileSideNav onPostCreated={fetchUserData} />
             <Box
               sx={{
@@ -619,6 +629,12 @@ function Profile() {
                   </Stack>
                 </Box>
               </Stack>
+              <Box sx={{textAlign: 'center', justifyContent: 'center', alignItems: 'center', paddingTop: '2vh', color: '#cfcaca'}}>
+                  <Typography >
+                © {new Date().getFullYear()} Flores & Kolpakov. All rights
+                reserved.
+              </Typography>
+                  </Box>
             </Box>
           </Box>
         )}

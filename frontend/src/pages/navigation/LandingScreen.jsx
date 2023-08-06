@@ -25,7 +25,7 @@ function Landing() {
   }, []);
 
   return (
-    <div style={{ backgroundColor: "#FDFCFF", minHeight: "100vh" }}>
+    <div style={{ backgroundColor: "#FDFCFF", maxHeight: "100vh", overflow: 'scroll' }}>
       <ThemeProvider theme={AppTheme}>
         {windowWidth >= 768 ? (
           <Box width={"100vw"}>
