@@ -12,6 +12,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import EditComment from "./Modals/EditComment";
+import Linkify from "../util/Linkify";
 
 function Comment({
   _key,
@@ -110,7 +111,9 @@ function Comment({
             <Avatar sx={{ width: 40, height: 40 }} >{userName[0]}</Avatar>
             <Typography variant="h5">{userName}</Typography>
           </Stack>
-          <Typography>{content}</Typography>
+          <Typography>
+            <Linkify text={content}/>
+            </Typography>
           <Box sx={{textAlign: 'right'}}>
 
             <Typography variant="caption" sx={{color: "text.secondary", textAlign: 'right' }}>{updatedAt}</Typography>

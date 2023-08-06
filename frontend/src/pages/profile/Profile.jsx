@@ -28,6 +28,7 @@ import EditProfileModal from "../../components/Modals/EditProfileModal";
 import EditPhotoModal from "../../components/Modals/EditPhotoModal";
 import ShowFollowingModal from "../../components/Modals/ShowFollowingModal";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import Linkify from "../../util/Linkify";
 
 function Profile() {
   const { profileid } = useParams();
@@ -298,7 +299,7 @@ function Profile() {
                       display: "flex",
                       flexDirection: "column",
                       justifyContent: "flex-end",
-                      backgroundColor: 'accent.main',
+                      backgroundColor: "accent.main",
                       borderRadius: "10px",
                       minHeight: "20vh",
                     }}
@@ -417,7 +418,7 @@ function Profile() {
                     }}
                   >
                     <Typography color={"text.secondary"}>
-                      {biography}
+                      <Linkify text={biography} />
                     </Typography>
                   </Paper>
                 </Box>
@@ -492,7 +493,7 @@ function Profile() {
                       display: "flex",
                       flexDirection: "column",
                       justifyContent: "flex-end",
-                      backgroundColor: 'accent.main',
+                      backgroundColor: "accent.main",
                       borderRadius: "10px",
                       minHeight: "20vh",
                     }}
@@ -612,7 +613,7 @@ function Profile() {
                     }}
                   >
                     <Typography color={"text.secondary"}>
-                      {biography}
+                      <Linkify text={biography} />
                     </Typography>
                   </Paper>
                 </Box>
