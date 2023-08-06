@@ -122,6 +122,8 @@ function Profile() {
           const blobUrl = URL.createObjectURL(blob);
           setProfileImage(blobUrl);
           setLoading(false);
+
+          setEditOpen(false);
         }
       }
     } catch (error) {

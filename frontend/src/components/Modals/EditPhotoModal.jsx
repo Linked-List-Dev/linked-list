@@ -6,13 +6,24 @@ import {
   Typography,
   Input,
   ThemeProvider,
+  Snackbar,
+  Alert,
   Stack,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import AppTheme from "../../util/Theme";
 
-function EditPhotoModal ({ open, onClose, onFileUpload }) {
+function EditPhotoModal({ open, onClose, onFileUpload }) {
   const [selectedFile, setSelectedFile] = useState(null);
+  const [errorOpen, setErrorOpen] = useState(false)
+
+  const handleSnackClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setErrorOpen(false);
+  };
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -20,12 +31,15 @@ function EditPhotoModal ({ open, onClose, onFileUpload }) {
 
   const handleUpload = () => {
     if (selectedFile) {
-      onFileUpload(selectedFile);
-      setSelectedFile(null);
-      onClose();
+      const fileExtension = selectedFile.name.split('.').pop().toLowerCase()
+
+      if (fileExtension === 'jpeg' || fileExtension === 'jpg' || fileExtension === 'png'){
+        onFileUpload(selectedFile);
+        setSelectedFile(null);
+      } else {
+        setErrorOpen(true)
+      }
     }
-    onClose()
-    
   };
 
   return (
@@ -78,22 +92,23 @@ function EditPhotoModal ({ open, onClose, onFileUpload }) {
                     p={2}
                     textAlign="center"
                     component="div"
-                    paddingLeft={'2vw'}
-                    paddingRight={'2vw'}
+                    paddingLeft={"2vw"}
+                    paddingRight={"2vw"}
                   >
                     <Input
                       id="file-input"
                       type="file"
+                      accept="image/png, image/jpeg"
                       onChange={handleFileChange}
                       style={{ display: "none" }}
                       inputProps={{ "aria-label": "Upload file" }}
                     />
                     <CloudUploadIcon fontSize="large" />
                     {selectedFile ? (
-            <p>File uploaded: {selectedFile.name}</p>
-          ) : (
-            <p>Click anywhere to upload a file</p>
-          )}
+                      <p>File uploaded: {selectedFile.name}</p>
+                    ) : (
+                      <p>Click anywhere to upload a file</p>
+                    )}
                   </Box>
                 </label>
               </Box>
@@ -121,8 +136,22 @@ function EditPhotoModal ({ open, onClose, onFileUpload }) {
           </Box>
         </Box>
       </Modal>
+
+      <Snackbar
+          open={errorOpen}
+          autoHideDuration={3000}
+          onClose={handleSnackClose}
+        >
+          <Alert
+            onClose={handleSnackClose}
+            severity="error"
+            sx={{ width: "100%" }}
+          >
+            Invalid photo type. Must be jpeg, jpg, or png.
+          </Alert>
+        </Snackbar>
     </ThemeProvider>
   );
-};
+}
 
 export default EditPhotoModal;
