@@ -16,7 +16,7 @@ import {
 import AppTheme from "../../util/Theme";
 import axios from "axios";
 
-function EditPost({ _content, _postId, _open, _handleClose, onUpdatePost }) {
+function EditPost({ _content, _postId, _open, _handleClose, onUpdatePostDescription }) {
   const [content, setContent] = useState(_content);
   const [open, setOpen] = useState(_open);
   const [successVis, setSuccessVis] = useState(false);
@@ -38,11 +38,11 @@ function EditPost({ _content, _postId, _open, _handleClose, onUpdatePost }) {
         },
       }
     );
-
-    console.log("res.status:", res.status);
+    
+    console.log(res.status);
     if (res.status === 200) {
       // Update the state variable with the updated user data
-      onUpdatePost(content);
+      onUpdatePostDescription(res.data.post.description);
     } else {
       console.log(
         "Tia TODO: display an error saying failed to update post (res.data.error)"

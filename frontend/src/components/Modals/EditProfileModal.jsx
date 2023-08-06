@@ -8,7 +8,7 @@ import {
   Modal,
 } from "@mui/material";
 
-function EditProfileModal({ open, handleClose, handleSubmit, initValues }) {
+function EditProfileModal({ open, handleClose, onProfileUpdate, initValues }) {
   const [formValues, setFormValues] = useState("");
 
   useEffect(() => {
@@ -25,8 +25,7 @@ function EditProfileModal({ open, handleClose, handleSubmit, initValues }) {
 
   const localSubmit = (e) => {
     e.preventDefault();
-    console.log("LOCAL SUBMIT", formValues);
-    handleSubmit(e, formValues);
+    onProfileUpdate(e, formValues);
     handleClose();
   };
 

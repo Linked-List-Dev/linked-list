@@ -32,6 +32,7 @@ import Linkify from "../../util/Linkify";
 
 function Profile() {
   const { profileid } = useParams();
+  const [profileId, setProfileId] = useState(profileid);
   const [userName, setUserName] = useState("");
   const [userId, setUserId] = useState("");
   const [jobTitle, setJobTitle] = useState("New user");
@@ -77,6 +78,7 @@ function Profile() {
     setAnchorEl(null);
   };
 
+  
   const handleFileUpload = async (file) => {
     console.log("file:", file);
 
@@ -148,9 +150,7 @@ function Profile() {
     };
   }, []);
 
-  const handleSubmit = async (e, values) => {
-    console.log("HANDLE SUBMIT", values);
-
+  const handleProfileUpdate = async (e, values) => {
     // Make PUT request to update user data
     const res = await axios.put(
       `http://localhost:8000/api/users/${userId}`,
@@ -252,6 +252,19 @@ function Profile() {
   useEffect(() => {
     fetchUserData();
   }, []);
+
+  useEffect(() => {
+    // Listen for changes in the profile ID
+    if (profileid !== profileId) {
+      setLoading(true);
+      setProfileId(profileid);
+    }
+  }, [profileid]);
+
+  useEffect(() => {
+    // Fetch user data whenever the profile ID changes
+    fetchUserData();
+  }, [profileId]);
 
   // ARTEM TODO: both buttons are there but only show the relevant one.
   const handleFollow = () => {
@@ -685,7 +698,7 @@ function Profile() {
           open={open}
           handleClose={handleClose}
           initValues={formValues}
-          handleSubmit={handleSubmit}
+          onProfileUpdate={handleProfileUpdate}
         />
         <Snackbar
           open={successVis}

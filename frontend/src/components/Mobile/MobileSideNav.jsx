@@ -66,7 +66,6 @@ function MobileSideNav({ onPostCreated }) {
         // Convert the blob to a URL (blob URL)
         const blobUrl = URL.createObjectURL(blob);
         setProfileImage(blobUrl);
-        console.log("NAVVVV: ", blobUrl)
       } else {
         console.log(
           "Tia TODO: display an error saying failed to fetch user data (res.data.error)"

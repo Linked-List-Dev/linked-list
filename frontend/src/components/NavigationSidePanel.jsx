@@ -76,7 +76,6 @@ function NavigationSidePanel({ onPostCreated }) {
         // Convert the blob to a URL (blob URL)
         const blobUrl = URL.createObjectURL(blob);
         setProfileImage(blobUrl);
-        console.log("NAVVVV: ", blobUrl);
       } else {
         console.log(
           "Tia TODO: display an error saying failed to fetch user data (res.data.error)"
@@ -146,6 +145,11 @@ function NavigationSidePanel({ onPostCreated }) {
     }
   };
 
+  const handleProfileButtonClick = () => {
+    const profileId = localStorage.getItem("id");
+    navigate(`/profile/${profileId}`);
+  };
+
   useEffect(() => {
     fetchProfilePicture();
   }, []);
@@ -201,10 +205,7 @@ function NavigationSidePanel({ onPostCreated }) {
               </ListItem>
 
               <ListItem>
-                <ListItemButton
-                  component={Link}
-                  to={`/profile/${localStorage.getItem("id")}`}
-                >
+                <ListItemButton onClick={handleProfileButtonClick}>
                   <ListItemIcon>
                     <Avatar
                       alt="Profile Picture"

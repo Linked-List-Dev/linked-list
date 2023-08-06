@@ -4,6 +4,8 @@ import Card from "@mui/material/Card";
 import {
   Button,
   TextField,
+  Snackbar,
+  Alert,
   CardActions,
   ThemeProvider,
   Avatar,
@@ -37,6 +39,7 @@ function ExpandedPost({
   handleClose,
   handleLike,
   handleDislike,
+  onUpdatePostComments
 }) {
   const [content, setContent] = useState(_content);
   const [userName, setUserName] = useState(_userName);
@@ -51,6 +54,8 @@ function ExpandedPost({
   const [message, setMessage] = useState(
     "There are no comments yet. Would you like to add one?"
   );
+  const [successCreateCommentVis, setSuccessCreateCommentVis] = useState(false);
+  const [successDeleteCommentVis, setSuccessDeleteCommentVis] = useState(false);
 
   useEffect(() => {
     setContent(_content);
@@ -82,7 +87,6 @@ function ExpandedPost({
 
   const handleCreateComment = async (e) => {
     e.preventDefault()
-    console.log(commentContent);
 
     const res = await axios.post(
       "http://localhost:8000/api/posts/comment",
@@ -100,8 +104,8 @@ function ExpandedPost({
     console.log(res.status);
     if (res.status === 200) {
       setComments(res.data.post.comments);
-      // setOpen(false);
-      // setSuccessVis(true)
+      onUpdatePostComments(res.data.post.comments);
+      setSuccessCreateCommentVis(true);
       setCommentContent("");
     } else {
       console.log("err.message:", res.data.error);
@@ -123,13 +127,39 @@ function ExpandedPost({
 
   const handleCommentDelete = (commentId) => {
     // Remove the deleted comment from the comments array in the state
-    setComments((prevComments) =>
-      prevComments.filter((comment) => comment._id !== commentId)
+    const newComments = comments.filter((comment) => comment._id !== commentId);
+    setComments(newComments);
+    onUpdatePostComments(newComments);
+    setSuccessDeleteCommentVis(true);
+  };
+
+  const handleCommentUpdate = (commentId, newContent) => {
+    // Update the content of the specific comment in the comments array in the state
+    const updatedComments = comments.map((comment) =>
+        comment._id === commentId ? { ...comment, content: newContent } : comment
     );
+    setComments(updatedComments);
+    onUpdatePostComments(updatedComments);
   };
 
   const handleCommentChange = (e) => {
     setCommentContent(e.target.value);
+  };
+
+  const handleCreateCommentSnackClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setSuccessCreateCommentVis(false);
+  };
+
+  const handleDeleteCommentSnackClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setSuccessDeleteCommentVis(false);
   };
 
   return (
@@ -274,6 +304,7 @@ function ExpandedPost({
                           _updatedAt={comment.updatedAt}
                           _profilePhoto={comment.authorProfilePictureId}
                           onCommentDelete={handleCommentDelete}
+                          onCommentUpdate={handleCommentUpdate}
                         />
                       ))}
                     </Stack>
@@ -310,6 +341,34 @@ function ExpandedPost({
             </Stack>
           </Card>
         </Modal>
+        <Snackbar
+          open={successCreateCommentVis}
+          autoHideDuration={3000}
+          onClose={handleCreateCommentSnackClose}
+        >
+          <Alert
+            onClose={handleCreateCommentSnackClose}
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+            Comment created successfully!
+          </Alert>
+        </Snackbar>
+
+        <Snackbar
+          open={successDeleteCommentVis}
+          autoHideDuration={3000}
+          onClose={handleDeleteCommentSnackClose}
+        >
+          <Alert
+            onClose={handleDeleteCommentSnackClose}
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+            Comment deleted successfully!
+          </Alert>
+        </Snackbar>
+
       </ThemeProvider>
     </div>
   );

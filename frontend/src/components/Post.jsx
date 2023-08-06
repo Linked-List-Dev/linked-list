@@ -39,12 +39,10 @@ function Post({
   _createdAt,
   _updatedAt,
 }) {
-  console.log("_authorProfilePhoto: ebebbe", _authorProfilePhoto);
   const [postId, setPostId] = useState(_postId); // may be used for expanded view later...
   const [userName, setUserName] = useState(_userName);
   const [jobTitle, setJobTitle] = useState(_jobTitle);
-  const [authorProfilePhoto, setAuthorProfilePhoto] =
-    useState(_authorProfilePhoto);
+  const [authorProfilePhoto, setAuthorProfilePhoto] = useState(_authorProfilePhoto);
   const [description, setDescription] = useState(_description);
   const [likes, setLikes] = useState(_likes);
   const [dislikes, setDislikes] = useState(_dislikes);
@@ -97,10 +95,6 @@ function Post({
 
     e.stopPropagation();
   };
-
-  function onCardClick() {
-    console.log("post was clicked", postId);
-  }
 
   async function handleLike() {
     if (!likes.includes(localStorage.getItem("email"))) {
@@ -258,9 +252,13 @@ function Post({
     }
   }
 
-  const handlePostUpdate = (newDescription) => {
+  const handleDescriptionUpdate = (newDescription) => {
     // Remove the deleted post from the posts array in the state
     setDescription(newDescription);
+  };
+
+  const handleCommentsUpdate = (newComments) => {
+    setComments(newComments);
   };
 
   useEffect(() => {
@@ -393,13 +391,14 @@ function Post({
             handleClose={handleClose}
             handleDislike={handleDislike}
             handleLike={handleLike}
+            onUpdatePostComments={handleCommentsUpdate}
           />
           <EditPost
             _content={description}
             _open={editOpen}
             _handleClose={handleEditClose}
             _postId={postId}
-            onUpdatePost={handlePostUpdate}
+            onUpdatePostDescription={handleDescriptionUpdate}
           />
         </Box>
       </ThemeProvider>

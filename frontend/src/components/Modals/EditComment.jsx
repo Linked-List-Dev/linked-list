@@ -160,7 +160,7 @@ function EditComment({ _content, _commentId, _open, _handleClose, onUpdateCommen
             severity="success"
             sx={{ width: "100%" }}
           >
-            Comment saved successfully!
+            Comment updated successfully!
           </Alert>
         </Snackbar>
         

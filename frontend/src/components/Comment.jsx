@@ -23,6 +23,7 @@ function Comment({
   _updatedAt,
   _profilePhoto,
   onCommentDelete,
+  onCommentUpdate
 }) {
   const [userName, setUserName] = useState(_authorName);
   const [content, setContent] = useState(_content);
@@ -41,6 +42,7 @@ function Comment({
   };
 
   const handleCommentUpdate = (newContent) => {
+    onCommentUpdate(commentId, newContent);
     setContent(newContent);
   };
 
@@ -56,7 +58,6 @@ function Comment({
 
     console.log(res.status);
     if (res.status === 204) {
-      // Tia TODO: create a popup saying that the post got deleted successfully
       onCommentDelete(commentId);
     } else {
       console.log(
