@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from "react";
 import NavigationSidePanel from "../../components/NavigationSidePanel";
 import AppTheme from "../../util/Theme";
-import { Box, Stack, ThemeProvider, Typography, Backdrop, CircularProgress } from "@mui/material";
+import {
+  Box,
+  Stack,
+  ThemeProvider,
+  Typography,
+  Backdrop,
+  CircularProgress,
+} from "@mui/material";
 import Post from "../../components/Post";
 import axios from "axios";
 import MobileSideNav from "../../components/Mobile/MobileSideNav";
@@ -113,11 +120,11 @@ function Feed() {
   return (
     <div>
       <Backdrop
-  sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-  open={loading}
->
-  <CircularProgress color="inherit" />
-  </Backdrop>
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <ThemeProvider theme={AppTheme}>
         {windowWidth >= 768 ? (
           <Box

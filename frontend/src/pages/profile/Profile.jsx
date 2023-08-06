@@ -15,7 +15,7 @@ import {
   IconButton,
   MenuItem,
   Backdrop,
-  CircularProgress
+  CircularProgress,
 } from "@mui/material";
 import Post from "../../components/Post";
 import EditIcon from "@mui/icons-material/Edit";
@@ -262,11 +262,11 @@ function Profile() {
   return (
     <div>
       <Backdrop
-  sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-  open={loading}
->
-  <CircularProgress color="inherit" />
-  </Backdrop>
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <ThemeProvider theme={AppTheme}>
         {windowWidth >= 768 ? (
           <Box
@@ -450,20 +450,30 @@ function Profile() {
                   </Stack>
                 </Box>
               </Stack>
-              <Box sx={{textAlign: 'center', justifyContent: 'center', alignItems: 'center', paddingTop: '2vh', color: '#cfcaca'}}>
-                  <Typography >
-                © {new Date().getFullYear()} Flores & Kolpakov. All rights
-                reserved.
-              </Typography>
-                  </Box>
+              <Box
+                sx={{
+                  textAlign: "center",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  paddingTop: "2vh",
+                  color: "#cfcaca",
+                }}
+              >
+                <Typography>
+                  © {new Date().getFullYear()} Flores & Kolpakov. All rights
+                  reserved.
+                </Typography>
+              </Box>
             </Box>
           </Box>
         ) : (
-          <Box sx={{
-            display: "flex",
-            backgroundColor: "page.secondary",
-            maxHeight: "100vh",
-          }}>
+          <Box
+            sx={{
+              display: "flex",
+              backgroundColor: "page.secondary",
+              maxHeight: "100vh",
+            }}
+          >
             <MobileSideNav onPostCreated={fetchUserData} />
             <Box
               sx={{
@@ -637,12 +647,20 @@ function Profile() {
                   </Stack>
                 </Box>
               </Stack>
-              <Box sx={{textAlign: 'center', justifyContent: 'center', alignItems: 'center', paddingTop: '2vh', color: '#cfcaca'}}>
-                  <Typography >
-                © {new Date().getFullYear()} Flores & Kolpakov. All rights
-                reserved.
-              </Typography>
-                  </Box>
+              <Box
+                sx={{
+                  textAlign: "center",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  paddingTop: "2vh",
+                  color: "#cfcaca",
+                }}
+              >
+                <Typography>
+                  © {new Date().getFullYear()} Flores & Kolpakov. All rights
+                  reserved.
+                </Typography>
+              </Box>
             </Box>
           </Box>
         )}
