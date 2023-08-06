@@ -81,6 +81,7 @@ function ExpandedPost({
   }, [_updatedAt]);
 
   const handleCreateComment = async (e) => {
+    e.preventDefault()
     console.log(commentContent);
 
     const res = await axios.post(
@@ -280,6 +281,7 @@ function ExpandedPost({
                 )}
 
                 <Divider sx={{ fontFamily: "Lato" }} />
+                <form onSubmit={handleCreateComment}>
                 <Stack direction={"row"}>
                   <TextField
                     variant="filled"
@@ -289,6 +291,7 @@ function ExpandedPost({
                     value={commentContent}
                   />
                   <Button
+                  type="submit"
                     variant="contained"
                     disableElevation
                     sx={{
@@ -297,11 +300,12 @@ function ExpandedPost({
                         backgroundColor: "accent.secondary",
                       },
                     }}
-                    onClick={handleCreateComment}
                   >
                     Comment
                   </Button>
                 </Stack>
+                </form>
+                
               </Box>
             </Stack>
           </Card>

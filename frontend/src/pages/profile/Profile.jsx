@@ -61,6 +61,9 @@ function Profile() {
   const closeFollowingModal = () => setOpenFollowingModal(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
+  const [followers, setFollowers] = useState(0)
+  const [following, setFollowing] = useState(0)
+
   const handleShowFollowingModal = () => {
     handleElClose();
     setOpenFollowingModal(true);
@@ -338,6 +341,12 @@ function Profile() {
                       <Typography variant="h6" color={"text.secondary"}>
                         {jobTitle}
                       </Typography>
+                      <Box>
+                        <Stack direction={'row'} spacing={2}>
+                        <Typography>Followers: {followers}</Typography>
+                        <Typography>Following: {following}</Typography>
+                        </Stack>
+                      </Box>
                     </Box>
 
                     <Box sx={{ ml: "auto", paddingTop: "2vh" }}>

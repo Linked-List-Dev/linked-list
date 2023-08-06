@@ -1,11 +1,15 @@
 import React from 'react';
 
 function Linkify({ text }) {
+  if (!text) {
+    return null; // Return null or some default content if text is undefined
+  }
+
   // Regular expression to detect URLs
   const urlRegex = /(https?:\/\/[^\s]+)/g;
 
   // Split the text into an array of segments
-  const segments = text.split(urlRegex);
+  const segments = text.split(urlRegex)
 
   // Create a new array with text segments and link elements
   const content = segments.map((segment, index) => {
@@ -20,7 +24,7 @@ function Linkify({ text }) {
     }
   });
 
-  return <div>{content}</div>;
+  return content;
 }
 
 export default Linkify
