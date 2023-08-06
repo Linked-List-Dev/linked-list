@@ -1,5 +1,5 @@
 import React from "react";
-import { AppBar, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Toolbar, Typography } from "@mui/material";
 import { ThemeProvider } from "@emotion/react";
 import AppTheme from "../util/Theme";
 
@@ -9,9 +9,9 @@ function Footer() {
   return (
     <div>
       <ThemeProvider theme={AppTheme}>
-        <AppBar
+        <Box
           position="static"
-          sx={{ top: "auto", bottom: 0, backgroundColor: "accent.main" }}
+          sx={{ top: "auto", bottom: 0, backgroundColor: "accent.main", width: '100vw' }}
         >
           <Toolbar>
             <Typography
@@ -21,7 +21,7 @@ function Footer() {
               © {currentYear} Flores & Kolpakov. All rights reserved.
             </Typography>
           </Toolbar>
-        </AppBar>
+        </Box>
       </ThemeProvider>
     </div>
   );

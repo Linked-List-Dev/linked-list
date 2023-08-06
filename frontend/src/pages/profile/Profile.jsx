@@ -11,6 +11,11 @@ import {
   Snackbar,
   Alert,
   Button,
+  Menu,
+  IconButton,
+  MenuItem,
+  Backdrop,
+  CircularProgress,
 } from "@mui/material";
 import Post from "../../components/Post";
 import EditIcon from "@mui/icons-material/Edit";
@@ -22,6 +27,8 @@ import Footer from "../../components/Footer";
 import EditProfileModal from "../../components/Modals/EditProfileModal";
 import EditPhotoModal from "../../components/Modals/EditPhotoModal";
 import ShowFollowingModal from "../../components/Modals/ShowFollowingModal";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import Linkify from "../../util/Linkify";
 
 function Profile() {
   const { profileid } = useParams();
@@ -41,20 +48,31 @@ function Profile() {
     bio: "",
     jobTitle: "",
   });
-  
-  const [openFollowingModal, setOpenFollowingModal] = useState(false)
-  const closeFollowingModal = () => setOpenFollowingModal(false)
+  const [openFollowingModal, setOpenFollowingModal] = useState(false);
   const [loading, setLoading] = useState(true);
-
   const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
   const [successVis, setSuccessVis] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [editOpen, setEditOpen] = useState(false);
-
+  const handleClose = () => setOpen(false);
+  const handleOpen = () => setOpen(true);
   const handleOpenEdit = () => setEditOpen(true);
   const handleCloseEdit = () => setEditOpen(false);
+  const closeFollowingModal = () => setOpenFollowingModal(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleShowFollowingModal = () => {
+    handleElClose();
+    setOpenFollowingModal(true);
+  };
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleElClose = () => {
+    setAnchorEl(null);
+  };
 
   const handleFileUpload = async (file) => {
     console.log("file:", file);
@@ -128,7 +146,7 @@ function Profile() {
   }, []);
 
   const handleSubmit = async (e, values) => {
-    console.log('HANDLE SUBMIT', values);
+    console.log("HANDLE SUBMIT", values);
 
     // Make PUT request to update user data
     const res = await axios.put(
@@ -181,7 +199,7 @@ function Profile() {
         setUserName(userData.name);
         setJobTitle(userData.jobTitle);
         setBiography(userData.bio);
-        setPosts(userPosts);
+        setPosts(userPosts.reverse());
 
         setFormValues({
           name: userData.name,
@@ -234,15 +252,22 @@ function Profile() {
 
   // ARTEM TODO: both buttons are there but only show the relevant one.
   const handleFollow = () => {
-    console.log("followed")
-  }
+    console.log("followed");
+  };
 
   const handleUnfollow = () => {
-    console.log("unfollowed")
-  }
+    handleElClose();
+    console.log("unfollowed");
+  };
 
   return (
     <div>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <ThemeProvider theme={AppTheme}>
         {windowWidth >= 768 ? (
           <Box
@@ -274,9 +299,7 @@ function Profile() {
                       display: "flex",
                       flexDirection: "column",
                       justifyContent: "flex-end",
-                      backgroundImage: `url(${headPhoto})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
+                      backgroundColor: "accent.main",
                       borderRadius: "10px",
                       minHeight: "20vh",
                     }}
@@ -293,23 +316,18 @@ function Profile() {
                           }}
                           onClick={handleOpenEdit}
                         />
-                      </Box>
-
-                      {userId === localStorage.getItem("id") ? (
-                        <Button
+                        <IconButton
                           sx={{
                             position: "absolute",
-                            bottom: "5px",
-                            right: "5px",
+                            bottom: 20,
+                            left: 140,
                             bgcolor: "white",
-                            width: "40px",
-                            height: "40px",
                           }}
-                          onClick={handleOpen}
+                          onClick={handleOpenEdit}
                         >
-                          <EditIcon fontSize="large" sx={{ color: "black" }} />
-                        </Button>
-                      ) : null}
+                          <EditIcon />
+                        </IconButton>
+                      </Box>
                     </Box>
                   </Box>
                   <Stack direction={"row"} justifyContent="space-between">
@@ -322,18 +340,70 @@ function Profile() {
                       </Typography>
                     </Box>
 
-                    <Box sx={{ ml: 'auto', paddingTop: '2vh' }}>
-                      <Button variant='contained' onClick={handleFollow}>Follow</Button>
-                      <Button variant='outlined' color="error" onClick={handleUnfollow}>Unfollow</Button>
+                    <Box sx={{ ml: "auto", paddingTop: "2vh" }}>
+                      {userId === localStorage.getItem("id") ? (
+                        <Button
+                          sx={{
+                            bgcolor: "white",
+                            width: "fit-content",
+                            height: "40px",
+                            display: "flex",
+                            alignItems: "center",
+                            padding: "0 10px",
+                            color: "text.main",
+                          }}
+                          onClick={handleOpen}
+                        >
+                          <EditIcon
+                            fontSize="small"
+                            sx={{ color: "black", marginRight: "5px" }}
+                          />
+                          Edit Profile
+                        </Button>
+                      ) : (
+                        <Box>
+                          {" "}
+                          <Button
+                            variant="contained"
+                            onClick={handleFollow}
+                            sx={{
+                              backgroundColor: "accent.main",
+                              "&:hover": {
+                                backgroundColor: "accent.secondary",
+                              },
+                            }}
+                          >
+                            Follow
+                          </Button>
+                          <Button
+                            onClick={handleClick}
+                            startIcon={<ArrowDropDownIcon />}
+                            variant="contained"
+                            sx={{
+                              backgroundColor: "accent.main",
+                              "&:hover": {
+                                backgroundColor: "accent.secondary",
+                              },
+                            }}
+                          >
+                            Following
+                          </Button>
+                          <Menu
+                            anchorEl={anchorEl}
+                            open={Boolean(anchorEl)}
+                            onClose={handleElClose}
+                          >
+                            <MenuItem onClick={handleShowFollowingModal}>
+                              View Following
+                            </MenuItem>
+                            <MenuItem onClick={handleUnfollow}>
+                              Unfollow
+                            </MenuItem>
+                          </Menu>
+                        </Box>
+                      )}
                     </Box>
                   </Stack>
-                  <Button onClick={() => {
-                    console.log("show following")
-                    setOpenFollowingModal(true)
-                  }}
-                  > 
-                  View following 
-                  </Button>
                 </Box>
 
                 <Box>
@@ -348,7 +418,7 @@ function Profile() {
                     }}
                   >
                     <Typography color={"text.secondary"}>
-                      {biography}
+                      <Linkify text={biography} />
                     </Typography>
                   </Paper>
                 </Box>
@@ -379,10 +449,30 @@ function Profile() {
                   </Stack>
                 </Box>
               </Stack>
+              <Box
+                sx={{
+                  textAlign: "center",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  paddingTop: "2vh",
+                  color: "#cfcaca",
+                }}
+              >
+                <Typography>
+                  © {new Date().getFullYear()} Flores & Kolpakov. All rights
+                  reserved.
+                </Typography>
+              </Box>
             </Box>
           </Box>
         ) : (
-          <Box>
+          <Box
+            sx={{
+              display: "flex",
+              backgroundColor: "page.secondary",
+              maxHeight: "100vh",
+            }}
+          >
             <MobileSideNav onPostCreated={fetchUserData} />
             <Box
               sx={{
@@ -392,6 +482,7 @@ function Profile() {
                 paddingTop: "67px",
                 paddingBottom: "2vh",
                 overflow: "auto",
+                backgroundColor: "page.secondary",
               }}
             >
               <Stack spacing={5}>
@@ -402,9 +493,7 @@ function Profile() {
                       display: "flex",
                       flexDirection: "column",
                       justifyContent: "flex-end",
-                      backgroundImage: `url(${headPhoto})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
+                      backgroundColor: "accent.main",
                       borderRadius: "10px",
                       minHeight: "20vh",
                     }}
@@ -421,23 +510,18 @@ function Profile() {
                           }}
                           onClick={handleOpenEdit}
                         />
-                      </Box>
-
-                      {userId === localStorage.getItem("id") ? (
-                        <Button
+                        <IconButton
                           sx={{
                             position: "absolute",
-                            bottom: "5px",
-                            right: "5px",
+                            bottom: 20,
+                            left: 120,
                             bgcolor: "white",
-                            width: "40px",
-                            height: "40px",
                           }}
-                          onClick={handleOpen}
+                          onClick={handleOpenEdit}
                         >
-                          <EditIcon fontSize="large" sx={{ color: "black" }} />
-                        </Button>
-                      ) : null}
+                          <EditIcon />
+                        </IconButton>
+                      </Box>
                     </Box>
                   </Box>
                   <Stack direction={"row"} justifyContent="space-between">
@@ -450,17 +534,71 @@ function Profile() {
                       </Typography>
                     </Box>
 
-                    <Box sx={{ ml: 'auto', paddingTop: '2vh' }}>
-                      <Button variant='contained' onClick={handleFollow}>Follow</Button>
-                      <Button variant='outlined' color="error" onClick={handleUnfollow}>Unfollow</Button>
+                    <Box sx={{ ml: "auto", paddingTop: "2vh" }}>
+                      {userId === localStorage.getItem("id") ? (
+                        <Button
+                          sx={{
+                            bgcolor: "white",
+                            width: "fit-content",
+                            height: "40px",
+                            display: "flex",
+                            alignItems: "center",
+                            padding: "0 10px",
+                            color: "text.main",
+                            whiteSpace: "nowrap",
+                          }}
+                          onClick={handleOpen}
+                        >
+                          <EditIcon
+                            fontSize="small"
+                            sx={{ color: "black", marginRight: "5px" }}
+                          />
+                          Edit Profile
+                        </Button>
+                      ) : (
+                        <Box>
+                          {" "}
+                          <Button
+                            variant="contained"
+                            onClick={handleFollow}
+                            sx={{
+                              backgroundColor: "accent.main",
+                              "&:hover": {
+                                backgroundColor: "accent.secondary",
+                              },
+                            }}
+                          >
+                            Follow
+                          </Button>
+                          <Button
+                            onClick={handleClick}
+                            startIcon={<ArrowDropDownIcon />}
+                            variant="contained"
+                            sx={{
+                              backgroundColor: "accent.main",
+                              "&:hover": {
+                                backgroundColor: "accent.secondary",
+                              },
+                            }}
+                          >
+                            Following
+                          </Button>
+                          <Menu
+                            anchorEl={anchorEl}
+                            open={Boolean(anchorEl)}
+                            onClose={handleElClose}
+                          >
+                            <MenuItem onClick={handleShowFollowingModal}>
+                              View Following
+                            </MenuItem>
+                            <MenuItem onClick={handleUnfollow}>
+                              Unfollow
+                            </MenuItem>
+                          </Menu>
+                        </Box>
+                      )}
                     </Box>
                   </Stack>
-                  <Button onClick={() => {
-                    console.log("show following")
-                  }}
-                  > 
-                  View following 
-                  </Button>
                 </Box>
 
                 <Box>
@@ -475,7 +613,7 @@ function Profile() {
                     }}
                   >
                     <Typography color={"text.secondary"}>
-                      {biography}
+                      <Linkify text={biography} />
                     </Typography>
                   </Paper>
                 </Box>
@@ -506,11 +644,28 @@ function Profile() {
                   </Stack>
                 </Box>
               </Stack>
+              <Box
+                sx={{
+                  textAlign: "center",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  paddingTop: "2vh",
+                  color: "#cfcaca",
+                }}
+              >
+                <Typography>
+                  © {new Date().getFullYear()} Flores & Kolpakov. All rights
+                  reserved.
+                </Typography>
+              </Box>
             </Box>
           </Box>
         )}
 
-        <ShowFollowingModal open={openFollowingModal} handleClose={closeFollowingModal}/>
+        <ShowFollowingModal
+          open={openFollowingModal}
+          handleClose={closeFollowingModal}
+        />
 
         <EditPhotoModal
           open={editOpen}

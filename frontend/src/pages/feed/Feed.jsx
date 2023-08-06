@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from "react";
 import NavigationSidePanel from "../../components/NavigationSidePanel";
 import AppTheme from "../../util/Theme";
-import { Box, Stack, ThemeProvider, Typography } from "@mui/material";
+import {
+  Box,
+  Stack,
+  ThemeProvider,
+  Typography,
+  Backdrop,
+  CircularProgress,
+} from "@mui/material";
 import Post from "../../components/Post";
 import axios from "axios";
 import MobileSideNav from "../../components/Mobile/MobileSideNav";
 import { useNavigate } from "react-router-dom";
-import Footer from "../../components/Footer";
 
 function Feed() {
   const [posts, setPosts] = useState([]);
@@ -55,12 +61,12 @@ function Feed() {
   };
 
   useEffect(() => {
-    getPosts()
+    getPosts();
   }, []);
 
   useEffect(() => {
     let isFetching = true; // Variable to keep track of whether profile pictures are still being fetched
-  
+
     // Define an async function to fetch profile pictures
     async function fetchProfilePictures() {
       try {
@@ -77,7 +83,7 @@ function Feed() {
                 responseType: "arraybuffer",
               }
             );
-  
+
             if (res.status === 200 || res.status === 304) {
               const blob = new Blob([res.data], {
                 type: res.headers["content-type"],
@@ -94,9 +100,9 @@ function Feed() {
         isFetching = false; // Set the isFetching variable to false if there was an error
       }
     }
-  
+
     fetchProfilePictures();
-  
+
     // Use another useEffect to set loading to false after all pictures are fetched
     const loadingTimer = setInterval(() => {
       if (!isFetching) {
@@ -104,7 +110,7 @@ function Feed() {
         clearInterval(loadingTimer);
       }
     }, 300);
-  
+
     // Cleanup the interval if the component unmounts or if the posts change
     return () => {
       clearInterval(loadingTimer);
@@ -113,6 +119,12 @@ function Feed() {
 
   return (
     <div>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <ThemeProvider theme={AppTheme}>
         {windowWidth >= 768 ? (
           <Box
@@ -152,41 +164,69 @@ function Feed() {
                     {posts.map((post) => {
                       console.log("post:", post);
                       console.log("profilePictures:", profilePictures);
-                      console.log("profilePictures[post.authorProfilePictureId]:", profilePictures[post.authorProfilePictureId]);
-                      console.log("loading:", loading)
+                      console.log(
+                        "profilePictures[post.authorProfilePictureId]:",
+                        profilePictures[post.authorProfilePictureId]
+                      );
+                      console.log("loading:", loading);
 
-                      return !loading && (
-                        <Post
-                          key={post._id}
-                          _postId={post._id}
-                          _userName={post.authorName}
-                          _jobTitle={post.authorJobTitle}
-                          _authorProfilePhoto={profilePictures[post.authorProfilePictureId]}
-                          _description={post.description}
-                          _likes={post.likes}
-                          _dislikes={post.dislikes}
-                          _authorId={post.authorId}
-                          _comments={post.comments}
-                          _createdAt={post.createdAt}
-                          _updatedAt={post.updatedAt}
-                          onDeletePost={handlePostDelete}
-                        />
+                      return (
+                        !loading && (
+                          <Post
+                            key={post._id}
+                            _postId={post._id}
+                            _userName={post.authorName}
+                            _jobTitle={post.authorJobTitle}
+                            _authorProfilePhoto={
+                              profilePictures[post.authorProfilePictureId]
+                            }
+                            _description={post.description}
+                            _likes={post.likes}
+                            _dislikes={post.dislikes}
+                            _authorId={post.authorId}
+                            _comments={post.comments}
+                            _createdAt={post.createdAt}
+                            _updatedAt={post.updatedAt}
+                            onDeletePost={handlePostDelete}
+                          />
+                        )
                       );
                     })}
                   </Stack>
                 </Box>
               )}
+
+              <Box
+                sx={{
+                  textAlign: "center",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  paddingTop: "2vh",
+                  color: "#cfcaca",
+                }}
+              >
+                <Typography>
+                  © {new Date().getFullYear()} Flores & Kolpakov. All rights
+                  reserved.
+                </Typography>
+              </Box>
             </Box>
           </Box>
         ) : (
-          <Box>
+          <Box
+            sx={{
+              display: "flex",
+              backgroundColor: "page.secondary",
+              maxHeight: "100vh",
+            }}
+          >
             <MobileSideNav onPostCreated={getPosts} />
             <Box
               sx={{
                 flex: 1,
                 paddingLeft: "2vw",
                 paddingRight: "2vw",
-                paddingTop: "67px",
+                paddingTop: "70px",
                 overflow: "auto",
               }}
             >
@@ -204,30 +244,48 @@ function Feed() {
               ) : (
                 <Box>
                   <Stack spacing={3}>
-                    {posts.map((post) => (
-                      !loading && <Post
-                        key={post._id}
-                        _postId={post._id}
-                        _userName={post.authorName}
-                        _jobTitle={post.authorJobTitle}
-                        _authorProfilePhoto={profilePictures[post.authorProfilePictureId]}
-                        _description={post.description}
-                        _likes={post.likes}
-                        _dislikes={post.dislikes}
-                        _authorId={post.authorId}
-                        _comments={post.comments}
-                        _createdAt={post.createdAt}
-                        _updatedAt={post.updatedAt}
-                        onDeletePost={handlePostDelete}
-                      />
-                    ))}
+                    {posts.map(
+                      (post) =>
+                        !loading && (
+                          <Post
+                            key={post._id}
+                            _postId={post._id}
+                            _userName={post.authorName}
+                            _jobTitle={post.authorJobTitle}
+                            _authorProfilePhoto={
+                              profilePictures[post.authorProfilePictureId]
+                            }
+                            _description={post.description}
+                            _likes={post.likes}
+                            _dislikes={post.dislikes}
+                            _authorId={post.authorId}
+                            _comments={post.comments}
+                            _createdAt={post.createdAt}
+                            _updatedAt={post.updatedAt}
+                            onDeletePost={handlePostDelete}
+                          />
+                        )
+                    )}
                   </Stack>
                 </Box>
               )}
+              <Box
+                sx={{
+                  textAlign: "center",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  paddingTop: "2vh",
+                  color: "#cfcaca",
+                }}
+              >
+                <Typography>
+                  © {new Date().getFullYear()} Flores & Kolpakov. All rights
+                  reserved.
+                </Typography>
+              </Box>
             </Box>
           </Box>
         )}
-        <Footer />
       </ThemeProvider>
     </div>
   );

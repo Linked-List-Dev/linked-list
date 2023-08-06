@@ -9,12 +9,7 @@ import {
 } from "@mui/material";
 
 function EditProfileModal({ open, handleClose, handleSubmit, initValues }) {
-  const [formValues, setFormValues] = useState("")
-  // ({
-  //   name: "",
-  //   bio: "",
-  //   jobTitle: "",
-  // });
+  const [formValues, setFormValues] = useState("");
 
   useEffect(() => {
     setFormValues(initValues);
@@ -29,11 +24,11 @@ function EditProfileModal({ open, handleClose, handleSubmit, initValues }) {
   };
 
   const localSubmit = (e) => {
-    e.preventDefault()
-    console.log('LOCAL SUBMIT', formValues)
-    handleSubmit(e, formValues)
-    handleClose()
-}
+    e.preventDefault();
+    console.log("LOCAL SUBMIT", formValues);
+    handleSubmit(e, formValues);
+    handleClose();
+  };
 
   return (
     <Modal

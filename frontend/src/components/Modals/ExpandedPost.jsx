@@ -21,6 +21,7 @@ import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 import axios from "axios";
 import Comment from "../Comment";
+import Linkify from "../../util/Linkify";
 
 function ExpandedPost({
   _postId,
@@ -170,7 +171,9 @@ function ExpandedPost({
                       </Typography>
                     </Stack>
                   </Stack>
-                  <Typography variant="h5">{content}</Typography>
+                  <Typography variant="h5">
+                    <Linkify text={content}/>
+                  </Typography>
                 </CardContent>
                 <CardActions
                   sx={{

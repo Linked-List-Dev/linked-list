@@ -9,8 +9,7 @@ import {
   Typography,
   Stack,
   CardContent,
-  IconButton,
-  Box,
+  IconButton, Box
 } from "@mui/material";
 import AppTheme from "../util/Theme";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
@@ -24,6 +23,7 @@ import axios from "axios";
 import ExpandedPost from "./Modals/ExpandedPost";
 import EditPost from "./Modals/EditPost";
 import { Link } from "react-router-dom";
+import Linkify from '../util/Linkify'
 
 function Post({
   _postId,
@@ -39,18 +39,19 @@ function Post({
   _createdAt,
   _updatedAt,
 }) {
-  console.log("_authorProfilePhoto: ebebbe", _authorProfilePhoto)
+  console.log("_authorProfilePhoto: ebebbe", _authorProfilePhoto);
   const [postId, setPostId] = useState(_postId); // may be used for expanded view later...
   const [userName, setUserName] = useState(_userName);
   const [jobTitle, setJobTitle] = useState(_jobTitle);
-  const [authorProfilePhoto, setAuthorProfilePhoto] = useState(_authorProfilePhoto);
+  const [authorProfilePhoto, setAuthorProfilePhoto] =
+    useState(_authorProfilePhoto);
   const [description, setDescription] = useState(_description);
   const [likes, setLikes] = useState(_likes);
   const [dislikes, setDislikes] = useState(_dislikes);
   const [authorId, setAuthorId] = useState(_authorId);
   const [comments, setComments] = useState(_comments);
-  const [createdAt, setCreatedAt] = useState('');
-  const [updatedAt, setUpdatedAt] = useState('');
+  const [createdAt, setCreatedAt] = useState("");
+  const [updatedAt, setUpdatedAt] = useState("");
   const [open, setOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
 
@@ -268,10 +269,10 @@ function Post({
       const dateObject = new Date(_updatedAt);
 
       // Format the date to "dd:mm" (day and month)
-      const formattedDate = dateObject.toLocaleDateString('en-GB', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
+      const formattedDate = dateObject.toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
       });
 
       setUpdatedAt(formattedDate);
@@ -283,7 +284,6 @@ function Post({
       <ThemeProvider theme={AppTheme}>
         <Card sx={{ bgcolor: "page.main" }}>
           <div style={{ position: "relative", zIndex: 999 }}>
-          
             {authorId.toString() === localStorage.getItem("id") ? ( //only author can edit/delete their posts
               <>
                 <IconButton
@@ -331,7 +331,7 @@ function Post({
               </Stack>
 
               <Typography variant="h6" color="text.secondary">
-                {description}
+                <Linkify text={description}/>
               </Typography>
             </CardContent>
           </CardActionArea>
@@ -363,7 +363,16 @@ function Post({
             <Button sx={{ color: "accent.main" }} onClick={handleComment}>
               <CommentIcon /> {comments.length}
             </Button>
-            <Typography variant="caption" sx={{ position: "absolute", right: "40px", color: "text.secondary" }}>{updatedAt}</Typography>
+            <Typography
+              variant="caption"
+              sx={{
+                position: "relative",
+                right: "0px",
+                color: "text.secondary",
+              }}
+            >
+              {updatedAt}
+            </Typography>
           </CardActions>
         </Card>
         <Box>
