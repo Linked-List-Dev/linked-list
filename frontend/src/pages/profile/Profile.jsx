@@ -199,7 +199,7 @@ function Profile() {
         setUserName(userData.name);
         setJobTitle(userData.jobTitle);
         setBiography(userData.bio);
-        setPosts(userPosts);
+        setPosts(userPosts.reverse());
 
         setFormValues({
           name: userData.name,
