@@ -57,6 +57,35 @@ function ExpandedPost({
   const [successCreateCommentVis, setSuccessCreateCommentVis] = useState(false);
   const [successDeleteCommentVis, setSuccessDeleteCommentVis] = useState(false);
 
+  const fetchProfilePicture = async (profilePictureId) => {
+    try {
+      const res = await axios.get(
+        `http://localhost:8000/api/users/profileImage/${profilePictureId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          responseType: "arraybuffer",
+        }
+      );
+  
+      if (res.status === 200) {
+        const blob = new Blob([res.data], {
+          type: res.headers["content-type"],
+        });
+        return URL.createObjectURL(blob);
+      } else {
+        // Tia TODO: handle error
+        console.log("Error fetching profile picture");
+        return null;
+      }
+    } catch (err) {
+      console.error("Error fetching profile picture:", err);
+      // Tia TODO: handle error
+      return null;
+    }
+  };
+  
   useEffect(() => {
     setContent(_content);
   }, [_content]);
@@ -103,8 +132,16 @@ function ExpandedPost({
 
     console.log(res.status);
     if (res.status === 200) {
-      setComments(res.data.post.comments);
-      onUpdatePostComments(res.data.post.comments);
+      const newComment = {
+        ...res.data.comment,
+        profilePicture: await fetchProfilePicture(res.data.comment.authorProfilePictureId),
+      };
+
+      // Spread the old comments and append the new comment to the comments array
+      const updatedComments = [...comments, newComment];
+      
+      setComments(updatedComments);
+      onUpdatePostComments(updatedComments);
       setSuccessCreateCommentVis(true);
       setCommentContent("");
     } else {
@@ -189,7 +226,7 @@ function ExpandedPost({
                 <CardContent>
                   <Stack direction={"row"} spacing={2} paddingBottom={"1vh"}>
                     <Avatar src={profilePhoto} sx={{ width: 60, height: 60 }}>
-                      A
+                      {profilePhoto ? null : userName[0]}
                     </Avatar>
                     <Stack>
                       <Typography variant="h5">{userName}</Typography>
@@ -302,7 +339,7 @@ function ExpandedPost({
                           _authorName={comment.authorName}
                           _createdAt={comment.createdAt}
                           _updatedAt={comment.updatedAt}
-                          _profilePhoto={comment.authorProfilePictureId}
+                          _profilePhoto={comment.profilePicture}
                           onCommentDelete={handleCommentDelete}
                           onCommentUpdate={handleCommentUpdate}
                         />

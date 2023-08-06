@@ -333,9 +333,8 @@ router.post("/comment/", requireAuthentication, async function (req, res, next) 
 
         return res.status(200).json({
             message: "New comment successfully added!",
-            id: newComment._id,
-            post: updatedPost,
-            authorProfilePictureId: user.profilePictureId
+            comment: newComment,
+            post: updatedPost
         })
     } catch (err) {
         console.log("err:", err.message)

@@ -32,6 +32,8 @@ function Comment({
   const [editOpen, setEditOpen] = useState(false);
   const [commentId, setCommentId] = useState(_key);
   const [profilePhoto, setProfilePhoto] = useState(_profilePhoto);
+  
+  console.log("_profilePhoto:", _profilePhoto)
 
   const handleEditOpen = () => {
     setEditOpen(true);
@@ -109,7 +111,14 @@ function Comment({
         </div>
         <CardContent sx={{ display: 'block' }}>
           <Stack direction={"row"} spacing={2} paddingBottom={"1vh"}>
-            <Avatar sx={{ width: 40, height: 40 }} >{userName[0]}</Avatar>
+            <Avatar
+              alt="Profile Picture"
+              src={profilePhoto}
+              sx={{ width: 40, height: 40 }}
+            >
+              {profilePhoto ? null : userName[0]}
+            </Avatar>
+            
             <Typography variant="h5">{userName}</Typography>
           </Stack>
           <Typography>

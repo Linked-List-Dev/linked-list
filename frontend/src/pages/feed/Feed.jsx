@@ -16,11 +16,11 @@ import { useNavigate } from "react-router-dom";
 
 function Feed() {
   const [posts, setPosts] = useState([]);
-  const [profilePictures, setProfilePictures] = useState({});
+  const [postProfilePictures, setPostProfilePictures] = useState({});
   const [loading, setLoading] = useState(true);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [message, setMessage] = useState(
-    "There are no posts yet... Want to add one?"
+  const [message, setMessage] = useState(""
+    // "There are no posts yet... Want to add one?"
   );
 
   const navigate = useNavigate();
@@ -38,6 +38,11 @@ function Feed() {
     };
   }, []);
 
+  const handlePostDelete = (postId) => {
+    // Remove the deleted post from the posts array in the state
+    setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
+  };
+
   async function getPosts() {
     try {
       const res = await axios.get("http://localhost:8000/api/feed/", {
@@ -47,7 +52,43 @@ function Feed() {
       });
 
       if (res.status === 200 || res.status === 304) {
-        setPosts(res.data.posts);
+        // Create an object to store the profile pictures for each comment author
+        const commentProfilePictures = {};
+
+        // Iterate through each post
+        for (const post of res.data.posts) {
+          // Iterate through each comment in the post
+          for (const comment of post.comments) {
+            const res = await axios.get(
+              `http://localhost:8000/api/users/profileImage/${comment.authorProfilePictureId}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                responseType: "arraybuffer",
+              }
+            );
+
+            if (res.status === 200 || res.status === 304) {
+              const blob = new Blob([res.data], {
+                type: res.headers["content-type"],
+              });
+              const blobUrl = URL.createObjectURL(blob);
+              commentProfilePictures[comment.authorProfilePictureId] = blobUrl;
+            }
+          }
+        }
+
+        // Set the posts with the updated comment profile pictures
+        const postsWithProfilePictures = res.data.posts.map((post) => ({
+          ...post,
+          comments: post.comments.map((comment) => ({
+            ...comment,
+            profilePicture: commentProfilePictures[comment.authorProfilePictureId] || "",
+          })),
+        }));
+
+        setPosts(postsWithProfilePictures);
       }
     } catch (err) {
       if (err.response.status === 401 || err.response.status === 400) {
@@ -55,13 +96,25 @@ function Feed() {
       }
     }
   }
-  const handlePostDelete = (postId) => {
-    // Remove the deleted post from the posts array in the state
-    setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
-  };
 
   useEffect(() => {
-    getPosts();
+    let isFetching = true;
+
+    // Use another useEffect to set loading to false after all pictures are fetched
+    const loadingTimer = setInterval(() => {
+      if (!isFetching) {
+        setLoading(false);
+        clearInterval(loadingTimer);
+      }
+    }, 450);
+
+    getPosts()
+
+    // Cleanup the interval if the component unmounts or if the posts change
+    return () => {
+      clearInterval(loadingTimer);
+    };
+
   }, []);
 
   useEffect(() => {
@@ -70,9 +123,8 @@ function Feed() {
     // Define an async function to fetch profile pictures
     async function fetchProfilePictures() {
       try {
-        const profilePicturesData = {};
+        const postProfilePicturesData = {};
         for (const post of posts) {
-          console.log("post:", post);
           if (post.authorProfilePictureId) {
             const res = await axios.get(
               `http://localhost:8000/api/users/profileImage/${post.authorProfilePictureId}`,
@@ -89,11 +141,11 @@ function Feed() {
                 type: res.headers["content-type"],
               });
               const blobUrl = URL.createObjectURL(blob);
-              profilePicturesData[post.authorProfilePictureId] = blobUrl;
+              postProfilePicturesData[post.authorProfilePictureId] = blobUrl;
             }
           }
         }
-        setProfilePictures(profilePicturesData);
+        setPostProfilePictures(postProfilePicturesData);
         isFetching = false; // Set the isFetching variable to false after all pictures are fetched
       } catch (error) {
         console.error("Error fetching profile pictures:", error);
@@ -109,7 +161,7 @@ function Feed() {
         setLoading(false);
         clearInterval(loadingTimer);
       }
-    }, 300);
+    }, 450);
 
     // Cleanup the interval if the component unmounts or if the posts change
     return () => {
@@ -162,14 +214,6 @@ function Feed() {
                 <Box>
                   <Stack spacing={3}>
                     {posts.map((post) => {
-                      console.log("post:", post);
-                      console.log("profilePictures:", profilePictures);
-                      console.log(
-                        "profilePictures[post.authorProfilePictureId]:",
-                        profilePictures[post.authorProfilePictureId]
-                      );
-                      console.log("loading:", loading);
-
                       return (
                         !loading && (
                           <Post
@@ -178,7 +222,7 @@ function Feed() {
                             _userName={post.authorName}
                             _jobTitle={post.authorJobTitle}
                             _authorProfilePhoto={
-                              profilePictures[post.authorProfilePictureId]
+                              postProfilePictures[post.authorProfilePictureId]
                             }
                             _description={post.description}
                             _likes={post.likes}
@@ -253,7 +297,7 @@ function Feed() {
                             _userName={post.authorName}
                             _jobTitle={post.authorJobTitle}
                             _authorProfilePhoto={
-                              profilePictures[post.authorProfilePictureId]
+                              postProfilePictures[post.authorProfilePictureId]
                             }
                             _description={post.description}
                             _likes={post.likes}

@@ -25,6 +25,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import axios from "axios";
 import NewPostModal from "../Modals/NewPostModal";
 import SettingsModal from "../Modals/SettingsModal";
+import { useNavigate } from "react-router-dom";
 
 function MobileSideNav({ onPostCreated }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -36,6 +37,8 @@ function MobileSideNav({ onPostCreated }) {
   const openSettingsModal = () => setSettingsOpen(true);
   const closeSettingsModal = () => setSettingsOpen(false);
   const [profileImage, setProfileImage] = useState("");
+
+  const navigate = useNavigate();
 
   const getFirstLetter = () => {
     const userName = localStorage.getItem("username");
