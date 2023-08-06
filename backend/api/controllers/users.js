@@ -392,25 +392,47 @@ router.post('/profileImage', requireAuthentication, upload.single('file'), async
                 { new: true }
             )
 
-            // iterate though the posts and update authorName, and authorJobTitle if they have changed
-            await Post.updateMany(
-                { authorEmail: updatedUser.email },
-                {
-                    $set: {
-                        authorProfilePictureId: id
-                    },
-                }
+            await Comment.updateMany(
+                { authorId: userid },
+                { $set: { authorProfilePictureId: id } }
             )
 
-            await Feed.updateMany(
-                { "posts.authorEmail": updatedUser.email },
+            await Post.updateMany(
+                {
+                    $or: [
+                        { authorEmail: updatedUser.email }, // Update authorProfilePictureId for user's posts
+                        { 'comments.authorId': userid }, // Update authorProfilePictureId for comments made by the user
+                    ],
+                },
                 {
                     $set: {
-                        "posts.$[post].authorProfilePictureId": id
+                        authorProfilePictureId: id,
+                        'comments.$[comment].authorProfilePictureId': id,
                     },
                 },
-                { arrayFilters: [{ "post.authorEmail": updatedUser.email }] }
+                { arrayFilters: [{ 'comment.authorId': userid }] }
             )
+            
+            const feed = await Feed.findById(process.env.FEED_ID)
+            
+            // Loop through all the posts in the feed
+            for (const post of feed.posts) {
+                // Update authorProfilePictureId for the post if it matches the user
+                if (post.authorEmail === updatedUser.email) {
+                    post.authorProfilePictureId = id
+                }
+
+                // Loop through all the comments in the post
+                for (const comment of post.comments) {
+                    // Update authorProfilePictureId for the comment if it matches the user
+                    if (comment.authorId === userid) {
+                        comment.authorProfilePictureId = id
+                    }
+                }
+            }
+            
+            // Save the updated feed
+            await feed.save()
             
             // After saving the photo in MongoDB, delete the uploaded image from the local folder
             fs.unlinkSync(req.file.path)
@@ -419,6 +441,7 @@ router.post('/profileImage', requireAuthentication, upload.single('file'), async
                 id: id
             })
         } catch (err) {
+            console.log("err:", err.message)
             return res.status(500).json({ error: err.message })
         }
     } else {

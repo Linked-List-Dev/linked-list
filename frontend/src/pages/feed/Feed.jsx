@@ -43,131 +43,97 @@ function Feed() {
     setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
   };
 
-  async function getPosts() {
-    try {
-      const res = await axios.get("http://localhost:8000/api/feed/", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-
-      if (res.status === 200 || res.status === 304) {
-        // Create an object to store the profile pictures for each comment author
-        const commentProfilePictures = {};
-
-        // Iterate through each post
-        for (const post of res.data.posts) {
-          // Iterate through each comment in the post
-          for (const comment of post.comments) {
-            const res = await axios.get(
-              `http://localhost:8000/api/users/profileImage/${comment.authorProfilePictureId}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-                responseType: "arraybuffer",
-              }
-            );
-
-            if (res.status === 200 || res.status === 304) {
-              const blob = new Blob([res.data], {
-                type: res.headers["content-type"],
-              });
-              const blobUrl = URL.createObjectURL(blob);
-              commentProfilePictures[comment.authorProfilePictureId] = blobUrl;
-            }
-          }
-        }
-
-        // Set the posts with the updated comment profile pictures
-        const postsWithProfilePictures = res.data.posts.map((post) => ({
-          ...post,
-          comments: post.comments.map((comment) => ({
-            ...comment,
-            profilePicture: commentProfilePictures[comment.authorProfilePictureId] || "",
-          })),
-        }));
-
-        setPosts(postsWithProfilePictures);
-      }
-    } catch (err) {
-      if (err.response.status === 401 || err.response.status === 400) {
-        navigate("/register");
-      }
-    }
+  const handlePostCreate = (data) => {
+    console.log("handlePostCreate:", data)
   }
-
+  
   useEffect(() => {
-    let isFetching = true;
-
-    // Use another useEffect to set loading to false after all pictures are fetched
-    const loadingTimer = setInterval(() => {
-      if (!isFetching) {
-        setLoading(false);
-        clearInterval(loadingTimer);
-      }
-    }, 450);
-
-    getPosts()
-
-    // Cleanup the interval if the component unmounts or if the posts change
-    return () => {
-      clearInterval(loadingTimer);
-    };
-
-  }, []);
-
-  useEffect(() => {
-    let isFetching = true; // Variable to keep track of whether profile pictures are still being fetched
-
-    // Define an async function to fetch profile pictures
-    async function fetchProfilePictures() {
+    async function getPosts() {
       try {
-        const postProfilePicturesData = {};
-        for (const post of posts) {
-          if (post.authorProfilePictureId) {
-            const res = await axios.get(
-              `http://localhost:8000/api/users/profileImage/${post.authorProfilePictureId}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-                responseType: "arraybuffer",
+        setLoading(true); // Start loading
+  
+        const res = await axios.get("http://localhost:8000/api/feed/", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+  
+        if (res.status === 200 || res.status === 304) {
+          // Create an object to store the profile pictures for each comment author
+          const commentProfilePictures = {};
+          const postProfilePicturesData = {};
+  
+          // Iterate through each post
+          for (const post of res.data.posts) {
+            if (post.authorProfilePictureId) {
+              const res = await axios.get(
+                `http://localhost:8000/api/users/profileImage/${post.authorProfilePictureId}`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                  },
+                  responseType: "arraybuffer",
+                }
+              );
+  
+              if (res.status === 200 || res.status === 304) {
+                const blob = new Blob([res.data], {
+                  type: res.headers["content-type"],
+                });
+                const blobUrl = URL.createObjectURL(blob);
+                postProfilePicturesData[post.authorProfilePictureId] = blobUrl;
               }
-            );
-
-            if (res.status === 200 || res.status === 304) {
-              const blob = new Blob([res.data], {
-                type: res.headers["content-type"],
-              });
-              const blobUrl = URL.createObjectURL(blob);
-              postProfilePicturesData[post.authorProfilePictureId] = blobUrl;
+            }
+            // Iterate through each comment in the post
+            for (const comment of post.comments) {
+              try {
+                const res = await axios.get(
+                  `http://localhost:8000/api/users/profileImage/${comment.authorProfilePictureId}`,
+                  {
+                    headers: {
+                      Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                    responseType: "arraybuffer",
+                  }
+                );
+  
+                if (res.status === 200 || res.status === 304) {
+                  const blob = new Blob([res.data], {
+                    type: res.headers["content-type"],
+                  });
+                  const blobUrl = URL.createObjectURL(blob);
+                  commentProfilePictures[comment.authorProfilePictureId] = blobUrl;
+                }
+              } catch (err) {
+                console.log(err);
+              }
             }
           }
+  
+          setPostProfilePictures(postProfilePicturesData);
+  
+          // Set the posts with the updated comment profile pictures
+          const postsWithCommentsWithProfilePictures = res.data.posts.map((post) => ({
+            ...post,
+            comments: post.comments.map((comment) => ({
+              ...comment,
+              profilePicture: commentProfilePictures[comment.authorProfilePictureId] || "",
+            })),
+          }));
+  
+          setPosts(postsWithCommentsWithProfilePictures);
         }
-        setPostProfilePictures(postProfilePicturesData);
-        isFetching = false; // Set the isFetching variable to false after all pictures are fetched
-      } catch (error) {
-        console.error("Error fetching profile pictures:", error);
-        isFetching = false; // Set the isFetching variable to false if there was an error
+      } catch (err) {
+        if (err.response.status === 401 || err.response.status === 400) {
+          navigate("/register");
+        }
+      } finally {
+        setLoading(false); // Stop loading after fetching data, regardless of success or error
       }
     }
-
-    fetchProfilePictures();
-
-    // Use another useEffect to set loading to false after all pictures are fetched
-    const loadingTimer = setInterval(() => {
-      if (!isFetching) {
-        setLoading(false);
-        clearInterval(loadingTimer);
-      }
-    }, 450);
-
-    // Cleanup the interval if the component unmounts or if the posts change
-    return () => {
-      clearInterval(loadingTimer);
-    };
-  }, [posts]);
+  
+    getPosts();
+  }, []);
 
   return (
     <div>
@@ -187,7 +153,7 @@ function Feed() {
             }}
           >
             <NavigationSidePanel
-              onPostCreated={getPosts}
+              onPostCreated={handlePostCreate}
               sx={{ overflow: "hidden" }}
             />
             <Box
@@ -264,7 +230,7 @@ function Feed() {
               maxHeight: "100vh",
             }}
           >
-            <MobileSideNav onPostCreated={getPosts} />
+            <MobileSideNav onPostCreated={handlePostCreate} />
             <Box
               sx={{
                 flex: 1,
