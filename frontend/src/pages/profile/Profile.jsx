@@ -298,9 +298,7 @@ function Profile() {
                       display: "flex",
                       flexDirection: "column",
                       justifyContent: "flex-end",
-                      backgroundImage: `url(${headPhoto})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
+                      backgroundColor: 'accent.main',
                       borderRadius: "10px",
                       minHeight: "20vh",
                     }}
@@ -494,9 +492,7 @@ function Profile() {
                       display: "flex",
                       flexDirection: "column",
                       justifyContent: "flex-end",
-                      backgroundImage: `url(${headPhoto})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
+                      backgroundColor: 'accent.main',
                       borderRadius: "10px",
                       minHeight: "20vh",
                     }}
