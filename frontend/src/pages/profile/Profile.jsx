@@ -81,7 +81,7 @@ function Profile() {
     setAnchorEl(null);
   };
 
-  
+
   const handleFileUpload = async (file) => {
     const formData = new FormData();
     formData.append("file", file);
@@ -115,6 +115,7 @@ function Profile() {
           profileImageFetch.status === 200 ||
           profileImageFetch.status === 304
         ) {
+          const commentProfilePictures = {};
           // Create a blob from the file data
           const blob = new Blob([profileImageFetch.data], {
             type: profileImageFetch.headers["content-type"],
@@ -123,7 +124,44 @@ function Profile() {
           // Convert the blob to a URL (blob URL)
           const blobUrl = URL.createObjectURL(blob);
           setProfileImage(blobUrl);
-          setPosts(res.data.userPosts);
+          setUserProfilePicture(blobUrl);
+          
+          for (const post of res.data.userPosts) {
+            for (const comment of post.comments) {
+              try {
+                const res = await axios.get(
+                  `http://localhost:8000/api/users/profileImage/${comment.authorProfilePictureId}`,
+                  {
+                    headers: {
+                      Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                    responseType: "arraybuffer",
+                  }
+                );
+    
+                if (res.status === 200 || res.status === 304) {
+                  const blob = new Blob([res.data], {
+                    type: res.headers["content-type"],
+                  });
+                  const blobUrl = URL.createObjectURL(blob);
+                  commentProfilePictures[comment.authorProfilePictureId] = blobUrl;
+                }
+              } catch (err) {
+                console.log(err);
+              }
+            }
+          }
+
+          const postsWithCommentsWithProfilePictures = res.data.userPosts.map((post) => ({
+            ...post,
+            comments: post.comments.map((comment) => ({
+              ...comment,
+              profilePicture: commentProfilePictures[comment.authorProfilePictureId] || "",
+            })),
+          }));
+    
+          setPosts(postsWithCommentsWithProfilePictures);
+
           setSuccessProfileDataUpdateVis(true);
           setLoading(false);
           setEditOpen(false);
@@ -226,8 +264,37 @@ function Profile() {
     setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
   };
 
-  const fetchUserData = async () => {
+  const handlePostCreate = async (newPost) => {
+    setPosts((prevPosts) => [...prevPosts, newPost]);
+  };
+
+  async function getProfile() {
     try {
+      setLoading(true); // Start loading
+
+      const profilePictureFetch = await axios.get(
+        `http://localhost:8000/api/users/profileImage/${localStorage.getItem(
+          "profilePictureId"
+        )}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          responseType: "arraybuffer", // Set the responseType to arraybuffer
+        }
+      );
+
+      if (profilePictureFetch.status === 200 || profilePictureFetch.status === 304) {
+        // Create a blob from the file data
+        const blob = new Blob([profilePictureFetch.data], {
+          type: profilePictureFetch.headers["content-type"],
+        });
+
+        // Convert the blob to a URL (blob URL)
+        const blobUrl = URL.createObjectURL(blob);
+        setUserProfilePicture(blobUrl);
+      }
+
       const res = await axios.get(
         `http://localhost:8000/api/users/${profileid}`,
         {
@@ -239,14 +306,51 @@ function Profile() {
 
       console.log(res.status);
       if (res.status === 200 || res.status === 304) {
+        const commentProfilePictures = {};
         const userData = res.data.user;
         const userPosts = res.data.userPosts;
-        console.log("userPosts:", userPosts);
         setUserId(userData._id);
         setUserName(userData.name);
         setJobTitle(userData.jobTitle);
         setBiography(userData.bio);
-        setPosts(userPosts.reverse());
+        
+        for (const post of userPosts) {
+          // Iterate through each comment in the post
+          for (const comment of post.comments) {
+            try {
+              const res = await axios.get(
+                `http://localhost:8000/api/users/profileImage/${comment.authorProfilePictureId}`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                  },
+                  responseType: "arraybuffer",
+                }
+              );
+
+              if (res.status === 200 || res.status === 304) {
+                const blob = new Blob([res.data], {
+                  type: res.headers["content-type"],
+                });
+                const blobUrl = URL.createObjectURL(blob);
+                commentProfilePictures[comment.authorProfilePictureId] = blobUrl;
+              }
+            } catch (err) {
+              console.log(err);
+            }
+          }
+        }
+        
+        // Set the posts with the updated comment profile pictures
+        const postsWithCommentsWithProfilePictures = userPosts.map((post) => ({
+          ...post,
+          comments: post.comments.map((comment) => ({
+            ...comment,
+            profilePicture: commentProfilePictures[comment.authorProfilePictureId] || "",
+          })),
+        }));
+          
+        setPosts(postsWithCommentsWithProfilePictures);
 
         setFormValues({
           name: userData.name,
@@ -286,17 +390,20 @@ function Profile() {
         }
       }
     } catch (err) {
-      console.log("err", err);
+      console.log("err", err.message);
       if (err.response.status === 401 || err.response.status === 400) {
         navigate("/register");
       } else if (err.response.status === 404) {
         // TIA TODO: Display 404
       }
+    } finally {
+      setLoading(false); // Stop loading after fetching data, regardless of success or error
     }
-  };
+  }
 
   useEffect(() => {
-    fetchUserData();
+    // on initial load
+    getProfile()
   }, []);
 
   useEffect(() => {
@@ -309,7 +416,7 @@ function Profile() {
 
   useEffect(() => {
     // Fetch user data whenever the profile ID changes
-    fetchUserData();
+    getProfile()
   }, [profileId]);
 
   // ARTEM TODO: both buttons are there but only show the relevant one.
@@ -342,7 +449,7 @@ function Profile() {
             {!loading && (
               <NavigationSidePanel
                 position="fixed"
-                onPostCreated={fetchUserData}
+                onPostCreated={handlePostCreate}
                 _userProfilePicture={userProfilePicture}
               />
             )}
@@ -430,8 +537,8 @@ function Profile() {
                       </Typography>
                       <Box>
                         <Stack direction={'row'} spacing={2}>
-                        <Typography>Followers: {followers}</Typography>
-                        <Typography>Following: {following}</Typography>
+                          <Typography>Followers: {followers}</Typography>
+                          <Typography>Following: {following}</Typography>
                         </Stack>
                       </Box>
                     </Box>
@@ -542,7 +649,7 @@ function Profile() {
                             onDeletePost={handlePostDelete}
                           />
                         )
-                    )}
+                      )}
                   </Stack>
                 </Box>
               </Stack>
@@ -570,7 +677,11 @@ function Profile() {
               maxHeight: "100vh",
             }}
           >
-            <MobileSideNav onPostCreated={fetchUserData} />
+            {!loading && (
+              <MobileSideNav
+                onPostCreated={handlePostCreate}
+                _userProfilePicture={userProfilePicture}
+              />)}
             <Box
               sx={{
                 flex: 1,
@@ -719,8 +830,8 @@ function Profile() {
                   <Typography variant="h4">Posts</Typography>
                   <Stack spacing={3}>
                     {posts
-                     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                     .map((post) =>
+                      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                      .map((post) =>
                         !loading && (
                           <Post
                             key={post._id}
@@ -738,7 +849,7 @@ function Profile() {
                             onDeletePost={handlePostDelete}
                           />
                         )
-                    )}
+                      )}
                   </Stack>
                 </Box>
               </Stack>
