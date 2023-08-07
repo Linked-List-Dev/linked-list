@@ -125,7 +125,7 @@ function Profile() {
           const blobUrl = URL.createObjectURL(blob);
           setProfileImage(blobUrl);
           setUserProfilePicture(blobUrl);
-          
+
           for (const post of res.data.userPosts) {
             for (const comment of post.comments) {
               try {
@@ -536,10 +536,10 @@ function Profile() {
                         {jobTitle}
                       </Typography>
                       <Box>
-                        <Stack direction={'row'} spacing={2}>
+                        {/* <Stack direction={'row'} spacing={2}>
                           <Typography>Followers: {followers}</Typography>
                           <Typography>Following: {following}</Typography>
-                        </Stack>
+                        </Stack> */}
                       </Box>
                     </Box>
 
@@ -563,47 +563,47 @@ function Profile() {
                           />
                           Edit Profile
                         </Button>
-                      ) : (
-                        <Box>
-                          {" "}
-                          <Button
-                            variant="contained"
-                            onClick={handleFollow}
-                            sx={{
-                              backgroundColor: "accent.main",
-                              "&:hover": {
-                                backgroundColor: "accent.secondary",
-                              },
-                            }}
-                          >
-                            Follow
-                          </Button>
-                          <Button
-                            onClick={handleClick}
-                            startIcon={<ArrowDropDownIcon />}
-                            variant="contained"
-                            sx={{
-                              backgroundColor: "accent.main",
-                              "&:hover": {
-                                backgroundColor: "accent.secondary",
-                              },
-                            }}
-                          >
-                            Following
-                          </Button>
-                          <Menu
-                            anchorEl={anchorEl}
-                            open={Boolean(anchorEl)}
-                            onClose={handleElClose}
-                          >
-                            <MenuItem onClick={handleShowFollowingModal}>
-                              View Following
-                            </MenuItem>
-                            <MenuItem onClick={handleUnfollow}>
-                              Unfollow
-                            </MenuItem>
-                          </Menu>
-                        </Box>
+                      ) : ( null
+                        // <Box>
+                        //   {" "}
+                        //   <Button
+                        //     variant="contained"
+                        //     onClick={handleFollow}
+                        //     sx={{
+                        //       backgroundColor: "accent.main",
+                        //       "&:hover": {
+                        //         backgroundColor: "accent.secondary",
+                        //       },
+                        //     }}
+                        //   >
+                        //     Follow
+                        //   </Button>
+                        //   <Button
+                        //     onClick={handleClick}
+                        //     startIcon={<ArrowDropDownIcon />}
+                        //     variant="contained"
+                        //     sx={{
+                        //       backgroundColor: "accent.main",
+                        //       "&:hover": {
+                        //         backgroundColor: "accent.secondary",
+                        //       },
+                        //     }}
+                        //   >
+                        //     Following
+                        //   </Button>
+                        //   <Menu
+                        //     anchorEl={anchorEl}
+                        //     open={Boolean(anchorEl)}
+                        //     onClose={handleElClose}
+                        //   >
+                        //     <MenuItem onClick={handleShowFollowingModal}>
+                        //       View Following
+                        //     </MenuItem>
+                        //     <MenuItem onClick={handleUnfollow}>
+                        //       Unfollow
+                        //     </MenuItem>
+                        //   </Menu>
+                        // </Box>
                       )}
                     </Box>
                   </Stack>
@@ -900,7 +900,6 @@ function Profile() {
             Your profile was updated!
           </Alert>
         </Snackbar>
-        <Footer />
       </ThemeProvider>
     </div>
   );

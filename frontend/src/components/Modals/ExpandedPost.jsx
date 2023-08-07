@@ -15,6 +15,7 @@ import {
   Divider,
   Modal,
   Box,
+  IconButton,
 } from "@mui/material";
 import AppTheme from "../../util/Theme";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
@@ -24,8 +25,10 @@ import ThumbDownAltIcon from "@mui/icons-material/ThumbDownAlt";
 import axios from "axios";
 import Comment from "../Comment";
 import Linkify from "../../util/Linkify";
+import { Link } from "react-router-dom";
 
 function ExpandedPost({
+  _authorId,
   _postId,
   _content,
   _userName,
@@ -41,6 +44,7 @@ function ExpandedPost({
   handleDislike,
   onUpdatePostComments
 }) {
+  const [authorId, setAuthorId] = useState(_authorId);
   const [content, setContent] = useState(_content);
   const [userName, setUserName] = useState(_userName);
   const [jobTitle, setJobTitle] = useState(_jobTitle);
@@ -225,9 +229,14 @@ function ExpandedPost({
               <Box>
                 <CardContent>
                   <Stack direction={"row"} spacing={2} paddingBottom={"1vh"}>
-                    <Avatar src={profilePhoto} sx={{ width: 60, height: 60 }}>
-                      {profilePhoto ? null : userName[0]}
-                    </Avatar>
+                      <IconButton
+                        component={Link}
+                        to={`/profile/${authorId}`}
+                      >
+                        <Avatar src={profilePhoto} sx={{ width: 60, height: 60 }}>
+                          {profilePhoto ? null : userName[0]}
+                        </Avatar>
+                      </IconButton>
                     <Stack>
                       <Typography variant="h5">{userName}</Typography>
                       <Typography

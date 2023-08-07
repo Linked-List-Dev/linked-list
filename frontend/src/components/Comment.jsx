@@ -6,13 +6,14 @@ import {
   Stack,
   CardContent,
   IconButton,
-  Box
+  Box,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import EditComment from "./Modals/EditComment";
 import Linkify from "../util/Linkify";
+import { Link } from "react-router-dom";
 
 function Comment({
   _key,
@@ -25,6 +26,7 @@ function Comment({
   onCommentDelete,
   onCommentUpdate
 }) {
+  const [authorId, setAuthorId] = useState(_authorId);
   const [userName, setUserName] = useState(_authorName);
   const [content, setContent] = useState(_content);
   const [createdAt, setCreatedAt] = useState(_createdAt);
@@ -111,14 +113,18 @@ function Comment({
         </div>
         <CardContent sx={{ display: 'block' }}>
           <Stack direction={"row"} spacing={2} paddingBottom={"1vh"}>
-            <Avatar
-              alt="Profile Picture"
-              src={profilePhoto}
-              sx={{ width: 40, height: 40 }}
+            <IconButton
+              component={Link}
+              to={`/profile/${authorId}`}
             >
-              {profilePhoto ? null : userName[0]}
-            </Avatar>
-            
+              <Avatar
+                alt="Profile Picture"
+                src={profilePhoto}
+                sx={{ width: 40, height: 40 }}
+              >
+                {profilePhoto ? null : userName[0]}
+              </Avatar>
+            </IconButton>
             <Typography variant="h5">{userName}</Typography>
           </Stack>
           <Typography>

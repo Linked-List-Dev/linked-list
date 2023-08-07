@@ -303,7 +303,7 @@ function Post({
             <IconButton
               style={{ position: "absolute", top: "10px", left: "10px" }}
               component={Link}
-              to={`/profile/${_authorId}`}
+              to={`/profile/${authorId}`}
             >
               <Avatar src={authorProfilePhoto} sx={{ width: 60, height: 60 }} />
             </IconButton>
@@ -378,6 +378,7 @@ function Post({
         </Card>
         <Box>
           <ExpandedPost
+            _authorId={authorId}
             _postId={postId}
             _content={description}
             _userName={userName}
