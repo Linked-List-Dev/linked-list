@@ -18,6 +18,10 @@ const limiter = rateLimit({
     standardHeaders: true,
 })
   
+const devOrigins = ['http://localhost:5173', 'http://localhost:5174'];
+const prodOrigins = ['https://linkedlist.onrender.com'];
+const origin = process.env.NODE_ENV === 'production' ? prodOrigins : devOrigins;
+
 app.disable('x-powered-by')
 
 // Define routes and middleware here
@@ -27,6 +31,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(morgan("dev"))
 app.use(
     cors({
+    origin: origin,
       credentials: true,
       optionsSuccessStatus: 200,
     }),
