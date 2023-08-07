@@ -272,27 +272,33 @@ function Profile() {
     try {
       setLoading(true); // Start loading
 
-      const profilePictureFetch = await axios.get(
-        `https://linkedlist-api.onrender.com/api/users/profileImage/${localStorage.getItem(
-          "profilePictureId"
-        )}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          responseType: "arraybuffer", // Set the responseType to arraybuffer
+      if (localStorage.getItem("profilePictureId") !== "") {
+        try {
+          const profilePictureFetch = await axios.get(
+            `https://linkedlist-api.onrender.com/api/users/profileImage/${localStorage.getItem(
+              "profilePictureId"
+            )}`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+              responseType: "arraybuffer", // Set the responseType to arraybuffer
+            }
+          );
+
+          if (profilePictureFetch.status === 200 || profilePictureFetch.status === 304) {
+            // Create a blob from the file data
+            const blob = new Blob([profilePictureFetch.data], {
+              type: profilePictureFetch.headers["content-type"],
+            });
+
+            // Convert the blob to a URL (blob URL)
+            const blobUrl = URL.createObjectURL(blob);
+            setUserProfilePicture(blobUrl);
+          }
+        } catch (err) {
+          console.log(err);
         }
-      );
-
-      if (profilePictureFetch.status === 200 || profilePictureFetch.status === 304) {
-        // Create a blob from the file data
-        const blob = new Blob([profilePictureFetch.data], {
-          type: profilePictureFetch.headers["content-type"],
-        });
-
-        // Convert the blob to a URL (blob URL)
-        const blobUrl = URL.createObjectURL(blob);
-        setUserProfilePicture(blobUrl);
       }
 
       const res = await axios.get(
