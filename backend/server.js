@@ -5,18 +5,33 @@ import morgan from "morgan"
 import cors from "cors"
 import api from "./api/index.js"
 import tracker from "./middleware/tracker.js"
+import rateLimit from "express-rate-limit"
 
 dotenv.config()
 
 const app = express()
 const PORT = process.env.PORT || 8000
 
+const limiter = rateLimit({
+    windowMs: 60 * 1000,
+    max: 100,                   // Limit each IP to 100 requests per `window` (here, per 1 minute)
+    standardHeaders: true,
+})
+  
+app.disable('x-powered-by')
+
 // Define routes and middleware here
+app.use(limiter)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(morgan("dev"))
-app.use(cors())
-
+app.use(
+    cors({
+      credentials: true,
+      optionsSuccessStatus: 200,
+    }),
+)
+  
 // Uncomment if you are debugging one of the endpoints:
 // app.use(tracker)
 
