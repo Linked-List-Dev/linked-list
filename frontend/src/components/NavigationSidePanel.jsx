@@ -83,7 +83,7 @@ function NavigationSidePanel({ onPostCreated, _userProfilePicture }) {
     console.log(formValues);
 
     const res = await axios.post(
-      "http://localhost:8000/api/posts/",
+      "https://linkedlist-api.onrender.com/api/posts/",
       { description: formValues.content }, // Request payload
       {
         headers: {

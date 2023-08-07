@@ -75,7 +75,7 @@ function Post({
 
   const handleDeleteClick = async (e) => {
     const res = await axios.delete(
-      `http://localhost:8000/api/posts/${postId}`,
+      `https://linkedlist-api.onrender.com/api/posts/${postId}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -101,7 +101,7 @@ function Post({
       if (dislikes.includes(localStorage.getItem("email"))) {
         //if its disliked and they like do +2 instead of +1
         const res = await axios.post(
-          "http://localhost:8000/api/posts/like/",
+          "https://linkedlist-api.onrender.com/api/posts/like/",
           {
             postId: postId,
             isLiked: false,
@@ -125,7 +125,7 @@ function Post({
       } else {
         //if its not disliked and they like do +1
         const res = await axios.post(
-          "http://localhost:8000/api/posts/like/",
+          "https://linkedlist-api.onrender.com/api/posts/like/",
           {
             postId: postId,
             isLiked: false,
@@ -150,7 +150,7 @@ function Post({
     } else {
       //if its liked and they like again do -1
       const res = await axios.post(
-        "http://localhost:8000/api/posts/like/",
+        "https://linkedlist-api.onrender.com/api/posts/like/",
         {
           postId: postId,
           isLiked: true,
@@ -179,7 +179,7 @@ function Post({
       if (likes.includes(localStorage.getItem("email"))) {
         //if its liked and they dislike do -2 instead of -1
         const res = await axios.post(
-          "http://localhost:8000/api/posts/dislike/",
+          "https://linkedlist-api.onrender.com/api/posts/dislike/",
           {
             postId: postId,
             isLiked: true,
@@ -203,7 +203,7 @@ function Post({
       } else {
         //if its not liked and they dislike do -1
         const res = await axios.post(
-          "http://localhost:8000/api/posts/dislike/",
+          "https://linkedlist-api.onrender.com/api/posts/dislike/",
           {
             postId: postId,
             isLiked: false,
@@ -228,7 +228,7 @@ function Post({
     } else {
       //if its disliked and they disliked again do +1
       const res = await axios.post(
-        "http://localhost:8000/api/posts/dislike/",
+        "https://linkedlist-api.onrender.com/api/posts/dislike/",
         {
           postId: postId,
           isLiked: false,

@@ -28,7 +28,7 @@ function LoginSide({ openByDefault }) {
   const handleSubmit = async (e) => {
     console.log(formValues);
     e.preventDefault();
-    const res = await axios.post("http://localhost:8000/api/users/login", {
+    const res = await axios.post("https://linkedlist-api.onrender.com/api/users/login", {
       email: formValues.email,
       password: formValues.password,
     });

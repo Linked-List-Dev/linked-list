@@ -42,7 +42,7 @@ function EditComment({ _content, _commentId, _open, _handleClose, onUpdateCommen
     }
 
     const res = await axios.put(
-      `http://localhost:8000/api/posts/comment/${commentId}`,
+      `https://linkedlist-api.onrender.com/api/posts/comment/${commentId}`,
       { newCommentContent: content },
       {
         headers: {

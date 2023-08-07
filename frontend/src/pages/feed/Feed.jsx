@@ -48,7 +48,7 @@ function Feed() {
     if (newPost.authorProfilePictureId) {
       try {
         const res = await axios.get(
-          `http://localhost:8000/api/users/profileImage/${newPost.authorProfilePictureId}`,
+          `https://linkedlist-api.onrender.com/api/users/profileImage/${newPost.authorProfilePictureId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -81,7 +81,7 @@ function Feed() {
         setLoading(true); // Start loading
   
         const profilePictureFetch = await axios.get(
-          `http://localhost:8000/api/users/profileImage/${localStorage.getItem(
+          `https://linkedlist-api.onrender.com/api/users/profileImage/${localStorage.getItem(
             "profilePictureId"
           )}`,
           {
@@ -103,7 +103,7 @@ function Feed() {
           setUserProfilePicture(blobUrl);
         }
 
-        const res = await axios.get("http://localhost:8000/api/feed/", {
+        const res = await axios.get("https://linkedlist-api.onrender.com/api/feed/", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -118,7 +118,7 @@ function Feed() {
           for (const post of res.data.posts) {
             if (post.authorProfilePictureId) {
               const res = await axios.get(
-                `http://localhost:8000/api/users/profileImage/${post.authorProfilePictureId}`,
+                `https://linkedlist-api.onrender.com/api/users/profileImage/${post.authorProfilePictureId}`,
                 {
                   headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -139,7 +139,7 @@ function Feed() {
             for (const comment of post.comments) {
               try {
                 const res = await axios.get(
-                  `http://localhost:8000/api/users/profileImage/${comment.authorProfilePictureId}`,
+                  `https://linkedlist-api.onrender.com/api/users/profileImage/${comment.authorProfilePictureId}`,
                   {
                     headers: {
                       Authorization: `Bearer ${localStorage.getItem("token")}`,

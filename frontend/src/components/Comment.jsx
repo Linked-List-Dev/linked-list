@@ -52,7 +52,7 @@ function Comment({
 
   const handleDeleteClick = async (e) => {
     const res = await axios.delete(
-      `http://localhost:8000/api/posts/comment/${commentId}`,
+      `https://linkedlist-api.onrender.com/api/posts/comment/${commentId}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,

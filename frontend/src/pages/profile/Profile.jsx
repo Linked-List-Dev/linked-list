@@ -89,7 +89,7 @@ function Profile() {
     setLoading(true)
     try {
       const res = await axios.post(
-        `http://localhost:8000/api/users/profileImage`,
+        `https://linkedlist-api.onrender.com/api/users/profileImage`,
         formData, // Use the FormData object as the request data
         {
           headers: {
@@ -102,7 +102,7 @@ function Profile() {
       if (res.status === 201) {
         localStorage.setItem("profilePictureId", res.data.id);
         const profileImageFetch = await axios.get(
-          `http://localhost:8000/api/users/profileImage/${res.data.id}`,
+          `https://linkedlist-api.onrender.com/api/users/profileImage/${res.data.id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -130,7 +130,7 @@ function Profile() {
             for (const comment of post.comments) {
               try {
                 const res = await axios.get(
-                  `http://localhost:8000/api/users/profileImage/${comment.authorProfilePictureId}`,
+                  `https://linkedlist-api.onrender.com/api/users/profileImage/${comment.authorProfilePictureId}`,
                   {
                     headers: {
                       Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -197,7 +197,7 @@ function Profile() {
     setLoading(true)
     // Make PUT request to update user data
     const res = await axios.put(
-      `http://localhost:8000/api/users/${userId}`,
+      `https://linkedlist-api.onrender.com/api/users/${userId}`,
       values,
       {
         headers: {
@@ -218,7 +218,7 @@ function Profile() {
         for (const comment of post.comments) {
           try {
             const res = await axios.get(
-              `http://localhost:8000/api/users/profileImage/${comment.authorProfilePictureId}`,
+              `https://linkedlist-api.onrender.com/api/users/profileImage/${comment.authorProfilePictureId}`,
               {
                 headers: {
                   Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -273,7 +273,7 @@ function Profile() {
       setLoading(true); // Start loading
 
       const profilePictureFetch = await axios.get(
-        `http://localhost:8000/api/users/profileImage/${localStorage.getItem(
+        `https://linkedlist-api.onrender.com/api/users/profileImage/${localStorage.getItem(
           "profilePictureId"
         )}`,
         {
@@ -296,7 +296,7 @@ function Profile() {
       }
 
       const res = await axios.get(
-        `http://localhost:8000/api/users/${profileid}`,
+        `https://linkedlist-api.onrender.com/api/users/${profileid}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -319,7 +319,7 @@ function Profile() {
           for (const comment of post.comments) {
             try {
               const res = await axios.get(
-                `http://localhost:8000/api/users/profileImage/${comment.authorProfilePictureId}`,
+                `https://linkedlist-api.onrender.com/api/users/profileImage/${comment.authorProfilePictureId}`,
                 {
                   headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -360,7 +360,7 @@ function Profile() {
 
         if (userData.profilePictureId !== "") {
           const profileImageFetch = await axios.get(
-            `http://localhost:8000/api/users/profileImage/${userData.profilePictureId}`,
+            `https://linkedlist-api.onrender.com/api/users/profileImage/${userData.profilePictureId}`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,

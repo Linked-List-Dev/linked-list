@@ -64,7 +64,7 @@ function ExpandedPost({
   const fetchProfilePicture = async (profilePictureId) => {
     try {
       const res = await axios.get(
-        `http://localhost:8000/api/users/profileImage/${profilePictureId}`,
+        `https://linkedlist-api.onrender.com/api/users/profileImage/${profilePictureId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -122,7 +122,7 @@ function ExpandedPost({
     e.preventDefault()
 
     const res = await axios.post(
-      "http://localhost:8000/api/posts/comment",
+      "https://linkedlist-api.onrender.com/api/posts/comment",
       {
         commentContent: commentContent,
         postId: postId,

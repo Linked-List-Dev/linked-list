@@ -20,7 +20,7 @@ function SettingsModal({
 
   const handleDeleteAccount = async () => {
     const res = await axios.delete(
-      `http://localhost:8000/api/users/${localStorage.getItem("id")}`,
+      `https://linkedlist-api.onrender.com/api/users/${localStorage.getItem("id")}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,

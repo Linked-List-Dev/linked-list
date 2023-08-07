@@ -41,7 +41,7 @@ function RegisterSide() {
     if (formValues.password === formValues.confirmPassword) {
       e.preventDefault();
       console.log("formValues:", formValues);
-      const res = await axios.post("http://localhost:8000/api/users", {
+      const res = await axios.post("https://linkedlist-api.onrender.com/api/users", {
         name: formValues.name,
         email: formValues.email,
         password: formValues.confirmPassword,

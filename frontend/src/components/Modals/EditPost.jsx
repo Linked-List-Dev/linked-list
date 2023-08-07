@@ -30,7 +30,7 @@ function EditPost({ _content, _postId, _open, _handleClose, onUpdatePostDescript
 
     // TODO update the post
     const res = await axios.put(
-      `http://localhost:8000/api/posts/${postId}`,
+      `https://linkedlist-api.onrender.com/api/posts/${postId}`,
       { description: content },
       {
         headers: {
