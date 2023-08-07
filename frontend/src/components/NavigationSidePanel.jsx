@@ -33,7 +33,7 @@ import SettingsModal from "./Modals/SettingsModal";
 import Feed from "../pages/feed/Feed";
 import Footer from "./Footer";
 
-function NavigationSidePanel({ onPostCreated }) {
+function NavigationSidePanel({ onPostCreated, _userProfilePicture }) {
   const [open, setOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [successVis, setSuccessVis] = useState(false);
@@ -41,52 +41,13 @@ function NavigationSidePanel({ onPostCreated }) {
   const handleClose = () => setOpen(false);
   const openSettingsModal = () => setSettingsOpen(true);
   const closeSettingsModal = () => setSettingsOpen(false);
-  const [profileImage, setProfileImage] = useState("");
+  const [profileImage, setProfileImage] = useState(_userProfilePicture);
 
   const navigate = useNavigate();
 
   const getFirstLetter = () => {
     const userName = localStorage.getItem("username");
     return userName ? userName[0] : "";
-  };
-
-  const fetchProfilePicture = async () => {
-    try {
-      const profileImageFetch = await axios.get(
-        `http://localhost:8000/api/users/profileImage/${localStorage.getItem(
-          "profilePictureId"
-        )}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          responseType: "arraybuffer", // Set the responseType to arraybuffer
-        }
-      );
-
-      if (
-        profileImageFetch.status === 200 ||
-        profileImageFetch.status === 304
-      ) {
-        // Create a blob from the file data
-        const blob = new Blob([profileImageFetch.data], {
-          type: profileImageFetch.headers["content-type"],
-        });
-
-        // Convert the blob to a URL (blob URL)
-        const blobUrl = URL.createObjectURL(blob);
-        setProfileImage(blobUrl);
-      } else {
-        console.log(
-          "Tia TODO: display an error saying failed to fetch user data (res.data.error)"
-        );
-      }
-    } catch (err) {
-      console.log("err", err);
-      if (err.response.status === 401 || err.response.status === 400) {
-        navigate("/register");
-      }
-    }
   };
 
   const [formValues, setFormValues] = useState({
@@ -135,7 +96,7 @@ function NavigationSidePanel({ onPostCreated }) {
     if (res.status === 200) {
       // console.log("response: ", res.data.id)
       // return res.data.id;
-      onPostCreated();
+      onPostCreated(res.data.createdPost);
       setOpen(false);
       setSuccessVis(true);
       formValues.content = "";
@@ -149,10 +110,6 @@ function NavigationSidePanel({ onPostCreated }) {
     const profileId = localStorage.getItem("id");
     navigate(`/profile/${profileId}`);
   };
-
-  useEffect(() => {
-    fetchProfilePicture();
-  }, []);
 
   return (
     <div>

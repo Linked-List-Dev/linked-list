@@ -29,6 +29,7 @@ import EditPhotoModal from "../../components/Modals/EditPhotoModal";
 import ShowFollowingModal from "../../components/Modals/ShowFollowingModal";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import Linkify from "../../util/Linkify";
+import { useNavigate } from "react-router-dom";
 
 function Profile() {
   const { profileid } = useParams();
@@ -41,6 +42,7 @@ function Profile() {
   );
   const [posts, setPosts] = useState([]);
   const [profileImage, setProfileImage] = useState("");
+  const [userProfilePicture, setUserProfilePicture] = useState("");
   const [headPhoto, setHeaderPhoto] = useState(
     "https://images.pexels.com/photos/1796730/pexels-photo-1796730.jpeg?cs=srgb&dl=pexels-chait-goli-1796730.jpg&fm=jpg"
   );
@@ -52,7 +54,7 @@ function Profile() {
   const [openFollowingModal, setOpenFollowingModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
-  const [successVis, setSuccessVis] = useState(false);
+  const [successProfileDataUpdateVis, setSuccessProfileDataUpdateVis] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [editOpen, setEditOpen] = useState(false);
   const handleClose = () => setOpen(false);
@@ -61,6 +63,7 @@ function Profile() {
   const handleCloseEdit = () => setEditOpen(false);
   const closeFollowingModal = () => setOpenFollowingModal(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const navigate = useNavigate();
 
   const [followers, setFollowers] = useState(0)
   const [following, setFollowing] = useState(0)
@@ -80,11 +83,10 @@ function Profile() {
 
   
   const handleFileUpload = async (file) => {
-    console.log("file:", file);
-
     const formData = new FormData();
     formData.append("file", file);
 
+    setLoading(true)
     try {
       const res = await axios.post(
         `http://localhost:8000/api/users/profileImage`,
@@ -121,8 +123,9 @@ function Profile() {
           // Convert the blob to a URL (blob URL)
           const blobUrl = URL.createObjectURL(blob);
           setProfileImage(blobUrl);
+          setPosts(res.data.userPosts);
+          setSuccessProfileDataUpdateVis(true);
           setLoading(false);
-
           setEditOpen(false);
         }
       }
@@ -136,7 +139,7 @@ function Profile() {
       return;
     }
 
-    setSuccessVis(false);
+    setSuccessProfileDataUpdateVis(false);
   };
 
   useEffect(() => {
@@ -153,6 +156,7 @@ function Profile() {
   }, []);
 
   const handleProfileUpdate = async (e, values) => {
+    setLoading(true)
     // Make PUT request to update user data
     const res = await axios.put(
       `http://localhost:8000/api/users/${userId}`,
@@ -170,8 +174,46 @@ function Profile() {
       setUserName(res.data.name);
       setJobTitle(res.data.jobTitle);
       setBiography(res.data.bio);
+      const commentProfilePictures = {};
+
+      for (const post of res.data.userPosts) {
+        for (const comment of post.comments) {
+          try {
+            const res = await axios.get(
+              `http://localhost:8000/api/users/profileImage/${comment.authorProfilePictureId}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                responseType: "arraybuffer",
+              }
+            );
+
+            if (res.status === 200 || res.status === 304) {
+              const blob = new Blob([res.data], {
+                type: res.headers["content-type"],
+              });
+              const blobUrl = URL.createObjectURL(blob);
+              commentProfilePictures[comment.authorProfilePictureId] = blobUrl;
+            }
+          } catch (err) {
+            console.log(err);
+          }
+        }
+      }
+
+      const postsWithCommentsWithProfilePictures = res.data.userPosts.map((post) => ({
+        ...post,
+        comments: post.comments.map((comment) => ({
+          ...comment,
+          profilePicture: commentProfilePictures[comment.authorProfilePictureId] || "",
+        })),
+      }));
+
+      setPosts(postsWithCommentsWithProfilePictures);
+      setLoading(false)
       setOpen(false);
-      setSuccessVis(true);
+      setSuccessProfileDataUpdateVis(true);
     } else {
       console.log(
         res.data.error // change to snackbar
@@ -247,6 +289,8 @@ function Profile() {
       console.log("err", err);
       if (err.response.status === 401 || err.response.status === 400) {
         navigate("/register");
+      } else if (err.response.status === 404) {
+        // TIA TODO: Display 404
       }
     }
   };
@@ -295,10 +339,13 @@ function Profile() {
               maxHeight: "100vh",
             }}
           >
-            <NavigationSidePanel
-              position="fixed"
-              onPostCreated={fetchUserData}
-            />
+            {!loading && (
+              <NavigationSidePanel
+                position="fixed"
+                onPostCreated={fetchUserData}
+                _userProfilePicture={userProfilePicture}
+              />
+            )}
             <Box
               sx={{
                 flex: 1,
@@ -324,27 +371,52 @@ function Profile() {
                   >
                     <Box sx={{ position: "relative" }}>
                       <Box sx={{ paddingLeft: "2vw", paddingBottom: "2vh" }}>
-                        <Avatar
-                          src={profileImage}
-                          sx={{
-                            width: 150,
-                            height: 150,
-                            border: "white 4px solid",
-                            borderColor: "page.main",
-                          }}
-                          onClick={handleOpenEdit}
-                        />
-                        <IconButton
-                          sx={{
-                            position: "absolute",
-                            bottom: 20,
-                            left: 140,
-                            bgcolor: "white",
-                          }}
-                          onClick={handleOpenEdit}
-                        >
-                          <EditIcon />
-                        </IconButton>
+                        {userId === localStorage.getItem("id") ? (
+                          <>
+                            <Avatar
+                              src={profileImage}
+                              sx={{
+                                width: 150,
+                                height: 150,
+                                border: "white 4px solid",
+                                borderColor: "page.main",
+                                cursor: "pointer", // Set the cursor to "pointer" when hovering over the Avatar
+                                "&:hover": {
+                                  // Add on-hover styles
+                                  border: "white 4px solid",
+                                  boxShadow: "0px 0px 5px 0px rgba(0, 0, 0, 0.75)",
+                                },
+                              }}
+                              onClick={handleOpenEdit}
+                            />
+                            <IconButton
+                              sx={{
+                                position: "absolute",
+                                bottom: 20,
+                                left: 140,
+                                bgcolor: "white",
+                                cursor: "pointer", // Set the cursor to "pointer" when hovering over the IconButton
+                                "&:hover": {
+                                  // Add on-hover styles
+                                  backgroundColor: "gray", // For example, change the background color on hover
+                                },
+                              }}
+                              onClick={handleOpenEdit}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                          </>
+                        ) : (
+                          <Avatar
+                            src={profileImage}
+                            sx={{
+                              width: 150,
+                              height: 150,
+                              border: "white 4px solid",
+                              borderColor: "page.main",
+                            }}
+                          />
+                        )}
                       </Box>
                     </Box>
                   </Box>
@@ -450,8 +522,9 @@ function Profile() {
                 <Box>
                   <Typography variant="h4">Posts</Typography>
                   <Stack spacing={3}>
-                    {posts.map(
-                      (post) =>
+                    {posts
+                      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                      .map((post) =>
                         !loading && (
                           <Post
                             key={post._id}
@@ -645,8 +718,9 @@ function Profile() {
                 <Box>
                   <Typography variant="h4">Posts</Typography>
                   <Stack spacing={3}>
-                    {posts.map(
-                      (post) =>
+                    {posts
+                     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                     .map((post) =>
                         !loading && (
                           <Post
                             key={post._id}
@@ -703,7 +777,7 @@ function Profile() {
           onProfileUpdate={handleProfileUpdate}
         />
         <Snackbar
-          open={successVis}
+          open={successProfileDataUpdateVis}
           autoHideDuration={3000}
           onClose={handleSnackClose}
         >

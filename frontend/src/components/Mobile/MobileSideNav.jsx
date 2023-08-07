@@ -27,7 +27,7 @@ import NewPostModal from "../Modals/NewPostModal";
 import SettingsModal from "../Modals/SettingsModal";
 import { useNavigate } from "react-router-dom";
 
-function MobileSideNav({ onPostCreated }) {
+function MobileSideNav({ onPostCreated, _userProfilePicture }) {
   const [isOpen, setIsOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -36,50 +36,13 @@ function MobileSideNav({ onPostCreated }) {
   const handleClose = () => setOpen(false);
   const openSettingsModal = () => setSettingsOpen(true);
   const closeSettingsModal = () => setSettingsOpen(false);
-  const [profileImage, setProfileImage] = useState("");
+  const [profileImage, setProfileImage] = useState(_userProfilePicture);
 
   const navigate = useNavigate();
 
   const getFirstLetter = () => {
     const userName = localStorage.getItem("username");
     return userName ? userName[0] : '';
-  };
-
-  const fetchProfilePicture = async () => {
-    try {
-      const profileImageFetch = await axios.get(
-        `http://localhost:8000/api/users/profileImage/${localStorage.getItem("profilePictureId")}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          responseType: "arraybuffer", // Set the responseType to arraybuffer
-        }
-      );
-
-      if (
-        profileImageFetch.status === 200 ||
-        profileImageFetch.status === 304
-      ) {
-        // Create a blob from the file data
-        const blob = new Blob([profileImageFetch.data], {
-          type: profileImageFetch.headers["content-type"],
-        });
-
-        // Convert the blob to a URL (blob URL)
-        const blobUrl = URL.createObjectURL(blob);
-        setProfileImage(blobUrl);
-      } else {
-        console.log(
-          "Tia TODO: display an error saying failed to fetch user data (res.data.error)"
-        );
-      }
-    } catch (err) {
-      console.log("err", err);
-      if (err.response.status === 401 || err.response.status === 400) {
-        navigate("/register");
-      }
-    }
   };
 
   const toggleDrawer = () => {
@@ -106,10 +69,6 @@ function MobileSideNav({ onPostCreated }) {
     localStorage.setItem("profilePictureId", "");
     navigate("/");
   };
-  const handleDeleteAccount = () => {
-    console.log("deleting account");
-    //artem to do delete account and redirect user to the landing page
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -135,9 +94,7 @@ function MobileSideNav({ onPostCreated }) {
 
     console.log(res.status);
     if (res.status === 200) {
-      // console.log("response: ", res.data.id)
-      // return res.data.id;
-      onPostCreated();
+      onPostCreated(res.data.createdPost);
       setOpen(false);
       setSuccessVis(true);
       formValues.content = "";
@@ -146,10 +103,6 @@ function MobileSideNav({ onPostCreated }) {
       // Tia TODO: display the error
     }
   };
-
-  useEffect(() => {
-    fetchProfilePicture();
-  }, []);
 
   return (
     <div>

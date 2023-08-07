@@ -77,7 +77,7 @@ router.get("/:userid", requireAuthentication, async function (req, res, next) {
         
 
         if (!user) {
-            return res.status(400).json({ error: "User not found" })
+            return res.status(404).json({ error: "User not found" })
         } else {
             const feed = await Feed.findById(process.env.FEED_ID)
 
@@ -208,13 +208,21 @@ router.put("/:userid", requireAuthentication, async function (req, res, next) {
                 { arrayFilters: [{ "post.authorEmail": userToUpdate.email }] }
             )
 
+            const feed = await Feed.findById(process.env.FEED_ID)
+
+            // Filter posts where the authorId matches the user's _id
+            const userPosts = feed.posts.filter(post =>
+                post.authorId.toString() === req.params.userid.toString()
+            )
+            
             return res
                 .status(200)
                 .json({
                     message: "User info successfully updated!",
                     name: updatedUser.name,
                     jobTitle: updatedUser.jobTitle,
-                    bio: updatedUser.bio
+                    bio: updatedUser.bio,
+                    userPosts: userPosts
                 })
         } catch (err) {
             return res.status(500).json({ error: err.message })
@@ -434,11 +442,17 @@ router.post('/profileImage', requireAuthentication, upload.single('file'), async
             // Save the updated feed
             await feed.save()
             
+            // Filter posts where the authorId matches the user's _id
+            const userPosts = feed.posts.filter(post =>
+                post.authorId.toString() === userid.toString()
+            )
+
             // After saving the photo in MongoDB, delete the uploaded image from the local folder
             fs.unlinkSync(req.file.path)
 
             res.status(201).send({
-                id: id
+                id: id,
+                userPosts: userPosts
             })
         } catch (err) {
             console.log("err:", err.message)

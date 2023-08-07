@@ -22,6 +22,7 @@ function Feed() {
   const [message, setMessage] = useState(""
     // "There are no posts yet... Want to add one?"
   );
+  const [userProfilePicture, setUserProfilePicture] = useState("");
 
   const navigate = useNavigate();
 
@@ -43,8 +44,35 @@ function Feed() {
     setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
   };
 
-  const handlePostCreate = (data) => {
-    console.log("handlePostCreate:", data)
+  const handlePostCreate = async (newPost) => {
+    if (newPost.authorProfilePictureId) {
+      try {
+        const res = await axios.get(
+          `http://localhost:8000/api/users/profileImage/${newPost.authorProfilePictureId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            responseType: "arraybuffer",
+          }
+        );
+
+        if (res.status === 200 || res.status === 304) {
+          const blob = new Blob([res.data], {
+            type: res.headers["content-type"],
+          });
+          const blobUrl = URL.createObjectURL(blob);
+          setPostProfilePictures((prevProfilePictures) => ({
+            ...prevProfilePictures,
+            [newPost.authorProfilePictureId]: blobUrl,
+          }));
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    
+    setPosts((prevPosts) => [...prevPosts, newPost]);
   }
   
   useEffect(() => {
@@ -52,6 +80,29 @@ function Feed() {
       try {
         setLoading(true); // Start loading
   
+        const profilePictureFetch = await axios.get(
+          `http://localhost:8000/api/users/profileImage/${localStorage.getItem(
+            "profilePictureId"
+          )}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            responseType: "arraybuffer", // Set the responseType to arraybuffer
+          }
+        );
+
+        if (profilePictureFetch.status === 200 || profilePictureFetch.status === 304) {
+          // Create a blob from the file data
+          const blob = new Blob([profilePictureFetch.data], {
+            type: profilePictureFetch.headers["content-type"],
+          });
+  
+          // Convert the blob to a URL (blob URL)
+          const blobUrl = URL.createObjectURL(blob);
+          setUserProfilePicture(blobUrl);
+        }
+
         const res = await axios.get("http://localhost:8000/api/feed/", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -152,10 +203,13 @@ function Feed() {
               maxHeight: "100vh",
             }}
           >
-            <NavigationSidePanel
-              onPostCreated={handlePostCreate}
-              sx={{ overflow: "hidden" }}
-            />
+            {!loading && (
+              <NavigationSidePanel
+                onPostCreated={handlePostCreate}
+                _userProfilePicture={userProfilePicture}
+                sx={{ overflow: "hidden" }}
+              />
+            )}
             <Box
               sx={{
                 flex: 1,
@@ -179,7 +233,9 @@ function Feed() {
               ) : (
                 <Box>
                   <Stack spacing={3}>
-                    {posts.map((post) => {
+                    {posts
+                     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                     .map((post) => {
                       return (
                         !loading && (
                           <Post
@@ -230,7 +286,12 @@ function Feed() {
               maxHeight: "100vh",
             }}
           >
-            <MobileSideNav onPostCreated={handlePostCreate} />
+            {!loading && (
+              <MobileSideNav
+                onPostCreated={handlePostCreate}
+                _userProfilePicture={userProfilePicture}
+              />
+            )}
             <Box
               sx={{
                 flex: 1,
@@ -254,8 +315,9 @@ function Feed() {
               ) : (
                 <Box>
                   <Stack spacing={3}>
-                    {posts.map(
-                      (post) =>
+                    {posts
+                     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                     .map((post) =>
                         !loading && (
                           <Post
                             key={post._id}

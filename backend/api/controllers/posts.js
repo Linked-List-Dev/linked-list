@@ -48,12 +48,7 @@ router.post("/", requireAuthentication, async function (req, res, next) {
         await feed.save()
 
         return res.status(200).json({
-            id: createdPost._id,
-            description: createdPost.description,
-            author: createdPost.authorName,
-            authorJobTitle: createdPost.authorJobTitle,
-            authorProfilePictureId: createdPost.authorProfilePictureId,
-            authorId: userid,
+            createdPost: createdPost
         })
     } catch (err) {
         return res.status(500).json({ error: err.message })
