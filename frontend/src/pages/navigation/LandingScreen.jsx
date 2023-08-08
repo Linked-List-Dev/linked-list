@@ -1,12 +1,60 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { ThemeProvider, Typography, Box, Stack } from "@mui/material";
 import NavigationBar from "../../components/NavigationBar";
 import AppTheme from "../../util/Theme";
 import MobileNav from "../../components/Mobile/MobileNav";
 import { motion } from "framer-motion";
 import LightSpeed from "react-reveal/LightSpeed";
-import Slide from "react-reveal/Slide";
-import Footer from "../../components/Footer";
+import Fade from "react-reveal/Fade";
+import { Card, CardContent, IconButton, Button } from "@mui/material";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+
+const cardData = [
+  {
+    title: "Comprehensive Profiles",
+    content: `Create a detailed profile
+  highlighting your educational background, profession,
+  experience, and a captivating bio that tells your unique
+  story.`,
+  },
+  {
+    title: "Project Showcase",
+    content: `Showcase your personal projects, side
+  hustles, and open-source contributions with visually
+  stunning project displays. Let the world see your coding
+  prowess.`,
+  },
+  {
+    title: "Resume Display",
+    content: `Upload your resume and make it easily
+  accessible to potential employers. LinkedList ensures that
+  your talent shines through.`,
+  },
+  {
+    title: "Engaging Blog Post",
+    content: `Share your thoughts, insights, and
+  expertise with the community through captivating blog posts.
+  Inspire others, spark discussions, and grow your
+  professional network.`,
+  },
+  {
+    title: "Career Opportunities",
+    content: `Explore a wide range of job
+  opportunities posted by reputable tech companies. Stay
+  updated with the latest career prospects in the
+  ever-evolving tech industry.`,
+  },
+  {
+    title: "Networking and Collaboration",
+    content: `Connect with like-minded tech
+  professionals, form collaborations, and exchange knowledge.
+  LinkedList is your gateway to building meaningful
+  professional relationships.`,
+  },
+  // Add more card data as needed
+];
 
 function Landing() {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -24,143 +72,403 @@ function Landing() {
     };
   }, []);
 
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const handlePrev = () => {
+    setActiveIndex((prevIndex) =>
+      prevIndex === cardData.length - 1 ? 0 : prevIndex - 1
+    );
+  };
+
+  const handleNext = () => {
+    setActiveIndex((prevIndex) =>
+      prevIndex === cardData.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
   return (
-    <div
+    <Box
       style={{
-        backgroundColor: "#FDFCFF",
+        backgroundColor: "#F6F6F6",
         maxHeight: "100vh",
         overflow: "scroll",
       }}
     >
       <ThemeProvider theme={AppTheme}>
-        {windowWidth >= 768 ? (
+        {windowWidth >= 850 ? (
           <Box width={"100vw"}>
             <NavigationBar />
+            <Box>
+          <Box minWidth={"100vw"} color={"text.main"}>
+            <Stack
+              direction="row"
+              paddingTop={"10vh"}
+              height="100%"
+              spacing={5}
+              paddingBottom={10}
+            >
+              <Box
+                justifyContent="center"
+                alignItems="center"
+                width={"48vw"}
+                paddingLeft={"2vw"}
+                textAlign={"center"}
+                color={"text.main"}
+              >
+                <Fade top>
+                  <Typography variant="h2">Welcome to LinkedList</Typography>
+                </Fade>
+                <Fade>
+                  <Typography variant="h4" paddingTop={"3vh"}>
+                    Welcome to LinkedList, a tech-focused social platform
+                    designed for tech enthusiasts. Similar to LinkedIn,
+                    LinkedList lets tech professionals showcase skills, build
+                    connections, and boost careers. Connect with like-minded
+                    tech experts, share knowledge through articles, and network
+                    with potential collaborators. Stay updated on industry
+                    trends and engage with influential personalities and
+                    companies. Join our vibrant community to enhance your tech
+                    career. Discover, connect, and thrive with LinkedList.
+                  </Typography>
+                </Fade>
+              </Box>
+              <Box
+                sx={{
+                  width: "48vw",
+                  paddingRight: "2vw",
+                  minHeight: "50vh",
+                  overflow: "hidden",
+                  textAlign: "center",
+                }}
+              >
+                <Fade top>
+                  <Typography variant="h2">Key Features</Typography>
+                </Fade>
+                <Box
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    position: "relative",
+                    paddingTop: "3vh",
+                  }}
+                >
+                  <IconButton
+    style={{
+      position: "absolute",
+      top: "50%",
+      left: "10px",
+      transform: "translateY(-50%)",
+    }}
+    onClick={handlePrev}
+  >
+    <ChevronLeftIcon />
+  </IconButton>
+                  <Box
+                    style={{
+                      transition: "transform 0.5s ease",
+                      transform: `translateX(-${activeIndex * 100.6}%)`,
+                    }}
+                  >
+                    <Stack direction={"row"} spacing={3}>
+                      {cardData.map((card, index) => (
+                        <Box
+                          key={index}
+                          style={{
+                            flex: "0 0 100%",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <Card
+                            style={{
+                              width: "40vw",
+                              height: "35vh",
+                              textAlign: "left",
+                            }}
+                          >
+                            <CardContent>
+                              <Typography variant="h4">{card.title}</Typography>
+                              <Typography
+                                variant="h5"
+                                color={"text.secondary"}
+                                paddingTop={2}
+                              >
+                                {card.content}
+                              </Typography>
+                            </CardContent>
+                          </Card>
+                        </Box>
+                      ))}
+                    </Stack>
+                  </Box>
+                  <IconButton
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      right: "10px",
+                      transform: "translateY(-50%)",
+                    }}
+                    onClick={handleNext}
+                  >
+                    <ChevronRightIcon />
+                  </IconButton>
+                </Box>
+              </Box>
+            </Stack>
+          </Box>
+
+          <Box
+            width={"100vw"}
+            minHeight={"21vh"}
+            sx={{
+              background: "linear-gradient(to top, #9398FC, #6858D8)",
+            }}
+          >
+            <Box paddingTop={5} alignContent={"center"} textAlign={"center"}>
+              <Button
+                component={Link}
+                to="/feed"
+                variant="outlined"
+                sx={{
+                  color: "white",
+                  borderColor: "white",
+                  position: "relative",
+                  "&:hover": {
+                    "&::before, &::after": {
+                      content: '""',
+                      position: "absolute",
+                      top: "0",
+                      right: "0",
+                      bottom: "0",
+                      left: "0",
+                      border: "2px solid white",
+                      borderRadius: "4px", // Optional: Adjust the border radius to match the button
+                    },
+                    "&::before": {
+                      transform: "translate(-4px, -4px)", // Adjust for border thickness
+                    },
+                    "&::after": {
+                      transform: "translate(4px, 4px)", // Adjust for border thickness
+                    },
+                  },
+                }}
+              >
+                <Typography variant="h4"> Start Exploring Now</Typography>
+              </Button>
+            </Box>
+
+            <Box
+              sx={{
+                textAlign: "center",
+                justifyContent: "center",
+                alignItems: "center",
+                color: "#cfcaca",
+                position: "absolute",
+                bottom: 0,
+                width: "100%",
+                paddingBottom: "1rem",
+              }}
+            >
+              <Typography paddingTop={"2vh"}>
+                © {new Date().getFullYear()} Flores & Kolpakov. All rights
+                reserved.
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
           </Box>
         ) : (
           <Box width={"100vw"}>
             <MobileNav />
+            <Box>
+          <Box minWidth={"100vw"} color={"text.main"}>
+            <Stack
+              paddingTop={"10vh"}
+              height="100%"
+              spacing={5}
+              paddingBottom={10}
+            >
+              <Box
+                justifyContent="center"
+                alignItems="center"
+                width={"100vw"}
+                paddingLeft={"2vw"}
+                textAlign={"center"}
+                color={"text.main"}
+              >
+                <Fade top>
+                  <Typography variant="h2">Welcome to LinkedList</Typography>
+                </Fade>
+                <Fade>
+                  <Typography variant="h4" padding={"3vh"}>
+                    Welcome to LinkedList, a tech-focused social platform
+                    designed for tech enthusiasts. Similar to LinkedIn,
+                    LinkedList lets tech professionals showcase skills, build
+                    connections, and boost careers. Connect with like-minded
+                    tech experts, share knowledge through articles, and network
+                    with potential collaborators. Stay updated on industry
+                    trends and engage with influential personalities and
+                    companies. Join our vibrant community to enhance your tech
+                    career. Discover, connect, and thrive with LinkedList.
+                  </Typography>
+                </Fade>
+              </Box>
+              <Box
+                sx={{
+                  width: "100vw",
+                  paddingRight: "2vw",
+                  minHeight: "50vh",
+                  overflow: "hidden",
+                  textAlign: "center",
+                }}
+              >
+                <Fade top>
+                  <Typography variant="h2">Key Features</Typography>
+                </Fade>
+                <Box
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    position: "relative",
+                    paddingTop: "3vh",
+                  }}
+                >
+                  <IconButton
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "10px",
+                      transform: "translateY(-50%)",
+                    }}
+                    onClick={handlePrev}
+                  >
+                    <ChevronLeftIcon />
+                  </IconButton>
+                  <Box
+                    style={{
+                      transition: "transform 0.5s ease",
+                      transform: `translateX(-${activeIndex * 100.6}%)`,
+                    }}
+                  >
+                    <Stack direction={"row"} spacing={3}>
+                      {cardData.map((card, index) => (
+                        <Box
+                          key={index}
+                          style={{
+                            flex: "0 0 100%",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <Card
+                            style={{
+                              width: "70vw",
+                              height: "35vh",
+                              textAlign: "left",
+                            }}
+                          >
+                            <CardContent>
+                              <Typography variant="h4">{card.title}</Typography>
+                              <Typography
+                                variant="h5"
+                                color={"text.secondary"}
+                                paddingTop={2}
+                              >
+                                {card.content}
+                              </Typography>
+                            </CardContent>
+                          </Card>
+                        </Box>
+                      ))}
+                    </Stack>
+                  </Box>
+                  <IconButton
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      right: "10px",
+                      transform: "translateY(-50%)",
+                    }}
+                    onClick={handleNext}
+                  >
+                    <ChevronRightIcon />
+                  </IconButton>
+                </Box>
+              </Box>
+            </Stack>
+          </Box>
+
+          <Box
+            width={"100vw"}
+            minHeight={"21vh"}
+            sx={{
+              background: "linear-gradient(to top, #9398FC, #6858D8)",
+            }}
+          >
+            <Box paddingTop={5} alignContent={"center"} textAlign={"center"}>
+              <Button
+                component={Link}
+                to="/feed"
+                variant="outlined"
+                sx={{
+                  color: "white",
+                  borderColor: "white",
+                  position: "relative",
+                  "&:hover": {
+                    "&::before, &::after": {
+                      content: '""',
+                      position: "absolute",
+                      top: "0",
+                      right: "0",
+                      bottom: "0",
+                      left: "0",
+                      border: "2px solid white",
+                      borderRadius: "4px", // Optional: Adjust the border radius to match the button
+                    },
+                    "&::before": {
+                      transform: "translate(-4px, -4px)", // Adjust for border thickness
+                    },
+                    "&::after": {
+                      transform: "translate(4px, 4px)", // Adjust for border thickness
+                    },
+                  },
+                }}
+              >
+                <Typography variant="h4"> Start Exploring Now</Typography>
+              </Button>
+            </Box>
+
+            <Box
+              sx={{
+                textAlign: "center",
+                justifyContent: "center",
+                alignItems: "center",
+                color: "#cfcaca",
+                position: "absolute",
+                bottom: 0,
+                width: "100%",
+                paddingBottom: "1rem",
+              }}
+            >
+              <Typography paddingTop={"2vh"}>
+                © {new Date().getFullYear()} Flores & Kolpakov. All rights
+                reserved.
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
           </Box>
         )}
-
-        <Box minWidth={"100vw"}>
-          <Stack direction="row" paddingTop={"10vh"} height="100%" spacing={5}>
-            <Box
-              justifyContent="center"
-              alignItems="center"
-              paddingLeft={"10vw"}
-              paddingRight={"10vw"}
-              textAlign={"center"}
-              color={"text.main"}
-            >
-              <Slide left cascade collapse>
-                <Typography variant="h2">Welcome to LinkedList</Typography>
-              </Slide>
-              <br></br> <br></br> <br></br>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 3 }}
-              >
-                <Typography variant="h4" paddingTop={2}>
-                  a social media platform designed exclusively for individuals
-                  in the tech industry. Just like LinkedIn, but tailored
-                  specifically for tech enthusiasts, LinkedList provides a
-                  powerful platform for tech professionals to showcase their
-                  skills, build connections, and enhance their career prospects.
-                </Typography>
-              </motion.div>
-            </Box>
-          </Stack>
-        </Box>
-
-        <Box minWidth={"100vw"} paddingTop={"10vh"}>
-          <Stack direction="row" spacing={5}>
-            <Box
-              justifyContent="center"
-              alignItems="center"
-              height="100%"
-              paddingRight={"10vw"}
-              paddingLeft={"10vw"}
-              textAlign={"center"}
-              color={"text.main"}
-            >
-              <Typography variant="h3">Key Features</Typography>
-              <ul style={{ textAlign: "center" }}>
-                <Stack spacing={2}>
-                  <LightSpeed left cascade collapse>
-                    <Typography variant="h5">
-                      <li>
-                        Comprehensive Profiles: Create a detailed profile
-                        highlighting your educational background, profession,
-                        experience, and a captivating bio that tells your unique
-                        story.
-                      </li>
-                    </Typography>
-                  </LightSpeed>
-
-                  <LightSpeed left cascade collapse>
-                    <Typography variant="h5">
-                      <li>
-                        Project Showcase: Showcase your personal projects, side
-                        hustles, and open-source contributions with visually
-                        stunning project displays. Let the world see your coding
-                        prowess.
-                      </li>
-                    </Typography>
-                  </LightSpeed>
-
-                  <LightSpeed left cascade collapse>
-                    <Typography variant="h5">
-                      <li>
-                        Resume Display: Upload your resume and make it easily
-                        accessible to potential employers. LinkedList ensures
-                        that your talent shines through.
-                      </li>
-                    </Typography>
-                  </LightSpeed>
-
-                  <LightSpeed left cascade collapse>
-                    <Typography variant="h5">
-                      <li>
-                        Engaging Blog Posts: Share your thoughts, insights, and
-                        expertise with the community through captivating blog
-                        posts. Inspire others, spark discussions, and grow your
-                        professional network.
-                      </li>
-                    </Typography>
-                  </LightSpeed>
-
-                  <LightSpeed left cascade collapse>
-                    <Typography variant="h5">
-                      <li>
-                        Career Opportunities: Explore a wide range of job
-                        opportunities posted by reputable tech companies. Stay
-                        updated with the latest career prospects in the
-                        ever-evolving tech industry.
-                      </li>
-                    </Typography>
-                  </LightSpeed>
-
-                  <LightSpeed left cascade collapse>
-                    <Typography variant="h5">
-                      <li>
-                        Networking and Collaboration: Connect with like-minded
-                        tech professionals, form collaborations, and exchange
-                        knowledge. LinkedList is your gateway to building
-                        meaningful professional relationships.
-                      </li>
-                    </Typography>
-                  </LightSpeed>
-                </Stack>
-              </ul>
-            </Box>
-          </Stack>
-        </Box>
-        <br></br>
-        <Footer />
       </ThemeProvider>
-    </div>
+    </Box>
   );
 }
 

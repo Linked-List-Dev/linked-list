@@ -40,6 +40,9 @@ function Profile() {
   const [biography, setBiography] = useState(
     "There's no bio yet... Click the edit button to add one!"
   );
+  const [noPostsMsg, setNoPostsMsg] = useState(
+    "You have no posts yet. Want to add one?"
+  );
   const [posts, setPosts] = useState([]);
   const [profileImage, setProfileImage] = useState("");
   const [userProfilePicture, setUserProfilePicture] = useState("");
@@ -54,7 +57,8 @@ function Profile() {
   const [openFollowingModal, setOpenFollowingModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
-  const [successProfileDataUpdateVis, setSuccessProfileDataUpdateVis] = useState(false);
+  const [successProfileDataUpdateVis, setSuccessProfileDataUpdateVis] =
+    useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [editOpen, setEditOpen] = useState(false);
   const handleClose = () => setOpen(false);
@@ -65,8 +69,8 @@ function Profile() {
   const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
 
-  const [followers, setFollowers] = useState(0)
-  const [following, setFollowing] = useState(0)
+  const [followers, setFollowers] = useState(0);
+  const [following, setFollowing] = useState(0);
 
   const handleShowFollowingModal = () => {
     handleElClose();
@@ -81,12 +85,11 @@ function Profile() {
     setAnchorEl(null);
   };
 
-
   const handleFileUpload = async (file) => {
     const formData = new FormData();
     formData.append("file", file);
 
-    setLoading(true)
+    setLoading(true);
     try {
       const res = await axios.post(
         `http://localhost:8000/api/users/profileImage`,
@@ -138,13 +141,14 @@ function Profile() {
                     responseType: "arraybuffer",
                   }
                 );
-    
+
                 if (res.status === 200 || res.status === 304) {
                   const blob = new Blob([res.data], {
                     type: res.headers["content-type"],
                   });
                   const blobUrl = URL.createObjectURL(blob);
-                  commentProfilePictures[comment.authorProfilePictureId] = blobUrl;
+                  commentProfilePictures[comment.authorProfilePictureId] =
+                    blobUrl;
                 }
               } catch (err) {
                 console.log(err);
@@ -152,14 +156,17 @@ function Profile() {
             }
           }
 
-          const postsWithCommentsWithProfilePictures = res.data.userPosts.map((post) => ({
-            ...post,
-            comments: post.comments.map((comment) => ({
-              ...comment,
-              profilePicture: commentProfilePictures[comment.authorProfilePictureId] || "",
-            })),
-          }));
-    
+          const postsWithCommentsWithProfilePictures = res.data.userPosts.map(
+            (post) => ({
+              ...post,
+              comments: post.comments.map((comment) => ({
+                ...comment,
+                profilePicture:
+                  commentProfilePictures[comment.authorProfilePictureId] || "",
+              })),
+            })
+          );
+
           setPosts(postsWithCommentsWithProfilePictures);
 
           setSuccessProfileDataUpdateVis(true);
@@ -194,7 +201,7 @@ function Profile() {
   }, []);
 
   const handleProfileUpdate = async (e, values) => {
-    setLoading(true)
+    setLoading(true);
     // Make PUT request to update user data
     const res = await axios.put(
       `http://localhost:8000/api/users/${userId}`,
@@ -240,16 +247,19 @@ function Profile() {
         }
       }
 
-      const postsWithCommentsWithProfilePictures = res.data.userPosts.map((post) => ({
-        ...post,
-        comments: post.comments.map((comment) => ({
-          ...comment,
-          profilePicture: commentProfilePictures[comment.authorProfilePictureId] || "",
-        })),
-      }));
+      const postsWithCommentsWithProfilePictures = res.data.userPosts.map(
+        (post) => ({
+          ...post,
+          comments: post.comments.map((comment) => ({
+            ...comment,
+            profilePicture:
+              commentProfilePictures[comment.authorProfilePictureId] || "",
+          })),
+        })
+      );
 
       setPosts(postsWithCommentsWithProfilePictures);
-      setLoading(false)
+      setLoading(false);
       setOpen(false);
       setSuccessProfileDataUpdateVis(true);
     } else {
@@ -284,7 +294,10 @@ function Profile() {
         }
       );
 
-      if (profilePictureFetch.status === 200 || profilePictureFetch.status === 304) {
+      if (
+        profilePictureFetch.status === 200 ||
+        profilePictureFetch.status === 304
+      ) {
         // Create a blob from the file data
         const blob = new Blob([profilePictureFetch.data], {
           type: profilePictureFetch.headers["content-type"],
@@ -313,7 +326,7 @@ function Profile() {
         setUserName(userData.name);
         setJobTitle(userData.jobTitle);
         setBiography(userData.bio);
-        
+
         for (const post of userPosts) {
           // Iterate through each comment in the post
           for (const comment of post.comments) {
@@ -333,23 +346,25 @@ function Profile() {
                   type: res.headers["content-type"],
                 });
                 const blobUrl = URL.createObjectURL(blob);
-                commentProfilePictures[comment.authorProfilePictureId] = blobUrl;
+                commentProfilePictures[comment.authorProfilePictureId] =
+                  blobUrl;
               }
             } catch (err) {
               console.log(err);
             }
           }
         }
-        
+
         // Set the posts with the updated comment profile pictures
         const postsWithCommentsWithProfilePictures = userPosts.map((post) => ({
           ...post,
           comments: post.comments.map((comment) => ({
             ...comment,
-            profilePicture: commentProfilePictures[comment.authorProfilePictureId] || "",
+            profilePicture:
+              commentProfilePictures[comment.authorProfilePictureId] || "",
           })),
         }));
-          
+
         setPosts(postsWithCommentsWithProfilePictures);
 
         setFormValues({
@@ -403,7 +418,7 @@ function Profile() {
 
   useEffect(() => {
     // on initial load
-    getProfile()
+    getProfile();
   }, []);
 
   useEffect(() => {
@@ -416,7 +431,7 @@ function Profile() {
 
   useEffect(() => {
     // Fetch user data whenever the profile ID changes
-    getProfile()
+    getProfile();
   }, [profileId]);
 
   // ARTEM TODO: both buttons are there but only show the relevant one.
@@ -491,7 +506,8 @@ function Profile() {
                                 "&:hover": {
                                   // Add on-hover styles
                                   border: "white 4px solid",
-                                  boxShadow: "0px 0px 5px 0px rgba(0, 0, 0, 0.75)",
+                                  boxShadow:
+                                    "0px 0px 5px 0px rgba(0, 0, 0, 0.75)",
                                 },
                               }}
                               onClick={handleOpenEdit}
@@ -563,48 +579,48 @@ function Profile() {
                           />
                           Edit Profile
                         </Button>
-                      ) : ( null
-                        // <Box>
-                        //   {" "}
-                        //   <Button
-                        //     variant="contained"
-                        //     onClick={handleFollow}
-                        //     sx={{
-                        //       backgroundColor: "accent.main",
-                        //       "&:hover": {
-                        //         backgroundColor: "accent.secondary",
-                        //       },
-                        //     }}
-                        //   >
-                        //     Follow
-                        //   </Button>
-                        //   <Button
-                        //     onClick={handleClick}
-                        //     startIcon={<ArrowDropDownIcon />}
-                        //     variant="contained"
-                        //     sx={{
-                        //       backgroundColor: "accent.main",
-                        //       "&:hover": {
-                        //         backgroundColor: "accent.secondary",
-                        //       },
-                        //     }}
-                        //   >
-                        //     Following
-                        //   </Button>
-                        //   <Menu
-                        //     anchorEl={anchorEl}
-                        //     open={Boolean(anchorEl)}
-                        //     onClose={handleElClose}
-                        //   >
-                        //     <MenuItem onClick={handleShowFollowingModal}>
-                        //       View Following
-                        //     </MenuItem>
-                        //     <MenuItem onClick={handleUnfollow}>
-                        //       Unfollow
-                        //     </MenuItem>
-                        //   </Menu>
-                        // </Box>
-                      )}
+                      ) : null
+                      // <Box>
+                      //   {" "}
+                      //   <Button
+                      //     variant="contained"
+                      //     onClick={handleFollow}
+                      //     sx={{
+                      //       backgroundColor: "accent.main",
+                      //       "&:hover": {
+                      //         backgroundColor: "accent.secondary",
+                      //       },
+                      //     }}
+                      //   >
+                      //     Follow
+                      //   </Button>
+                      //   <Button
+                      //     onClick={handleClick}
+                      //     startIcon={<ArrowDropDownIcon />}
+                      //     variant="contained"
+                      //     sx={{
+                      //       backgroundColor: "accent.main",
+                      //       "&:hover": {
+                      //         backgroundColor: "accent.secondary",
+                      //       },
+                      //     }}
+                      //   >
+                      //     Following
+                      //   </Button>
+                      //   <Menu
+                      //     anchorEl={anchorEl}
+                      //     open={Boolean(anchorEl)}
+                      //     onClose={handleElClose}
+                      //   >
+                      //     <MenuItem onClick={handleShowFollowingModal}>
+                      //       View Following
+                      //     </MenuItem>
+                      //     <MenuItem onClick={handleUnfollow}>
+                      //       Unfollow
+                      //     </MenuItem>
+                      //   </Menu>
+                      // </Box>
+                      }
                     </Box>
                   </Stack>
                 </Box>
@@ -629,26 +645,37 @@ function Profile() {
                 <Box>
                   <Typography variant="h4">Posts</Typography>
                   <Stack spacing={3}>
+                    {posts.length === 0 ? (
+                      <Typography
+                        variant="h5"
+                        sx={{ position: "absolute", color: "text.secondary" }}
+                      >
+                        {noPostsMsg}
+                      </Typography>
+                    ) : null}
                     {posts
-                      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                      .map((post) =>
-                        !loading && (
-                          <Post
-                            key={post._id}
-                            _postId={post._id}
-                            _userName={post.authorName}
-                            _authorId={post.authorId}
-                            _jobTitle={post.authorJobTitle}
-                            _authorProfilePhoto={profileImage}
-                            _description={post.description}
-                            _likes={post.likes}
-                            _dislikes={post.dislikes}
-                            _comments={post.comments}
-                            _createdAt={post.createdAt}
-                            _updatedAt={post.updatedAt}
-                            onDeletePost={handlePostDelete}
-                          />
-                        )
+                      .sort(
+                        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                      )
+                      .map(
+                        (post) =>
+                          !loading && (
+                            <Post
+                              key={post._id}
+                              _postId={post._id}
+                              _userName={post.authorName}
+                              _authorId={post.authorId}
+                              _jobTitle={post.authorJobTitle}
+                              _authorProfilePhoto={profileImage}
+                              _description={post.description}
+                              _likes={post.likes}
+                              _dislikes={post.dislikes}
+                              _comments={post.comments}
+                              _createdAt={post.createdAt}
+                              _updatedAt={post.updatedAt}
+                              onDeletePost={handlePostDelete}
+                            />
+                          )
                       )}
                   </Stack>
                 </Box>
@@ -674,6 +701,7 @@ function Profile() {
             sx={{
               display: "flex",
               backgroundColor: "page.secondary",
+              height: '100vh',
               maxHeight: "100vh",
             }}
           >
@@ -681,7 +709,8 @@ function Profile() {
               <MobileSideNav
                 onPostCreated={handlePostCreate}
                 _userProfilePicture={userProfilePicture}
-              />)}
+              />
+            )}
             <Box
               sx={{
                 flex: 1,
@@ -829,26 +858,37 @@ function Profile() {
                 <Box>
                   <Typography variant="h4">Posts</Typography>
                   <Stack spacing={3}>
+                    {posts.length === 0 ? (
+                      <Typography
+                        variant="h5"
+                        sx={{ position: "absolute", color: "text.secondary" }}
+                      >
+                        {noPostsMsg}
+                      </Typography>
+                    ) : null}
                     {posts
-                      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                      .map((post) =>
-                        !loading && (
-                          <Post
-                            key={post._id}
-                            _postId={post._id}
-                            _userName={post.authorName}
-                            _authorId={post.authorId}
-                            _jobTitle={post.authorJobTitle}
-                            _authorProfilePhoto={profileImage}
-                            _description={post.description}
-                            _likes={post.likes}
-                            _dislikes={post.dislikes}
-                            _comments={post.comments}
-                            _createdAt={post.createdAt}
-                            _updatedAt={post.updatedAt}
-                            onDeletePost={handlePostDelete}
-                          />
-                        )
+                      .sort(
+                        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                      )
+                      .map(
+                        (post) =>
+                          !loading && (
+                            <Post
+                              key={post._id}
+                              _postId={post._id}
+                              _userName={post.authorName}
+                              _authorId={post.authorId}
+                              _jobTitle={post.authorJobTitle}
+                              _authorProfilePhoto={profileImage}
+                              _description={post.description}
+                              _likes={post.likes}
+                              _dislikes={post.dislikes}
+                              _comments={post.comments}
+                              _createdAt={post.createdAt}
+                              _updatedAt={post.updatedAt}
+                              onDeletePost={handlePostDelete}
+                            />
+                          )
                       )}
                   </Stack>
                 </Box>
@@ -862,7 +902,7 @@ function Profile() {
                   color: "#cfcaca",
                 }}
               >
-                <Typography>
+                <Typography paddingTop={'2vh'}>
                   © {new Date().getFullYear()} Flores & Kolpakov. All rights
                   reserved.
                 </Typography>
