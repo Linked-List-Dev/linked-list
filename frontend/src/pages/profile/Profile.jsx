@@ -38,12 +38,11 @@ function Profile() {
   const [userName, setUserName] = useState("");
   const [userId, setUserId] = useState("");
   const [jobTitle, setJobTitle] = useState("New user");
-  const [biography, setBiography] = useState(
-    "There's no bio yet... Click the edit button to add one!"
-  );
+  const [biography, setBiography] = useState("");
   const [noPostsMsg, setNoPostsMsg] = useState(
     "You have no posts yet. Want to add one?"
   );
+  const [noBioMsg, setNoBioMsg] = useState("")
   const [posts, setPosts] = useState([]);
   const [profileImage, setProfileImage] = useState("");
   const [userProfilePicture, setUserProfilePicture] = useState("");
@@ -138,7 +137,9 @@ function Profile() {
                     `${API_URL}/users/profileImage/${comment.authorProfilePictureId}`,
                     {
                       headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        Authorization: `Bearer ${localStorage.getItem(
+                          "token"
+                        )}`,
                       },
                       responseType: "arraybuffer",
                     }
@@ -155,7 +156,10 @@ function Profile() {
                 }
               } catch (err) {
                 console.log(err);
-                if (err.response.status === 401 || err.response.status === 400) {
+                if (
+                  err.response.status === 401 ||
+                  err.response.status === 400
+                ) {
                   navigate("/register");
                 }
               }
@@ -212,15 +216,11 @@ function Profile() {
   const handleProfileUpdate = async (e, values) => {
     setLoading(true);
     // Make PUT request to update user data
-    const res = await axios.put(
-      `${API_URL}/users/${userId}`,
-      values,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
-    );
+    const res = await axios.put(`${API_URL}/users/${userId}`, values, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
 
     console.log("res.status:", res.status);
     if (res.status === 200) {
@@ -249,7 +249,8 @@ function Profile() {
                   type: res.headers["content-type"],
                 });
                 const blobUrl = URL.createObjectURL(blob);
-                commentProfilePictures[comment.authorProfilePictureId] = blobUrl;
+                commentProfilePictures[comment.authorProfilePictureId] =
+                  blobUrl;
               }
             }
           } catch (err) {
@@ -296,7 +297,7 @@ function Profile() {
     try {
       setLoading(true); // Start loading
 
-      let profilePictureFetch = {}
+      let profilePictureFetch = {};
       if (localStorage.getItem("profilePictureId") !== "") {
         profilePictureFetch = await axios.get(
           `${API_URL}/users/profileImage/${localStorage.getItem(
@@ -309,7 +310,7 @@ function Profile() {
             responseType: "arraybuffer", // Set the responseType to arraybuffer
           }
         );
-      } 
+      }
 
       if (
         profilePictureFetch.status === 200 ||
@@ -325,14 +326,11 @@ function Profile() {
         setUserProfilePicture(blobUrl);
       }
 
-      const res = await axios.get(
-        `${API_URL}/users/${profileid}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const res = await axios.get(`${API_URL}/users/${profileid}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
 
       console.log(res.status);
       if (res.status === 200 || res.status === 304) {
@@ -571,7 +569,31 @@ function Profile() {
                         {userName}
                       </Typography>
                       <Typography variant="h6" color={"text.secondary"}>
-                        {jobTitle}
+                      {userId === localStorage.getItem("id") ? (
+                        <>
+                          {jobTitle ? (
+                            <Box>
+                              {jobTitle}
+                            </Box>
+                          ) : (
+                            <Box>
+                              You haven't shared your job yet...
+                            </Box>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                        {jobTitle ? (
+                            <Box>
+                              {jobTitle}
+                            </Box>
+                          ) : (
+                            <Box>
+                              Looking for job
+                            </Box>
+                          )}
+                        </>
+                      )}
                       </Typography>
                       <Box>
                         {/* <Stack direction={'row'} spacing={2}>
@@ -582,66 +604,67 @@ function Profile() {
                     </Box>
 
                     <Box sx={{ ml: "auto", paddingTop: "2vh" }}>
-                      {userId === localStorage.getItem("id") ? (
-                        <Button
-                          sx={{
-                            bgcolor: "white",
-                            width: "fit-content",
-                            height: "40px",
-                            display: "flex",
-                            alignItems: "center",
-                            padding: "0 10px",
-                            color: "text.main",
-                          }}
-                          onClick={handleOpen}
-                        >
-                          <EditIcon
-                            fontSize="small"
-                            sx={{ color: "black", marginRight: "5px" }}
-                          />
-                          Edit Profile
-                        </Button>
-                      ) : null
-                      // <Box>
-                      //   {" "}
-                      //   <Button
-                      //     variant="contained"
-                      //     onClick={handleFollow}
-                      //     sx={{
-                      //       backgroundColor: "accent.main",
-                      //       "&:hover": {
-                      //         backgroundColor: "accent.secondary",
-                      //       },
-                      //     }}
-                      //   >
-                      //     Follow
-                      //   </Button>
-                      //   <Button
-                      //     onClick={handleClick}
-                      //     startIcon={<ArrowDropDownIcon />}
-                      //     variant="contained"
-                      //     sx={{
-                      //       backgroundColor: "accent.main",
-                      //       "&:hover": {
-                      //         backgroundColor: "accent.secondary",
-                      //       },
-                      //     }}
-                      //   >
-                      //     Following
-                      //   </Button>
-                      //   <Menu
-                      //     anchorEl={anchorEl}
-                      //     open={Boolean(anchorEl)}
-                      //     onClose={handleElClose}
-                      //   >
-                      //     <MenuItem onClick={handleShowFollowingModal}>
-                      //       View Following
-                      //     </MenuItem>
-                      //     <MenuItem onClick={handleUnfollow}>
-                      //       Unfollow
-                      //     </MenuItem>
-                      //   </Menu>
-                      // </Box>
+                      {
+                        userId === localStorage.getItem("id") ? (
+                          <Button
+                            sx={{
+                              bgcolor: "white",
+                              width: "fit-content",
+                              height: "40px",
+                              display: "flex",
+                              alignItems: "center",
+                              padding: "0 10px",
+                              color: "text.main",
+                            }}
+                            onClick={handleOpen}
+                          >
+                            <EditIcon
+                              fontSize="small"
+                              sx={{ color: "black", marginRight: "5px" }}
+                            />
+                            Edit Profile
+                          </Button>
+                        ) : null
+                        // <Box>
+                        //   {" "}
+                        //   <Button
+                        //     variant="contained"
+                        //     onClick={handleFollow}
+                        //     sx={{
+                        //       backgroundColor: "accent.main",
+                        //       "&:hover": {
+                        //         backgroundColor: "accent.secondary",
+                        //       },
+                        //     }}
+                        //   >
+                        //     Follow
+                        //   </Button>
+                        //   <Button
+                        //     onClick={handleClick}
+                        //     startIcon={<ArrowDropDownIcon />}
+                        //     variant="contained"
+                        //     sx={{
+                        //       backgroundColor: "accent.main",
+                        //       "&:hover": {
+                        //         backgroundColor: "accent.secondary",
+                        //       },
+                        //     }}
+                        //   >
+                        //     Following
+                        //   </Button>
+                        //   <Menu
+                        //     anchorEl={anchorEl}
+                        //     open={Boolean(anchorEl)}
+                        //     onClose={handleElClose}
+                        //   >
+                        //     <MenuItem onClick={handleShowFollowingModal}>
+                        //       View Following
+                        //     </MenuItem>
+                        //     <MenuItem onClick={handleUnfollow}>
+                        //       Unfollow
+                        //     </MenuItem>
+                        //   </Menu>
+                        // </Box>
                       }
                     </Box>
                   </Stack>
@@ -659,7 +682,24 @@ function Profile() {
                     }}
                   >
                     <Typography color={"text.secondary"}>
-                      <Linkify text={biography} />
+                      {userId === localStorage.getItem("id") ? (
+                        <>
+                          {biography ? (
+                            <Linkify text={biography} />
+                          ) : (
+                            <Box>You haven't set your bio yet. Click the edit profile button to add one!</Box>
+                          )}
+                        </>
+                      ): (
+                        <>
+                        {biography ? (
+                            <Linkify text={biography} />
+                          ) : (
+                            <Box>This user has no bio added yet.</Box>
+                          )}
+                        </>
+                      )}
+                      
                     </Typography>
                   </Paper>
                 </Box>
@@ -702,20 +742,40 @@ function Profile() {
                   </Stack>
                 </Box>
               </Stack>
-              <Box
-                sx={{
-                  textAlign: "center",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  paddingTop: "2vh",
-                  color: "#cfcaca",
-                }}
-              >
-                <Typography>
-                  © {new Date().getFullYear()} Flores & Kolpakov. All rights
-                  reserved.
-                </Typography>
-              </Box>
+              {posts.length === 0 ? (
+                      <Box
+                      sx={{
+                        textAlign: "center",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        paddingTop: "2vh",
+                        color: "#cfcaca",
+                        position: 'fixed',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        margin: 'auto',
+                        width: '100vw',
+                      }}
+                    >
+                      <Typography paddingTop={"2vh"}>
+                        © {new Date().getFullYear()} Flores & Kolpakov. All rights reserved.
+                      </Typography>
+                    </Box>
+                    ) : <Box
+                    sx={{
+                      textAlign: "center",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      paddingTop: "2vh",
+                      color: "#cfcaca",
+                    }}
+                  >
+                    <Typography paddingTop={"2vh"}>
+                      © {new Date().getFullYear()} Flores & Kolpakov. All rights
+                      reserved.
+                    </Typography>
+                  </Box>}
             </Box>
           </Box>
         ) : (
@@ -723,7 +783,7 @@ function Profile() {
             sx={{
               display: "flex",
               backgroundColor: "page.secondary",
-              height: '100vh',
+              height: "100vh",
               maxHeight: "100vh",
             }}
           >
@@ -789,7 +849,31 @@ function Profile() {
                         {userName}
                       </Typography>
                       <Typography variant="h6" color={"text.secondary"}>
-                        {jobTitle}
+                      {userId === localStorage.getItem("id") ? (
+                        <>
+                          {jobTitle ? (
+                            <Box>
+                              {jobTitle}
+                            </Box>
+                          ) : (
+                            <Box>
+                              You haven't shared your job yet...
+                            </Box>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                        {jobTitle ? (
+                            <Box>
+                              {jobTitle}
+                            </Box>
+                          ) : (
+                            <Box>
+                              Looking for job
+                            </Box>
+                          )}
+                        </>
+                      )}
                       </Typography>
                     </Box>
 
@@ -814,47 +898,47 @@ function Profile() {
                           />
                           Edit Profile
                         </Button>
-                      ) : (
-                        <Box>
-                          {" "}
-                          <Button
-                            variant="contained"
-                            onClick={handleFollow}
-                            sx={{
-                              backgroundColor: "accent.main",
-                              "&:hover": {
-                                backgroundColor: "accent.secondary",
-                              },
-                            }}
-                          >
-                            Follow
-                          </Button>
-                          <Button
-                            onClick={handleClick}
-                            startIcon={<ArrowDropDownIcon />}
-                            variant="contained"
-                            sx={{
-                              backgroundColor: "accent.main",
-                              "&:hover": {
-                                backgroundColor: "accent.secondary",
-                              },
-                            }}
-                          >
-                            Following
-                          </Button>
-                          <Menu
-                            anchorEl={anchorEl}
-                            open={Boolean(anchorEl)}
-                            onClose={handleElClose}
-                          >
-                            <MenuItem onClick={handleShowFollowingModal}>
-                              View Following
-                            </MenuItem>
-                            <MenuItem onClick={handleUnfollow}>
-                              Unfollow
-                            </MenuItem>
-                          </Menu>
-                        </Box>
+                      ) : ( null
+                        // <Box>
+                        //   {" "}
+                        //   <Button
+                        //     variant="contained"
+                        //     onClick={handleFollow}
+                        //     sx={{
+                        //       backgroundColor: "accent.main",
+                        //       "&:hover": {
+                        //         backgroundColor: "accent.secondary",
+                        //       },
+                        //     }}
+                        //   >
+                        //     Follow
+                        //   </Button>
+                        //   <Button
+                        //     onClick={handleClick}
+                        //     startIcon={<ArrowDropDownIcon />}
+                        //     variant="contained"
+                        //     sx={{
+                        //       backgroundColor: "accent.main",
+                        //       "&:hover": {
+                        //         backgroundColor: "accent.secondary",
+                        //       },
+                        //     }}
+                        //   >
+                        //     Following
+                        //   </Button>
+                        //   <Menu
+                        //     anchorEl={anchorEl}
+                        //     open={Boolean(anchorEl)}
+                        //     onClose={handleElClose}
+                        //   >
+                        //     <MenuItem onClick={handleShowFollowingModal}>
+                        //       View Following
+                        //     </MenuItem>
+                        //     <MenuItem onClick={handleUnfollow}>
+                        //       Unfollow
+                        //     </MenuItem>
+                        //   </Menu>
+                        // </Box>
                       )}
                     </Box>
                   </Stack>
@@ -872,7 +956,23 @@ function Profile() {
                     }}
                   >
                     <Typography color={"text.secondary"}>
-                      <Linkify text={biography} />
+                    {userId === localStorage.getItem("id") ? (
+                        <>
+                          {biography ? (
+                            <Linkify text={biography} />
+                          ) : (
+                            <Box>You haven't set your bio yet. Click the edit profile button to add one!</Box>
+                          )}
+                        </>
+                      ): (
+                        <>
+                        {biography ? (
+                            <Linkify text={biography} />
+                          ) : (
+                            <Box>This user has no bio added yet.</Box>
+                          )}
+                        </>
+                      )}
                     </Typography>
                   </Paper>
                 </Box>
@@ -915,20 +1015,42 @@ function Profile() {
                   </Stack>
                 </Box>
               </Stack>
-              <Box
-                sx={{
-                  textAlign: "center",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  paddingTop: "2vh",
-                  color: "#cfcaca",
-                }}
-              >
-                <Typography paddingTop={'2vh'}>
-                  © {new Date().getFullYear()} Flores & Kolpakov. All rights
-                  reserved.
-                </Typography>
-              </Box>
+              
+              
+              {posts.length === 0 ? (
+                      <Box
+                      sx={{
+                        width: '100vw',
+                        textAlign: "center",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        paddingTop: "2vh",
+                        color: "#cfcaca",
+                        position: 'absolute',
+                        bottom: 0,
+                      }}
+                    >
+                      <Typography paddingTop={"2vh"}>
+                        © {new Date().getFullYear()} Flores & Kolpakov. All rights
+                        reserved.
+                      </Typography>
+                    </Box>
+                    ) : <Box
+                    sx={{
+                      width: '100vw',
+                      textAlign: "center",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      paddingTop: "2vh",
+                      color: "#cfcaca",
+                    }}
+                  >
+                    <Typography paddingTop={"2vh"}>
+                      © {new Date().getFullYear()} Flores & Kolpakov. All rights
+                      reserved.
+                    </Typography>
+                  </Box>}
+              
             </Box>
           </Box>
         )}

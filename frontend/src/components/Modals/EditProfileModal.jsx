@@ -82,6 +82,7 @@ function EditProfileModal({ open, handleClose, onProfileUpdate, initValues }) {
                   value={formValues.name}
                   onChange={handleChange}
                   fullWidth
+                  required
                 />
 
                 <TextField
