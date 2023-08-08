@@ -742,20 +742,40 @@ function Profile() {
                   </Stack>
                 </Box>
               </Stack>
-              <Box
-                sx={{
-                  textAlign: "center",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  paddingTop: "2vh",
-                  color: "#cfcaca",
-                }}
-              >
-                <Typography>
-                  © {new Date().getFullYear()} Flores & Kolpakov. All rights
-                  reserved.
-                </Typography>
-              </Box>
+              {posts.length === 0 ? (
+                      <Box
+                      sx={{
+                        textAlign: "center",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        paddingTop: "2vh",
+                        color: "#cfcaca",
+                        position: 'fixed',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        margin: 'auto',
+                        width: '100vw',
+                      }}
+                    >
+                      <Typography paddingTop={"2vh"}>
+                        © {new Date().getFullYear()} Flores & Kolpakov. All rights reserved.
+                      </Typography>
+                    </Box>
+                    ) : <Box
+                    sx={{
+                      textAlign: "center",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      paddingTop: "2vh",
+                      color: "#cfcaca",
+                    }}
+                  >
+                    <Typography paddingTop={"2vh"}>
+                      © {new Date().getFullYear()} Flores & Kolpakov. All rights
+                      reserved.
+                    </Typography>
+                  </Box>}
             </Box>
           </Box>
         ) : (
@@ -829,7 +849,31 @@ function Profile() {
                         {userName}
                       </Typography>
                       <Typography variant="h6" color={"text.secondary"}>
-                        {jobTitle}
+                      {userId === localStorage.getItem("id") ? (
+                        <>
+                          {jobTitle ? (
+                            <Box>
+                              {jobTitle}
+                            </Box>
+                          ) : (
+                            <Box>
+                              You haven't shared your job yet...
+                            </Box>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                        {jobTitle ? (
+                            <Box>
+                              {jobTitle}
+                            </Box>
+                          ) : (
+                            <Box>
+                              Looking for job
+                            </Box>
+                          )}
+                        </>
+                      )}
                       </Typography>
                     </Box>
 
@@ -854,47 +898,47 @@ function Profile() {
                           />
                           Edit Profile
                         </Button>
-                      ) : (
-                        <Box>
-                          {" "}
-                          <Button
-                            variant="contained"
-                            onClick={handleFollow}
-                            sx={{
-                              backgroundColor: "accent.main",
-                              "&:hover": {
-                                backgroundColor: "accent.secondary",
-                              },
-                            }}
-                          >
-                            Follow
-                          </Button>
-                          <Button
-                            onClick={handleClick}
-                            startIcon={<ArrowDropDownIcon />}
-                            variant="contained"
-                            sx={{
-                              backgroundColor: "accent.main",
-                              "&:hover": {
-                                backgroundColor: "accent.secondary",
-                              },
-                            }}
-                          >
-                            Following
-                          </Button>
-                          <Menu
-                            anchorEl={anchorEl}
-                            open={Boolean(anchorEl)}
-                            onClose={handleElClose}
-                          >
-                            <MenuItem onClick={handleShowFollowingModal}>
-                              View Following
-                            </MenuItem>
-                            <MenuItem onClick={handleUnfollow}>
-                              Unfollow
-                            </MenuItem>
-                          </Menu>
-                        </Box>
+                      ) : ( null
+                        // <Box>
+                        //   {" "}
+                        //   <Button
+                        //     variant="contained"
+                        //     onClick={handleFollow}
+                        //     sx={{
+                        //       backgroundColor: "accent.main",
+                        //       "&:hover": {
+                        //         backgroundColor: "accent.secondary",
+                        //       },
+                        //     }}
+                        //   >
+                        //     Follow
+                        //   </Button>
+                        //   <Button
+                        //     onClick={handleClick}
+                        //     startIcon={<ArrowDropDownIcon />}
+                        //     variant="contained"
+                        //     sx={{
+                        //       backgroundColor: "accent.main",
+                        //       "&:hover": {
+                        //         backgroundColor: "accent.secondary",
+                        //       },
+                        //     }}
+                        //   >
+                        //     Following
+                        //   </Button>
+                        //   <Menu
+                        //     anchorEl={anchorEl}
+                        //     open={Boolean(anchorEl)}
+                        //     onClose={handleElClose}
+                        //   >
+                        //     <MenuItem onClick={handleShowFollowingModal}>
+                        //       View Following
+                        //     </MenuItem>
+                        //     <MenuItem onClick={handleUnfollow}>
+                        //       Unfollow
+                        //     </MenuItem>
+                        //   </Menu>
+                        // </Box>
                       )}
                     </Box>
                   </Stack>
@@ -912,7 +956,23 @@ function Profile() {
                     }}
                   >
                     <Typography color={"text.secondary"}>
-                      <Linkify text={biography} />
+                    {userId === localStorage.getItem("id") ? (
+                        <>
+                          {biography ? (
+                            <Linkify text={biography} />
+                          ) : (
+                            <Box>You haven't set your bio yet. Click the edit profile button to add one!</Box>
+                          )}
+                        </>
+                      ): (
+                        <>
+                        {biography ? (
+                            <Linkify text={biography} />
+                          ) : (
+                            <Box>This user has no bio added yet.</Box>
+                          )}
+                        </>
+                      )}
                     </Typography>
                   </Paper>
                 </Box>
@@ -955,20 +1015,42 @@ function Profile() {
                   </Stack>
                 </Box>
               </Stack>
-              <Box
-                sx={{
-                  textAlign: "center",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  paddingTop: "2vh",
-                  color: "#cfcaca",
-                }}
-              >
-                <Typography paddingTop={"2vh"}>
-                  © {new Date().getFullYear()} Flores & Kolpakov. All rights
-                  reserved.
-                </Typography>
-              </Box>
+              
+              
+              {posts.length === 0 ? (
+                      <Box
+                      sx={{
+                        width: '100vw',
+                        textAlign: "center",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        paddingTop: "2vh",
+                        color: "#cfcaca",
+                        position: 'absolute',
+                        bottom: 0,
+                      }}
+                    >
+                      <Typography paddingTop={"2vh"}>
+                        © {new Date().getFullYear()} Flores & Kolpakov. All rights
+                        reserved.
+                      </Typography>
+                    </Box>
+                    ) : <Box
+                    sx={{
+                      width: '100vw',
+                      textAlign: "center",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      paddingTop: "2vh",
+                      color: "#cfcaca",
+                    }}
+                  >
+                    <Typography paddingTop={"2vh"}>
+                      © {new Date().getFullYear()} Flores & Kolpakov. All rights
+                      reserved.
+                    </Typography>
+                  </Box>}
+              
             </Box>
           </Box>
         )}
