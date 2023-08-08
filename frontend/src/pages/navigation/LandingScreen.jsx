@@ -76,7 +76,7 @@ function Landing() {
 
   const handlePrev = () => {
     setActiveIndex((prevIndex) =>
-      prevIndex === cardData.length - 1 ? 0 : prevIndex - 1
+      prevIndex === 0 ? cardData.length - 1 : prevIndex - 1
     );
   };
 
@@ -122,16 +122,15 @@ function Landing() {
                     </Fade>
                     <Fade>
                       <Typography variant="h5" paddingTop={"3vh"}>
-                        a tech-focused social platform
-                        designed for tech enthusiasts. Similar to LinkedIn,
-                        LinkedList lets tech professionals showcase skills,
-                        build connections, and boost careers. Connect with
-                        like-minded tech experts, share knowledge through
-                        articles, and network with potential collaborators. Stay
-                        updated on industry trends and engage with influential
-                        personalities and companies. Join our vibrant community
-                        to enhance your tech career. Discover, connect, and
-                        thrive with LinkedList.
+                        a tech-focused social platform designed for tech
+                        enthusiasts. Similar to LinkedIn, LinkedList lets tech
+                        professionals showcase skills, build connections, and
+                        boost careers. Connect with like-minded tech experts,
+                        share knowledge through articles, and network with
+                        potential collaborators. Stay updated on industry trends
+                        and engage with influential personalities and companies.
+                        Join our vibrant community to enhance your tech career.
+                        Discover, connect, and thrive with LinkedList.
                       </Typography>
                     </Fade>
                   </Box>
