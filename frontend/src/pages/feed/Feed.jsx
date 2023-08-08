@@ -101,17 +101,20 @@ function Feed() {
           );
         }
 
-        if (profilePictureFetch.status === 200 || profilePictureFetch.status === 304) {
-          // Create a blob from the file data
-          const blob = new Blob([profilePictureFetch.data], {
-            type: profilePictureFetch.headers["content-type"],
-          });
-  
-          // Convert the blob to a URL (blob URL)
-          const blobUrl = URL.createObjectURL(blob);
-          setUserProfilePicture(blobUrl);
+            if (profilePictureFetch.status === 200 || profilePictureFetch.status === 304) {
+              // Create a blob from the file data
+              const blob = new Blob([profilePictureFetch.data], {
+                type: profilePictureFetch.headers["content-type"],
+              });
+      
+              // Convert the blob to a URL (blob URL)
+              const blobUrl = URL.createObjectURL(blob);
+              setUserProfilePicture(blobUrl);
+            }
+          } catch (err) {
+            console.log(err);
+          }
         }
-
         const res = await axios.get(`${API_URL}/feed/`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

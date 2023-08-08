@@ -29,6 +29,7 @@ function LoginSide({ openByDefault }) {
   const handleSubmit = async (e) => {
     console.log(formValues);
     e.preventDefault();
+    
     const res = await axios.post(`${API_URL}/users/login`, {
       email: formValues.email,
       password: formValues.password,
