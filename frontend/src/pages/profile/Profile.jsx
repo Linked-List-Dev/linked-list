@@ -28,6 +28,7 @@ import EditProfileModal from "../../components/Modals/EditProfileModal";
 import EditPhotoModal from "../../components/Modals/EditPhotoModal";
 import ShowFollowingModal from "../../components/Modals/ShowFollowingModal";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import FourOhFour from "../error/FourOhFour";
 import Linkify from "../../util/Linkify";
 import { useNavigate } from "react-router-dom";
 
@@ -68,6 +69,7 @@ function Profile() {
   const closeFollowingModal = () => setOpenFollowingModal(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
+  const [profileNotFound, setProfileNotFound] = useState(false);
 
   const [followers, setFollowers] = useState(0);
   const [following, setFollowing] = useState(0);
@@ -311,7 +313,10 @@ function Profile() {
           }
         );
       } else {
-        setUserProfilePicture("");
+        setUserProfilePicture("")
+        if (localStorage.getItem("id") === profileId) {
+          setProfileImage("")
+        }
       }
 
       if (
@@ -430,8 +435,8 @@ function Profile() {
       console.log("err", err.message);
       if (err.response.status === 401 || err.response.status === 400) {
         navigate("/register");
-      } else if (err.response.status === 404) {
-        // TIA TODO: Display 404
+      } else { //404 or 500
+        setProfileNotFound(true)
       }
     } finally {
       setLoading(false); // Stop loading after fetching data, regardless of success or error
@@ -468,284 +473,288 @@ function Profile() {
 
   return (
     <div>
-      <Backdrop
-        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={loading}
-      >
-        <CircularProgress color="inherit" />
-      </Backdrop>
-      <ThemeProvider theme={AppTheme}>
-        {windowWidth >= 768 ? (
-          <Box
-            sx={{
-              display: "flex",
-              backgroundColor: "page.secondary",
-              maxHeight: "100vh",
-            }}
+      {profileNotFound ? (
+        <FourOhFour />
+      ) : (
+        <>
+          <Backdrop
+            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={loading}
           >
-            {!loading && (
-              <NavigationSidePanel
-                position="fixed"
-                onPostCreated={handlePostCreate}
-                _userProfilePicture={userProfilePicture}
-              />
-            )}
-            <Box
-              sx={{
-                flex: 1,
-                paddingLeft: "2vw",
-                paddingRight: "2vw",
-                paddingTop: "2vh",
-                paddingBottom: "2vh",
-                overflow: "auto",
-              }}
-            >
-              <Stack spacing={5}>
-                <Box>
-                  <Box
-                    bgcolor={"accent.main"}
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "flex-end",
-                      backgroundColor: "accent.main",
-                      borderRadius: "10px",
-                      minHeight: "20vh",
-                    }}
-                  >
-                    <Box sx={{ position: "relative" }}>
-                      <Box sx={{ paddingLeft: "2vw", paddingBottom: "2vh" }}>
-                        {userId === localStorage.getItem("id") ? (
-                          <>
-                            <Avatar
-                              src={profileImage}
-                              sx={{
-                                width: 150,
-                                height: 150,
-                                border: "white 4px solid",
-                                borderColor: "page.main",
-                                cursor: "pointer", // Set the cursor to "pointer" when hovering over the Avatar
-                                "&:hover": {
-                                  // Add on-hover styles
-                                  border: "white 4px solid",
-                                  boxShadow:
-                                    "0px 0px 5px 0px rgba(0, 0, 0, 0.75)",
-                                },
-                              }}
-                              onClick={handleOpenEdit}
-                            />
-                            <IconButton
-                              sx={{
-                                position: "absolute",
-                                bottom: 20,
-                                left: 140,
-                                bgcolor: "white",
-                                cursor: "pointer", // Set the cursor to "pointer" when hovering over the IconButton
-                                "&:hover": {
-                                  // Add on-hover styles
-                                  backgroundColor: "gray", // For example, change the background color on hover
-                                },
-                              }}
-                              onClick={handleOpenEdit}
-                            >
-                              <EditIcon />
-                            </IconButton>
-                          </>
-                        ) : (
-                          <Avatar
-                            src={profileImage}
-                            sx={{
-                              width: 150,
-                              height: 150,
-                              border: "white 4px solid",
-                              borderColor: "page.main",
-                            }}
-                          />
-                        )}
-                      </Box>
-                    </Box>
-                  </Box>
-                  <Stack direction={"row"} justifyContent="space-between">
+            <CircularProgress color="inherit" />
+          </Backdrop>
+          <ThemeProvider theme={AppTheme}>
+            {windowWidth >= 768 ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  backgroundColor: "page.secondary",
+                  maxHeight: "100vh",
+                }}
+              >
+                {!loading && (
+                  <NavigationSidePanel
+                    position="fixed"
+                    onPostCreated={handlePostCreate}
+                    _userProfilePicture={userProfilePicture}
+                  />
+                )}
+                <Box
+                  sx={{
+                    flex: 1,
+                    paddingLeft: "2vw",
+                    paddingRight: "2vw",
+                    paddingTop: "2vh",
+                    paddingBottom: "2vh",
+                    overflow: "auto",
+                  }}
+                >
+                  <Stack spacing={5}>
                     <Box>
-                      <Typography variant="h3" color={"text.main"}>
-                        {userName}
-                      </Typography>
-                      <Typography variant="h6" color={"text.secondary"}>
-                      {userId === localStorage.getItem("id") ? (
-                        <>
-                          {jobTitle ? (
-                            <Box>
-                              {jobTitle}
-                            </Box>
-                          ) : (
-                            <Box>
-                              You haven't shared your job yet...
-                            </Box>
-                          )}
-                        </>
-                      ) : (
-                        <>
-                        {jobTitle ? (
-                            <Box>
-                              {jobTitle}
-                            </Box>
-                          ) : (
-                            <Box>
-                              Looking for job
-                            </Box>
-                          )}
-                        </>
-                      )}
-                      </Typography>
-                      <Box>
-                        {/* <Stack direction={'row'} spacing={2}>
+                      <Box
+                        bgcolor={"accent.main"}
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "flex-end",
+                          backgroundColor: "accent.main",
+                          borderRadius: "10px",
+                          minHeight: "20vh",
+                        }}
+                      >
+                        <Box sx={{ position: "relative" }}>
+                          <Box sx={{ paddingLeft: "2vw", paddingBottom: "2vh" }}>
+                            {userId === localStorage.getItem("id") ? (
+                              <>
+                                <Avatar
+                                  src={profileImage}
+                                  sx={{
+                                    width: 150,
+                                    height: 150,
+                                    border: "white 4px solid",
+                                    borderColor: "page.main",
+                                    cursor: "pointer", // Set the cursor to "pointer" when hovering over the Avatar
+                                    "&:hover": {
+                                      // Add on-hover styles
+                                      border: "white 4px solid",
+                                      boxShadow:
+                                        "0px 0px 5px 0px rgba(0, 0, 0, 0.75)",
+                                    },
+                                  }}
+                                  onClick={handleOpenEdit}
+                                />
+                                <IconButton
+                                  sx={{
+                                    position: "absolute",
+                                    bottom: 20,
+                                    left: 140,
+                                    bgcolor: "white",
+                                    cursor: "pointer", // Set the cursor to "pointer" when hovering over the IconButton
+                                    "&:hover": {
+                                      // Add on-hover styles
+                                      backgroundColor: "gray", // For example, change the background color on hover
+                                    },
+                                  }}
+                                  onClick={handleOpenEdit}
+                                >
+                                  <EditIcon />
+                                </IconButton>
+                              </>
+                            ) : (
+                              <Avatar
+                                src={profileImage}
+                                sx={{
+                                  width: 150,
+                                  height: 150,
+                                  border: "white 4px solid",
+                                  borderColor: "page.main",
+                                }}
+                              />
+                            )}
+                          </Box>
+                        </Box>
+                      </Box>
+                      <Stack direction={"row"} justifyContent="space-between">
+                        <Box>
+                          <Typography variant="h3" color={"text.main"}>
+                            {userName}
+                          </Typography>
+                          <Typography variant="h6" color={"text.secondary"}>
+                            {userId === localStorage.getItem("id") ? (
+                              <>
+                                {jobTitle ? (
+                                  <Box>
+                                    {jobTitle}
+                                  </Box>
+                                ) : (
+                                  <Box>
+                                    You haven't shared your job yet...
+                                  </Box>
+                                )}
+                              </>
+                            ) : (
+                              <>
+                                {jobTitle ? (
+                                  <Box>
+                                    {jobTitle}
+                                  </Box>
+                                ) : (
+                                  <Box>
+                                    Looking for job
+                                  </Box>
+                                )}
+                              </>
+                            )}
+                          </Typography>
+                          <Box>
+                            {/* <Stack direction={'row'} spacing={2}>
                           <Typography>Followers: {followers}</Typography>
                           <Typography>Following: {following}</Typography>
                         </Stack> */}
-                      </Box>
+                          </Box>
+                        </Box>
+
+                        <Box sx={{ ml: "auto", paddingTop: "2vh" }}>
+                          {
+                            userId === localStorage.getItem("id") ? (
+                              <Button
+                                sx={{
+                                  bgcolor: "white",
+                                  width: "fit-content",
+                                  height: "40px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  padding: "0 10px",
+                                  color: "text.main",
+                                }}
+                                onClick={handleOpen}
+                              >
+                                <EditIcon
+                                  fontSize="small"
+                                  sx={{ color: "black", marginRight: "5px" }}
+                                />
+                                Edit Profile
+                              </Button>
+                            ) : null
+                            // <Box>
+                            //   {" "}
+                            //   <Button
+                            //     variant="contained"
+                            //     onClick={handleFollow}
+                            //     sx={{
+                            //       backgroundColor: "accent.main",
+                            //       "&:hover": {
+                            //         backgroundColor: "accent.secondary",
+                            //       },
+                            //     }}
+                            //   >
+                            //     Follow
+                            //   </Button>
+                            //   <Button
+                            //     onClick={handleClick}
+                            //     startIcon={<ArrowDropDownIcon />}
+                            //     variant="contained"
+                            //     sx={{
+                            //       backgroundColor: "accent.main",
+                            //       "&:hover": {
+                            //         backgroundColor: "accent.secondary",
+                            //       },
+                            //     }}
+                            //   >
+                            //     Following
+                            //   </Button>
+                            //   <Menu
+                            //     anchorEl={anchorEl}
+                            //     open={Boolean(anchorEl)}
+                            //     onClose={handleElClose}
+                            //   >
+                            //     <MenuItem onClick={handleShowFollowingModal}>
+                            //       View Following
+                            //     </MenuItem>
+                            //     <MenuItem onClick={handleUnfollow}>
+                            //       Unfollow
+                            //     </MenuItem>
+                            //   </Menu>
+                            // </Box>
+                          }
+                        </Box>
+                      </Stack>
                     </Box>
 
-                    <Box sx={{ ml: "auto", paddingTop: "2vh" }}>
-                      {
-                        userId === localStorage.getItem("id") ? (
-                          <Button
-                            sx={{
-                              bgcolor: "white",
-                              width: "fit-content",
-                              height: "40px",
-                              display: "flex",
-                              alignItems: "center",
-                              padding: "0 10px",
-                              color: "text.main",
-                            }}
-                            onClick={handleOpen}
-                          >
-                            <EditIcon
-                              fontSize="small"
-                              sx={{ color: "black", marginRight: "5px" }}
-                            />
-                            Edit Profile
-                          </Button>
-                        ) : null
-                        // <Box>
-                        //   {" "}
-                        //   <Button
-                        //     variant="contained"
-                        //     onClick={handleFollow}
-                        //     sx={{
-                        //       backgroundColor: "accent.main",
-                        //       "&:hover": {
-                        //         backgroundColor: "accent.secondary",
-                        //       },
-                        //     }}
-                        //   >
-                        //     Follow
-                        //   </Button>
-                        //   <Button
-                        //     onClick={handleClick}
-                        //     startIcon={<ArrowDropDownIcon />}
-                        //     variant="contained"
-                        //     sx={{
-                        //       backgroundColor: "accent.main",
-                        //       "&:hover": {
-                        //         backgroundColor: "accent.secondary",
-                        //       },
-                        //     }}
-                        //   >
-                        //     Following
-                        //   </Button>
-                        //   <Menu
-                        //     anchorEl={anchorEl}
-                        //     open={Boolean(anchorEl)}
-                        //     onClose={handleElClose}
-                        //   >
-                        //     <MenuItem onClick={handleShowFollowingModal}>
-                        //       View Following
-                        //     </MenuItem>
-                        //     <MenuItem onClick={handleUnfollow}>
-                        //       Unfollow
-                        //     </MenuItem>
-                        //   </Menu>
-                        // </Box>
-                      }
-                    </Box>
-                  </Stack>
-                </Box>
-
-                <Box>
-                  <Typography variant="h4">About Me</Typography>
-                  <Paper
-                    elevation={0}
-                    sx={{
-                      bgcolor: "page.main",
-                      height: "auto",
-                      padding: "2vh 2vw 2vw 2vh",
-                      borderRadius: "10px",
-                    }}
-                  >
-                    <Typography color={"text.secondary"}>
-                      {userId === localStorage.getItem("id") ? (
-                        <>
-                          {biography ? (
-                            <Linkify text={biography} />
-                          ) : (
-                            <Box>You haven't set your bio yet. Click the edit profile button to add one!</Box>
-                          )}
-                        </>
-                      ): (
-                        <>
-                        {biography ? (
-                            <Linkify text={biography} />
-                          ) : (
-                            <Box>This user has no bio added yet.</Box>
-                          )}
-                        </>
-                      )}
-                      
-                    </Typography>
-                  </Paper>
-                </Box>
-
-                <Box>
-                  <Typography variant="h4">Posts</Typography>
-                  <Stack spacing={3}>
-                    {posts.length === 0 ? (
-                      <Typography
-                        variant="h5"
-                        sx={{ position: "absolute", color: "text.secondary" }}
+                    <Box>
+                      <Typography variant="h4">About Me</Typography>
+                      <Paper
+                        elevation={0}
+                        sx={{
+                          bgcolor: "page.main",
+                          height: "auto",
+                          padding: "2vh 2vw 2vw 2vh",
+                          borderRadius: "10px",
+                        }}
                       >
-                        {noPostsMsg}
-                      </Typography>
-                    ) : null}
-                    {posts
-                      .sort(
-                        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-                      )
-                      .map(
-                        (post) =>
-                          !loading && (
-                            <Post
-                              key={post._id}
-                              _postId={post._id}
-                              _userName={post.authorName}
-                              _authorId={post.authorId}
-                              _jobTitle={post.authorJobTitle}
-                              _authorProfilePhoto={profileImage}
-                              _description={post.description}
-                              _likes={post.likes}
-                              _dislikes={post.dislikes}
-                              _comments={post.comments}
-                              _createdAt={post.createdAt}
-                              _updatedAt={post.updatedAt}
-                              onDeletePost={handlePostDelete}
-                            />
+                        <Typography color={"text.secondary"}>
+                          {userId === localStorage.getItem("id") ? (
+                            <>
+                              {biography ? (
+                                <Linkify text={biography} />
+                              ) : (
+                                <Box>You haven't set your bio yet. Click the edit profile button to add one!</Box>
+                              )}
+                            </>
+                          ) : (
+                            <>
+                              {biography ? (
+                                <Linkify text={biography} />
+                              ) : (
+                                <Box>This user has no bio added yet.</Box>
+                              )}
+                            </>
+                          )}
+
+                        </Typography>
+                      </Paper>
+                    </Box>
+
+                    <Box>
+                      <Typography variant="h4">Posts</Typography>
+                      <Stack spacing={3}>
+                        {posts.length === 0 ? (
+                          <Typography
+                            variant="h5"
+                            sx={{ position: "absolute", color: "text.secondary" }}
+                          >
+                            {noPostsMsg}
+                          </Typography>
+                        ) : null}
+                        {posts
+                          .sort(
+                            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
                           )
-                      )}
+                          .map(
+                            (post) =>
+                              !loading && (
+                                <Post
+                                  key={post._id}
+                                  _postId={post._id}
+                                  _userName={post.authorName}
+                                  _authorId={post.authorId}
+                                  _jobTitle={post.authorJobTitle}
+                                  _authorProfilePhoto={profileImage}
+                                  _description={post.description}
+                                  _likes={post.likes}
+                                  _dislikes={post.dislikes}
+                                  _comments={post.comments}
+                                  _createdAt={post.createdAt}
+                                  _updatedAt={post.updatedAt}
+                                  onDeletePost={handlePostDelete}
+                                />
+                              )
+                          )}
+                      </Stack>
+                    </Box>
                   </Stack>
-                </Box>
-              </Stack>
-              {posts.length === 0 ? (
-                      <Box
+                  {posts.length === 0 ? (
+                    <Box
                       sx={{
                         textAlign: "center",
                         justifyContent: "center",
@@ -764,7 +773,7 @@ function Profile() {
                         © {new Date().getFullYear()} Flores & Kolpakov. All rights reserved.
                       </Typography>
                     </Box>
-                    ) : <Box
+                  ) : <Box
                     sx={{
                       textAlign: "center",
                       justifyContent: "center",
@@ -778,249 +787,249 @@ function Profile() {
                       reserved.
                     </Typography>
                   </Box>}
-            </Box>
-          </Box>
-        ) : (
-          <Box
-            sx={{
-              display: "flex",
-              backgroundColor: "page.secondary",
-              height: "100vh",
-              maxHeight: "100vh",
-            }}
-          >
-            {!loading && (
-              <MobileSideNav
-                onPostCreated={handlePostCreate}
-                _userProfilePicture={userProfilePicture}
-              />
-            )}
-            <Box
-              sx={{
-                flex: 1,
-                paddingLeft: "2vw",
-                paddingRight: "2vw",
-                paddingTop: "67px",
-                paddingBottom: "2vh",
-                overflow: "auto",
-                backgroundColor: "page.secondary",
-              }}
-            >
-              <Stack spacing={5}>
-                <Box>
-                  <Box
-                    bgcolor={"accent.main"}
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "flex-end",
-                      backgroundColor: "accent.main",
-                      borderRadius: "10px",
-                      minHeight: "20vh",
-                    }}
-                  >
-                    <Box sx={{ position: "relative" }}>
-                      <Box sx={{ paddingLeft: "2vw", paddingBottom: "2vh" }}>
-                        <Avatar
-                          src={profileImage}
-                          sx={{
-                            width: 150,
-                            height: 150,
-                            border: "white 4px solid",
-                            borderColor: "page.main",
-                          }}
-                          onClick={handleOpenEdit}
-                        />
-                        <IconButton
-                          sx={{
-                            position: "absolute",
-                            bottom: 20,
-                            left: 120,
-                            bgcolor: "white",
-                          }}
-                          onClick={handleOpenEdit}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                      </Box>
-                    </Box>
-                  </Box>
-                  <Stack direction={"row"} justifyContent="space-between">
+                </Box>
+              </Box>
+            ) : (
+              <Box
+                sx={{
+                  display: "flex",
+                  backgroundColor: "page.secondary",
+                  height: "100vh",
+                  maxHeight: "100vh",
+                }}
+              >
+                {!loading && (
+                  <MobileSideNav
+                    onPostCreated={handlePostCreate}
+                    _userProfilePicture={userProfilePicture}
+                  />
+                )}
+                <Box
+                  sx={{
+                    flex: 1,
+                    paddingLeft: "2vw",
+                    paddingRight: "2vw",
+                    paddingTop: "67px",
+                    paddingBottom: "2vh",
+                    overflow: "auto",
+                    backgroundColor: "page.secondary",
+                  }}
+                >
+                  <Stack spacing={5}>
                     <Box>
-                      <Typography variant="h3" color={"text.main"}>
-                        {userName}
-                      </Typography>
-                      <Typography variant="h6" color={"text.secondary"}>
-                      {userId === localStorage.getItem("id") ? (
-                        <>
-                          {jobTitle ? (
-                            <Box>
-                              {jobTitle}
-                            </Box>
-                          ) : (
-                            <Box>
-                              You haven't shared your job yet...
-                            </Box>
-                          )}
-                        </>
-                      ) : (
-                        <>
-                        {jobTitle ? (
-                            <Box>
-                              {jobTitle}
-                            </Box>
-                          ) : (
-                            <Box>
-                              Looking for job
-                            </Box>
-                          )}
-                        </>
-                      )}
-                      </Typography>
-                    </Box>
-
-                    <Box sx={{ ml: "auto", paddingTop: "2vh" }}>
-                      {userId === localStorage.getItem("id") ? (
-                        <Button
-                          sx={{
-                            bgcolor: "white",
-                            width: "fit-content",
-                            height: "40px",
-                            display: "flex",
-                            alignItems: "center",
-                            padding: "0 10px",
-                            color: "text.main",
-                            whiteSpace: "nowrap",
-                          }}
-                          onClick={handleOpen}
-                        >
-                          <EditIcon
-                            fontSize="small"
-                            sx={{ color: "black", marginRight: "5px" }}
-                          />
-                          Edit Profile
-                        </Button>
-                      ) : ( null
-                        // <Box>
-                        //   {" "}
-                        //   <Button
-                        //     variant="contained"
-                        //     onClick={handleFollow}
-                        //     sx={{
-                        //       backgroundColor: "accent.main",
-                        //       "&:hover": {
-                        //         backgroundColor: "accent.secondary",
-                        //       },
-                        //     }}
-                        //   >
-                        //     Follow
-                        //   </Button>
-                        //   <Button
-                        //     onClick={handleClick}
-                        //     startIcon={<ArrowDropDownIcon />}
-                        //     variant="contained"
-                        //     sx={{
-                        //       backgroundColor: "accent.main",
-                        //       "&:hover": {
-                        //         backgroundColor: "accent.secondary",
-                        //       },
-                        //     }}
-                        //   >
-                        //     Following
-                        //   </Button>
-                        //   <Menu
-                        //     anchorEl={anchorEl}
-                        //     open={Boolean(anchorEl)}
-                        //     onClose={handleElClose}
-                        //   >
-                        //     <MenuItem onClick={handleShowFollowingModal}>
-                        //       View Following
-                        //     </MenuItem>
-                        //     <MenuItem onClick={handleUnfollow}>
-                        //       Unfollow
-                        //     </MenuItem>
-                        //   </Menu>
-                        // </Box>
-                      )}
-                    </Box>
-                  </Stack>
-                </Box>
-
-                <Box>
-                  <Typography variant="h4">About Me</Typography>
-                  <Paper
-                    elevation={0}
-                    sx={{
-                      bgcolor: "page.main",
-                      height: "auto",
-                      padding: "2vh 2vw 2vw 2vh",
-                      borderRadius: "10px",
-                    }}
-                  >
-                    <Typography color={"text.secondary"}>
-                    {userId === localStorage.getItem("id") ? (
-                        <>
-                          {biography ? (
-                            <Linkify text={biography} />
-                          ) : (
-                            <Box>You haven't set your bio yet. Click the edit profile button to add one!</Box>
-                          )}
-                        </>
-                      ): (
-                        <>
-                        {biography ? (
-                            <Linkify text={biography} />
-                          ) : (
-                            <Box>This user has no bio added yet.</Box>
-                          )}
-                        </>
-                      )}
-                    </Typography>
-                  </Paper>
-                </Box>
-
-                <Box>
-                  <Typography variant="h4">Posts</Typography>
-                  <Stack spacing={3}>
-                    {posts.length === 0 ? (
-                      <Typography
-                        variant="h5"
-                        sx={{ position: "absolute", color: "text.secondary" }}
-                      >
-                        {noPostsMsg}
-                      </Typography>
-                    ) : null}
-                    {posts
-                      .sort(
-                        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-                      )
-                      .map(
-                        (post) =>
-                          !loading && (
-                            <Post
-                              key={post._id}
-                              _postId={post._id}
-                              _userName={post.authorName}
-                              _authorId={post.authorId}
-                              _jobTitle={post.authorJobTitle}
-                              _authorProfilePhoto={profileImage}
-                              _description={post.description}
-                              _likes={post.likes}
-                              _dislikes={post.dislikes}
-                              _comments={post.comments}
-                              _createdAt={post.createdAt}
-                              _updatedAt={post.updatedAt}
-                              onDeletePost={handlePostDelete}
-                            />
-                          )
-                      )}
-                  </Stack>
-                </Box>
-              </Stack>
-              
-              
-              {posts.length === 0 ? (
                       <Box
+                        bgcolor={"accent.main"}
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "flex-end",
+                          backgroundColor: "accent.main",
+                          borderRadius: "10px",
+                          minHeight: "20vh",
+                        }}
+                      >
+                        <Box sx={{ position: "relative" }}>
+                          <Box sx={{ paddingLeft: "2vw", paddingBottom: "2vh" }}>
+                            <Avatar
+                              src={profileImage}
+                              sx={{
+                                width: 150,
+                                height: 150,
+                                border: "white 4px solid",
+                                borderColor: "page.main",
+                              }}
+                              onClick={handleOpenEdit}
+                            />
+                            <IconButton
+                              sx={{
+                                position: "absolute",
+                                bottom: 20,
+                                left: 120,
+                                bgcolor: "white",
+                              }}
+                              onClick={handleOpenEdit}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                          </Box>
+                        </Box>
+                      </Box>
+                      <Stack direction={"row"} justifyContent="space-between">
+                        <Box>
+                          <Typography variant="h3" color={"text.main"}>
+                            {userName}
+                          </Typography>
+                          <Typography variant="h6" color={"text.secondary"}>
+                            {userId === localStorage.getItem("id") ? (
+                              <>
+                                {jobTitle ? (
+                                  <Box>
+                                    {jobTitle}
+                                  </Box>
+                                ) : (
+                                  <Box>
+                                    You haven't shared your job yet...
+                                  </Box>
+                                )}
+                              </>
+                            ) : (
+                              <>
+                                {jobTitle ? (
+                                  <Box>
+                                    {jobTitle}
+                                  </Box>
+                                ) : (
+                                  <Box>
+                                    Looking for job
+                                  </Box>
+                                )}
+                              </>
+                            )}
+                          </Typography>
+                        </Box>
+
+                        <Box sx={{ ml: "auto", paddingTop: "2vh" }}>
+                          {userId === localStorage.getItem("id") ? (
+                            <Button
+                              sx={{
+                                bgcolor: "white",
+                                width: "fit-content",
+                                height: "40px",
+                                display: "flex",
+                                alignItems: "center",
+                                padding: "0 10px",
+                                color: "text.main",
+                                whiteSpace: "nowrap",
+                              }}
+                              onClick={handleOpen}
+                            >
+                              <EditIcon
+                                fontSize="small"
+                                sx={{ color: "black", marginRight: "5px" }}
+                              />
+                              Edit Profile
+                            </Button>
+                          ) : (null
+                            // <Box>
+                            //   {" "}
+                            //   <Button
+                            //     variant="contained"
+                            //     onClick={handleFollow}
+                            //     sx={{
+                            //       backgroundColor: "accent.main",
+                            //       "&:hover": {
+                            //         backgroundColor: "accent.secondary",
+                            //       },
+                            //     }}
+                            //   >
+                            //     Follow
+                            //   </Button>
+                            //   <Button
+                            //     onClick={handleClick}
+                            //     startIcon={<ArrowDropDownIcon />}
+                            //     variant="contained"
+                            //     sx={{
+                            //       backgroundColor: "accent.main",
+                            //       "&:hover": {
+                            //         backgroundColor: "accent.secondary",
+                            //       },
+                            //     }}
+                            //   >
+                            //     Following
+                            //   </Button>
+                            //   <Menu
+                            //     anchorEl={anchorEl}
+                            //     open={Boolean(anchorEl)}
+                            //     onClose={handleElClose}
+                            //   >
+                            //     <MenuItem onClick={handleShowFollowingModal}>
+                            //       View Following
+                            //     </MenuItem>
+                            //     <MenuItem onClick={handleUnfollow}>
+                            //       Unfollow
+                            //     </MenuItem>
+                            //   </Menu>
+                            // </Box>
+                          )}
+                        </Box>
+                      </Stack>
+                    </Box>
+
+                    <Box>
+                      <Typography variant="h4">About Me</Typography>
+                      <Paper
+                        elevation={0}
+                        sx={{
+                          bgcolor: "page.main",
+                          height: "auto",
+                          padding: "2vh 2vw 2vw 2vh",
+                          borderRadius: "10px",
+                        }}
+                      >
+                        <Typography color={"text.secondary"}>
+                          {userId === localStorage.getItem("id") ? (
+                            <>
+                              {biography ? (
+                                <Linkify text={biography} />
+                              ) : (
+                                <Box>You haven't set your bio yet. Click the edit profile button to add one!</Box>
+                              )}
+                            </>
+                          ) : (
+                            <>
+                              {biography ? (
+                                <Linkify text={biography} />
+                              ) : (
+                                <Box>This user has no bio added yet.</Box>
+                              )}
+                            </>
+                          )}
+                        </Typography>
+                      </Paper>
+                    </Box>
+
+                    <Box>
+                      <Typography variant="h4">Posts</Typography>
+                      <Stack spacing={3}>
+                        {posts.length === 0 ? (
+                          <Typography
+                            variant="h5"
+                            sx={{ position: "absolute", color: "text.secondary" }}
+                          >
+                            {noPostsMsg}
+                          </Typography>
+                        ) : null}
+                        {posts
+                          .sort(
+                            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                          )
+                          .map(
+                            (post) =>
+                              !loading && (
+                                <Post
+                                  key={post._id}
+                                  _postId={post._id}
+                                  _userName={post.authorName}
+                                  _authorId={post.authorId}
+                                  _jobTitle={post.authorJobTitle}
+                                  _authorProfilePhoto={profileImage}
+                                  _description={post.description}
+                                  _likes={post.likes}
+                                  _dislikes={post.dislikes}
+                                  _comments={post.comments}
+                                  _createdAt={post.createdAt}
+                                  _updatedAt={post.updatedAt}
+                                  onDeletePost={handlePostDelete}
+                                />
+                              )
+                          )}
+                      </Stack>
+                    </Box>
+                  </Stack>
+
+
+                  {posts.length === 0 ? (
+                    <Box
                       sx={{
                         width: '100vw',
                         textAlign: "center",
@@ -1037,7 +1046,7 @@ function Profile() {
                         reserved.
                       </Typography>
                     </Box>
-                    ) : <Box
+                  ) : <Box
                     sx={{
                       width: '100vw',
                       textAlign: "center",
@@ -1052,41 +1061,43 @@ function Profile() {
                       reserved.
                     </Typography>
                   </Box>}
-              
-            </Box>
-          </Box>
-        )}
 
-        <ShowFollowingModal
-          open={openFollowingModal}
-          handleClose={closeFollowingModal}
-        />
+                </Box>
+              </Box>
+            )}
 
-        <EditPhotoModal
-          open={editOpen}
-          onClose={handleCloseEdit}
-          onFileUpload={handleFileUpload}
-        />
-        <EditProfileModal
-          open={open}
-          handleClose={handleClose}
-          initValues={formValues}
-          onProfileUpdate={handleProfileUpdate}
-        />
-        <Snackbar
-          open={successProfileDataUpdateVis}
-          autoHideDuration={3000}
-          onClose={handleSnackClose}
-        >
-          <Alert
-            onClose={handleSnackClose}
-            severity="success"
-            sx={{ width: "100%" }}
-          >
-            Your profile was updated!
-          </Alert>
-        </Snackbar>
-      </ThemeProvider>
+            <ShowFollowingModal
+              open={openFollowingModal}
+              handleClose={closeFollowingModal}
+            />
+
+            <EditPhotoModal
+              open={editOpen}
+              onClose={handleCloseEdit}
+              onFileUpload={handleFileUpload}
+            />
+            <EditProfileModal
+              open={open}
+              handleClose={handleClose}
+              initValues={formValues}
+              onProfileUpdate={handleProfileUpdate}
+            />
+            <Snackbar
+              open={successProfileDataUpdateVis}
+              autoHideDuration={3000}
+              onClose={handleSnackClose}
+            >
+              <Alert
+                onClose={handleSnackClose}
+                severity="success"
+                sx={{ width: "100%" }}
+              >
+                Your profile was updated!
+              </Alert>
+            </Snackbar>
+          </ThemeProvider>
+        </>
+      )}
     </div>
   );
 }
