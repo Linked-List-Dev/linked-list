@@ -12,6 +12,8 @@ function FourOhFour() {
           sx={{ position: "absolute" }}
           paddingTop={"3vh"}
           paddingLeft={"3vw"}
+          component={Link}
+          to='/'
         >
           <img src={LinkedListLogo} />
         </Box>
