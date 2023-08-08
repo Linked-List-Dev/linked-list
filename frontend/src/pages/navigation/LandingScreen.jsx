@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { ThemeProvider, Typography, Box, Stack } from "@mui/material";
 import NavigationBar from "../../components/NavigationBar";
 import AppTheme from "../../util/Theme";
 import MobileNav from "../../components/Mobile/MobileNav";
 import { motion } from "framer-motion";
 import LightSpeed from "react-reveal/LightSpeed";
-import Slide from "react-reveal/Slide";
-import Footer from "../../components/Footer";
-import { Card, CardContent, IconButton } from "@mui/material";
+import Fade from "react-reveal/Fade";
+import { Card, CardContent, IconButton, Button } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
@@ -76,7 +76,7 @@ function Landing() {
 
   const handlePrev = () => {
     setActiveIndex((prevIndex) =>
-      prevIndex === 0 ? cardData.length - 1 : prevIndex - 1
+      prevIndex === cardData.length - 1 ? 0 : prevIndex - 1
     );
   };
 
@@ -90,149 +90,383 @@ function Landing() {
     <Box
       style={{
         backgroundColor: "#F6F6F6",
-        minHeight: "100vh",
+        maxHeight: "100vh",
         overflow: "scroll",
       }}
     >
       <ThemeProvider theme={AppTheme}>
-        {windowWidth >= 768 ? (
+        {windowWidth >= 850 ? (
           <Box width={"100vw"}>
             <NavigationBar />
+            <Box>
+          <Box minWidth={"100vw"} color={"text.main"}>
+            <Stack
+              direction="row"
+              paddingTop={"10vh"}
+              height="100%"
+              spacing={5}
+              paddingBottom={10}
+            >
+              <Box
+                justifyContent="center"
+                alignItems="center"
+                width={"48vw"}
+                paddingLeft={"2vw"}
+                textAlign={"center"}
+                color={"text.main"}
+              >
+                <Fade top>
+                  <Typography variant="h2">Welcome to LinkedList</Typography>
+                </Fade>
+                <Fade>
+                  <Typography variant="h4" paddingTop={"3vh"}>
+                    Welcome to LinkedList, a tech-focused social platform
+                    designed for tech enthusiasts. Similar to LinkedIn,
+                    LinkedList lets tech professionals showcase skills, build
+                    connections, and boost careers. Connect with like-minded
+                    tech experts, share knowledge through articles, and network
+                    with potential collaborators. Stay updated on industry
+                    trends and engage with influential personalities and
+                    companies. Join our vibrant community to enhance your tech
+                    career. Discover, connect, and thrive with LinkedList.
+                  </Typography>
+                </Fade>
+              </Box>
+              <Box
+                sx={{
+                  width: "48vw",
+                  paddingRight: "2vw",
+                  minHeight: "50vh",
+                  overflow: "hidden",
+                  textAlign: "center",
+                }}
+              >
+                <Fade top>
+                  <Typography variant="h2">Key Features</Typography>
+                </Fade>
+                <Box
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    position: "relative",
+                    paddingTop: "3vh",
+                  }}
+                >
+                  <IconButton
+    style={{
+      position: "absolute",
+      top: "50%",
+      left: "10px",
+      transform: "translateY(-50%)",
+    }}
+    onClick={handlePrev}
+  >
+    <ChevronLeftIcon />
+  </IconButton>
+                  <Box
+                    style={{
+                      transition: "transform 0.5s ease",
+                      transform: `translateX(-${activeIndex * 100.6}%)`,
+                    }}
+                  >
+                    <Stack direction={"row"} spacing={3}>
+                      {cardData.map((card, index) => (
+                        <Box
+                          key={index}
+                          style={{
+                            flex: "0 0 100%",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <Card
+                            style={{
+                              width: "40vw",
+                              height: "35vh",
+                              textAlign: "left",
+                            }}
+                          >
+                            <CardContent>
+                              <Typography variant="h4">{card.title}</Typography>
+                              <Typography
+                                variant="h5"
+                                color={"text.secondary"}
+                                paddingTop={2}
+                              >
+                                {card.content}
+                              </Typography>
+                            </CardContent>
+                          </Card>
+                        </Box>
+                      ))}
+                    </Stack>
+                  </Box>
+                  <IconButton
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      right: "10px",
+                      transform: "translateY(-50%)",
+                    }}
+                    onClick={handleNext}
+                  >
+                    <ChevronRightIcon />
+                  </IconButton>
+                </Box>
+              </Box>
+            </Stack>
+          </Box>
+
+          <Box
+            width={"100vw"}
+            minHeight={"21vh"}
+            sx={{
+              background: "linear-gradient(to top, #9398FC, #6858D8)",
+            }}
+          >
+            <Box paddingTop={5} alignContent={"center"} textAlign={"center"}>
+              <Button
+                component={Link}
+                to="/feed"
+                variant="outlined"
+                sx={{
+                  color: "white",
+                  borderColor: "white",
+                  position: "relative",
+                  "&:hover": {
+                    "&::before, &::after": {
+                      content: '""',
+                      position: "absolute",
+                      top: "0",
+                      right: "0",
+                      bottom: "0",
+                      left: "0",
+                      border: "2px solid white",
+                      borderRadius: "4px", // Optional: Adjust the border radius to match the button
+                    },
+                    "&::before": {
+                      transform: "translate(-4px, -4px)", // Adjust for border thickness
+                    },
+                    "&::after": {
+                      transform: "translate(4px, 4px)", // Adjust for border thickness
+                    },
+                  },
+                }}
+              >
+                <Typography variant="h4"> Start Exploring Now</Typography>
+              </Button>
+            </Box>
+
+            <Box
+              sx={{
+                textAlign: "center",
+                justifyContent: "center",
+                alignItems: "center",
+                color: "#cfcaca",
+                position: "absolute",
+                bottom: 0,
+                width: "100%",
+                paddingBottom: "1rem",
+              }}
+            >
+              <Typography paddingTop={"2vh"}>
+                © {new Date().getFullYear()} Flores & Kolpakov. All rights
+                reserved.
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
           </Box>
         ) : (
           <Box width={"100vw"}>
             <MobileNav />
-          </Box>
-        )}
-
-        <Box minWidth={"100vw"} color={"text.main"}>
-          <Stack direction="row" paddingTop={"10vh"} height="100%" spacing={5}>
-            <Box
-              justifyContent="center"
-              alignItems="center"
-              width={"48vw"}
-              paddingLeft={"2vw"}
-              textAlign={"left"}
-              color={"text.main"}
+            <Box>
+          <Box minWidth={"100vw"} color={"text.main"}>
+            <Stack
+              paddingTop={"10vh"}
+              height="100%"
+              spacing={5}
+              paddingBottom={10}
             >
-              <Typography variant="h2">Welcome to LinkedList</Typography>
-              <Typography variant="h4" paddingTop={"3vh"}>
-                Welcome to LinkedList, a tech-focused social platform designed
-                for tech enthusiasts. Similar to LinkedIn, LinkedList lets tech
-                professionals showcase skills, build connections, and boost
-                careers. Connect with like-minded tech experts, share knowledge
-                through articles, and network with potential collaborators. Stay
-                updated on industry trends and engage with influential
-                personalities and companies. Join our vibrant community to
-                enhance your tech career. Discover, connect, and thrive with
-                LinkedList.
-              </Typography>
-            </Box>
-            <Box
-              sx={{
-                width: "48vw",
-                paddingRight: "2vw",
-                minHeight: "50vh",
-                overflow: "hidden",
-                textAlign: "center",
-              }}
-            >
-              <Typography variant="h2">Key Features</Typography>
               <Box
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  position: "relative",
-                  paddingTop: "3vh",
+                justifyContent="center"
+                alignItems="center"
+                width={"100vw"}
+                paddingLeft={"2vw"}
+                textAlign={"center"}
+                color={"text.main"}
+              >
+                <Fade top>
+                  <Typography variant="h2">Welcome to LinkedList</Typography>
+                </Fade>
+                <Fade>
+                  <Typography variant="h4" padding={"3vh"}>
+                    Welcome to LinkedList, a tech-focused social platform
+                    designed for tech enthusiasts. Similar to LinkedIn,
+                    LinkedList lets tech professionals showcase skills, build
+                    connections, and boost careers. Connect with like-minded
+                    tech experts, share knowledge through articles, and network
+                    with potential collaborators. Stay updated on industry
+                    trends and engage with influential personalities and
+                    companies. Join our vibrant community to enhance your tech
+                    career. Discover, connect, and thrive with LinkedList.
+                  </Typography>
+                </Fade>
+              </Box>
+              <Box
+                sx={{
+                  width: "100vw",
+                  paddingRight: "2vw",
+                  minHeight: "50vh",
+                  overflow: "hidden",
+                  textAlign: "center",
                 }}
               >
-                <IconButton
-                  style={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "10px",
-                    transform: "translateY(-50%)",
-                  }}
-                  onClick={handlePrev}
-                >
-                  <ChevronLeftIcon />
-                </IconButton>
+                <Fade top>
+                  <Typography variant="h2">Key Features</Typography>
+                </Fade>
                 <Box
                   style={{
-                    transition: "transform 0.5s ease",
-                    transform: `translateX(-${activeIndex * 100.5}%)`,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    position: "relative",
+                    paddingTop: "3vh",
                   }}
                 >
-                  <Stack direction={"row"} spacing={3}>
-                    {cardData.map((card, index) => (
-                      <Box
-                        key={index}
-                        style={{
-                          flex: "0 0 100%",
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <Card
+                  <IconButton
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "10px",
+                      transform: "translateY(-50%)",
+                    }}
+                    onClick={handlePrev}
+                  >
+                    <ChevronLeftIcon />
+                  </IconButton>
+                  <Box
+                    style={{
+                      transition: "transform 0.5s ease",
+                      transform: `translateX(-${activeIndex * 100.6}%)`,
+                    }}
+                  >
+                    <Stack direction={"row"} spacing={3}>
+                      {cardData.map((card, index) => (
+                        <Box
+                          key={index}
                           style={{
-                            width: "40vw",
-                            height: "35vh",
-                            textAlign: "left",
+                            flex: "0 0 100%",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "center",
                           }}
                         >
-                          <CardContent>
-                            <Typography variant="h4">{card.title}</Typography>
-                            <Typography variant="h5" color={'text.secondary'} paddingTop={2}>
-                              {card.content}
-                            </Typography>
-                          </CardContent>
-                        </Card>
-                      </Box>
-                    ))}
-                  </Stack>
+                          <Card
+                            style={{
+                              width: "70vw",
+                              height: "35vh",
+                              textAlign: "left",
+                            }}
+                          >
+                            <CardContent>
+                              <Typography variant="h4">{card.title}</Typography>
+                              <Typography
+                                variant="h5"
+                                color={"text.secondary"}
+                                paddingTop={2}
+                              >
+                                {card.content}
+                              </Typography>
+                            </CardContent>
+                          </Card>
+                        </Box>
+                      ))}
+                    </Stack>
+                  </Box>
+                  <IconButton
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      right: "10px",
+                      transform: "translateY(-50%)",
+                    }}
+                    onClick={handleNext}
+                  >
+                    <ChevronRightIcon />
+                  </IconButton>
                 </Box>
-                <IconButton
-                  style={{
-                    position: "absolute",
-                    top: "50%",
-                    right: "10px",
-                    transform: "translateY(-50%)",
-                  }}
-                  onClick={handleNext}
-                >
-                  <ChevronRightIcon />
-                </IconButton>
               </Box>
-            </Box>
-          </Stack>
+            </Stack>
+          </Box>
 
           <Box
             width={"100vw"}
-            minHeight={"30vh"}
+            minHeight={"21vh"}
             sx={{
               background: "linear-gradient(to top, #9398FC, #6858D8)",
-              position: "relative",
             }}
-          ></Box>
-        </Box>
+          >
+            <Box paddingTop={5} alignContent={"center"} textAlign={"center"}>
+              <Button
+                component={Link}
+                to="/feed"
+                variant="outlined"
+                sx={{
+                  color: "white",
+                  borderColor: "white",
+                  position: "relative",
+                  "&:hover": {
+                    "&::before, &::after": {
+                      content: '""',
+                      position: "absolute",
+                      top: "0",
+                      right: "0",
+                      bottom: "0",
+                      left: "0",
+                      border: "2px solid white",
+                      borderRadius: "4px", // Optional: Adjust the border radius to match the button
+                    },
+                    "&::before": {
+                      transform: "translate(-4px, -4px)", // Adjust for border thickness
+                    },
+                    "&::after": {
+                      transform: "translate(4px, 4px)", // Adjust for border thickness
+                    },
+                  },
+                }}
+              >
+                <Typography variant="h4"> Start Exploring Now</Typography>
+              </Button>
+            </Box>
 
-        <Box
-          sx={{
-            textAlign: "center",
-            justifyContent: "center",
-            alignItems: "center",
-            paddingTop: "22vh",
-            color: "#cfcaca",
-          }}
-        >
-          <Typography paddingTop={"2vh"}>
-            © {new Date().getFullYear()} Flores & Kolpakov. All rights reserved.
-          </Typography>
+            <Box
+              sx={{
+                textAlign: "center",
+                justifyContent: "center",
+                alignItems: "center",
+                color: "#cfcaca",
+                position: "absolute",
+                bottom: 0,
+                width: "100%",
+                paddingBottom: "1rem",
+              }}
+            >
+              <Typography paddingTop={"2vh"}>
+                © {new Date().getFullYear()} Flores & Kolpakov. All rights
+                reserved.
+              </Typography>
+            </Box>
+          </Box>
         </Box>
+          </Box>
+        )}
       </ThemeProvider>
     </Box>
   );

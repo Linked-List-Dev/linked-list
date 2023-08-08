@@ -26,7 +26,7 @@ function NavigationBar() {
           <Stack
             spacing={2}
             direction="row"
-            sx={{ marginLeft: "auto", paddingRight: "2vw" }}
+            sx={{ marginLeft: "auto", paddingRight: "2vw", paddingTop: 1, paddingBottom: 1  }}
           >
             <Button
               variant="outlined"
@@ -41,6 +41,9 @@ function NavigationBar() {
                 textAlign: "center",
                 textTransform: "none",
                 whiteSpace: "nowrap",
+                "&:hover": {
+                  borderColor: "accent.main",
+                },
               }}
               component={Link}
               to="/login"
