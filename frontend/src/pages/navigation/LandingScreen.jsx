@@ -98,7 +98,7 @@ function Landing() {
         {windowWidth >= 850 ? (
           <Box width={"100vw"} maxHeight={"100vh"}>
             <NavigationBar />
-            <Box>
+            <Box >
               <Box minWidth={"100vw"} color={"text.main"}>
                 <Stack
                   direction="row"
@@ -227,7 +227,8 @@ function Landing() {
 
               <Box
                 width={"100vw"}
-                minHeight={"20vh"}
+                minHeight={"30vh"}
+                
                 sx={{
                   background: "linear-gradient(to top, #9398FC, #6858D8)",
                 }}
