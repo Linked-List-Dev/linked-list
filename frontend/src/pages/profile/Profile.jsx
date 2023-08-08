@@ -310,6 +310,8 @@ function Profile() {
             responseType: "arraybuffer", // Set the responseType to arraybuffer
           }
         );
+      } else {
+        setUserProfilePicture("");
       }
 
       if (

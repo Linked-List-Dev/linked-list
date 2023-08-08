@@ -96,7 +96,7 @@ function Landing() {
     >
       <ThemeProvider theme={AppTheme}>
         {windowWidth >= 850 ? (
-          <Box width={"100vw"} maxHeight={"100vh"} overflow={"clip"}>
+          <Box width={"100vw"} maxHeight={"100vh"}>
             <NavigationBar />
             <Box>
               <Box minWidth={"100vw"} color={"text.main"}>
@@ -121,8 +121,8 @@ function Landing() {
                       </Typography>
                     </Fade>
                     <Fade>
-                      <Typography variant="h4" paddingTop={"3vh"}>
-                        Welcome to LinkedList, a tech-focused social platform
+                      <Typography variant="h5" paddingTop={"3vh"}>
+                        a tech-focused social platform
                         designed for tech enthusiasts. Similar to LinkedIn,
                         LinkedList lets tech professionals showcase skills,
                         build connections, and boost careers. Connect with
@@ -314,7 +314,7 @@ function Landing() {
                       </Typography>
                     </Fade>
                     <Fade>
-                      <Typography variant="h4" padding={"3vh"}>
+                      <Typography variant="h5" padding={"3vh"}>
                         Welcome to LinkedList, a tech-focused social platform
                         designed for tech enthusiasts. Similar to LinkedIn,
                         LinkedList lets tech professionals showcase skills,
@@ -459,7 +459,7 @@ function Landing() {
                       },
                     }}
                   >
-                    <Typography variant="h4"> Start Exploring Now</Typography>
+                    <Typography variant="h4"> Start Exploring Now </Typography>
                   </Button>
                 </Box>
 
