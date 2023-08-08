@@ -32,6 +32,7 @@ import Linkify from "../../util/Linkify";
 import { useNavigate } from "react-router-dom";
 
 function Profile() {
+  const API_URL = import.meta.env.VITE_API_URL;
   const { profileid } = useParams();
   const [profileId, setProfileId] = useState(profileid);
   const [userName, setUserName] = useState("");
@@ -92,7 +93,7 @@ function Profile() {
     setLoading(true);
     try {
       const res = await axios.post(
-        `http://localhost:8000/api/users/profileImage`,
+        `${API_URL}/users/profileImage`,
         formData, // Use the FormData object as the request data
         {
           headers: {
@@ -105,7 +106,7 @@ function Profile() {
       if (res.status === 201) {
         localStorage.setItem("profilePictureId", res.data.id);
         const profileImageFetch = await axios.get(
-          `http://localhost:8000/api/users/profileImage/${res.data.id}`,
+          `${API_URL}/users/profileImage/${res.data.id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -132,26 +133,31 @@ function Profile() {
           for (const post of res.data.userPosts) {
             for (const comment of post.comments) {
               try {
-                const res = await axios.get(
-                  `http://localhost:8000/api/users/profileImage/${comment.authorProfilePictureId}`,
-                  {
-                    headers: {
-                      Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
-                    responseType: "arraybuffer",
-                  }
-                );
+                if (comment.authorProfilePictureId !== "") {
+                  const res = await axios.get(
+                    `${API_URL}/users/profileImage/${comment.authorProfilePictureId}`,
+                    {
+                      headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                      },
+                      responseType: "arraybuffer",
+                    }
+                  );
 
-                if (res.status === 200 || res.status === 304) {
-                  const blob = new Blob([res.data], {
-                    type: res.headers["content-type"],
-                  });
-                  const blobUrl = URL.createObjectURL(blob);
-                  commentProfilePictures[comment.authorProfilePictureId] =
-                    blobUrl;
+                  if (res.status === 200 || res.status === 304) {
+                    const blob = new Blob([res.data], {
+                      type: res.headers["content-type"],
+                    });
+                    const blobUrl = URL.createObjectURL(blob);
+                    commentProfilePictures[comment.authorProfilePictureId] =
+                      blobUrl;
+                  }
                 }
               } catch (err) {
                 console.log(err);
+                if (err.response.status === 401 || err.response.status === 400) {
+                  navigate("/register");
+                }
               }
             }
           }
@@ -176,6 +182,9 @@ function Profile() {
       }
     } catch (error) {
       console.error("Error uploading the file:", error);
+      if (err.response.status === 401 || err.response.status === 400) {
+        navigate("/register");
+      }
     }
   };
 
@@ -204,7 +213,7 @@ function Profile() {
     setLoading(true);
     // Make PUT request to update user data
     const res = await axios.put(
-      `http://localhost:8000/api/users/${userId}`,
+      `${API_URL}/users/${userId}`,
       values,
       {
         headers: {
@@ -224,25 +233,30 @@ function Profile() {
       for (const post of res.data.userPosts) {
         for (const comment of post.comments) {
           try {
-            const res = await axios.get(
-              `http://localhost:8000/api/users/profileImage/${comment.authorProfilePictureId}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-                responseType: "arraybuffer",
-              }
-            );
+            if (comment.authorProfilePictureId != "") {
+              const res = await axios.get(
+                `${API_URL}/users/profileImage/${comment.authorProfilePictureId}`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                  },
+                  responseType: "arraybuffer",
+                }
+              );
 
-            if (res.status === 200 || res.status === 304) {
-              const blob = new Blob([res.data], {
-                type: res.headers["content-type"],
-              });
-              const blobUrl = URL.createObjectURL(blob);
-              commentProfilePictures[comment.authorProfilePictureId] = blobUrl;
+              if (res.status === 200 || res.status === 304) {
+                const blob = new Blob([res.data], {
+                  type: res.headers["content-type"],
+                });
+                const blobUrl = URL.createObjectURL(blob);
+                commentProfilePictures[comment.authorProfilePictureId] = blobUrl;
+              }
             }
           } catch (err) {
             console.log(err);
+            if (err.response.status === 401 || err.response.status === 400) {
+              navigate("/register");
+            }
           }
         }
       }
@@ -282,17 +296,20 @@ function Profile() {
     try {
       setLoading(true); // Start loading
 
-      const profilePictureFetch = await axios.get(
-        `http://localhost:8000/api/users/profileImage/${localStorage.getItem(
-          "profilePictureId"
-        )}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          responseType: "arraybuffer", // Set the responseType to arraybuffer
-        }
-      );
+      let profilePictureFetch = {}
+      if (localStorage.getItem("profilePictureId") !== "") {
+        profilePictureFetch = await axios.get(
+          `${API_URL}/users/profileImage/${localStorage.getItem(
+            "profilePictureId"
+          )}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            responseType: "arraybuffer", // Set the responseType to arraybuffer
+          }
+        );
+      } 
 
       if (
         profilePictureFetch.status === 200 ||
@@ -309,7 +326,7 @@ function Profile() {
       }
 
       const res = await axios.get(
-        `http://localhost:8000/api/users/${profileid}`,
+        `${API_URL}/users/${profileid}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -331,26 +348,31 @@ function Profile() {
           // Iterate through each comment in the post
           for (const comment of post.comments) {
             try {
-              const res = await axios.get(
-                `http://localhost:8000/api/users/profileImage/${comment.authorProfilePictureId}`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                  },
-                  responseType: "arraybuffer",
-                }
-              );
+              if (comment.authorProfilePictureId !== "") {
+                const res = await axios.get(
+                  `${API_URL}/users/profileImage/${comment.authorProfilePictureId}`,
+                  {
+                    headers: {
+                      Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                    responseType: "arraybuffer",
+                  }
+                );
 
-              if (res.status === 200 || res.status === 304) {
-                const blob = new Blob([res.data], {
-                  type: res.headers["content-type"],
-                });
-                const blobUrl = URL.createObjectURL(blob);
-                commentProfilePictures[comment.authorProfilePictureId] =
-                  blobUrl;
+                if (res.status === 200 || res.status === 304) {
+                  const blob = new Blob([res.data], {
+                    type: res.headers["content-type"],
+                  });
+                  const blobUrl = URL.createObjectURL(blob);
+                  commentProfilePictures[comment.authorProfilePictureId] =
+                    blobUrl;
+                }
               }
             } catch (err) {
               console.log(err);
+              if (err.response.status === 401 || err.response.status === 400) {
+                navigate("/register");
+              }
             }
           }
         }
@@ -375,7 +397,7 @@ function Profile() {
 
         if (userData.profilePictureId !== "") {
           const profileImageFetch = await axios.get(
-            `http://localhost:8000/api/users/profileImage/${userData.profilePictureId}`,
+            `${API_URL}/users/profileImage/${userData.profilePictureId}`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,

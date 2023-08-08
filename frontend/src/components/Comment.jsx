@@ -26,6 +26,7 @@ function Comment({
   onCommentDelete,
   onCommentUpdate
 }) {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [authorId, setAuthorId] = useState(_authorId);
   const [userName, setUserName] = useState(_authorName);
   const [content, setContent] = useState(_content);
@@ -34,8 +35,6 @@ function Comment({
   const [editOpen, setEditOpen] = useState(false);
   const [commentId, setCommentId] = useState(_key);
   const [profilePhoto, setProfilePhoto] = useState(_profilePhoto);
-  
-  console.log("_profilePhoto:", _profilePhoto)
 
   const handleEditOpen = () => {
     setEditOpen(true);
@@ -52,7 +51,7 @@ function Comment({
 
   const handleDeleteClick = async (e) => {
     const res = await axios.delete(
-      `http://localhost:8000/api/posts/comment/${commentId}`,
+      `${API_URL}/posts/comment/${commentId}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,

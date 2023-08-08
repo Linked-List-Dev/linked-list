@@ -17,6 +17,7 @@ import AppTheme from "../../util/Theme";
 import axios from "axios";
 
 function EditPost({ _content, _postId, _open, _handleClose, onUpdatePostDescription }) {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [content, setContent] = useState(_content);
   const [open, setOpen] = useState(_open);
   const [successVis, setSuccessVis] = useState(false);
@@ -30,7 +31,7 @@ function EditPost({ _content, _postId, _open, _handleClose, onUpdatePostDescript
 
     // TODO update the post
     const res = await axios.put(
-      `http://localhost:8000/api/posts/${postId}`,
+      `${API_URL}/posts/${postId}`,
       { description: content },
       {
         headers: {

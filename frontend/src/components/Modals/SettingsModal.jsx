@@ -7,6 +7,7 @@ function SettingsModal({
   closeSettingsModal,
   handleLogOut,
 }) {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   const openSettingsModal = () => setSettingsOpen(true);
@@ -20,7 +21,7 @@ function SettingsModal({
 
   const handleDeleteAccount = async () => {
     const res = await axios.delete(
-      `http://localhost:8000/api/users/${localStorage.getItem("id")}`,
+      `${API_URL}/users/${localStorage.getItem("id")}`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,

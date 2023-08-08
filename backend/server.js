@@ -18,10 +18,6 @@ const limiter = rateLimit({
     standardHeaders: true,
 })
   
-const devOrigins = ['http://localhost:5173', 'http://localhost:5174'];
-const prodOrigins = ['https://linkedlist.onrender.com'];
-const origin = process.env.NODE_ENV === 'production' ? prodOrigins : devOrigins;
-
 app.disable('x-powered-by')
 
 // Define routes and middleware here
@@ -29,13 +25,18 @@ app.use(limiter)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(morgan("dev"))
-app.use(
-    cors({
-    origin: origin,
-      credentials: true,
-      optionsSuccessStatus: 200,
-    }),
-)
+
+if (process.env.NODE_ENV === 'production') {
+    app.use(
+        cors({
+            origin: ['https://linkedlist.onrender.com'],
+            credentials: true,
+            optionsSuccessStatus: 200,
+        }),
+    )
+} else {
+    app.use(cors())
+}
   
 // Uncomment if you are debugging one of the endpoints:
 // app.use(tracker)

@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import SignInModal from "./Modals/SignInModal";
 
 function LoginSide({ openByDefault }) {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [open, setOpen] = useState(openByDefault);
   const [formValues, setFormValues] = useState({
     email: "",
@@ -28,7 +29,7 @@ function LoginSide({ openByDefault }) {
   const handleSubmit = async (e) => {
     console.log(formValues);
     e.preventDefault();
-    const res = await axios.post("http://localhost:8000/api/users/login", {
+    const res = await axios.post(`${API_URL}/users/login`, {
       email: formValues.email,
       password: formValues.password,
     });

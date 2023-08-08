@@ -34,6 +34,7 @@ import Feed from "../pages/feed/Feed";
 import Footer from "./Footer";
 
 function NavigationSidePanel({ onPostCreated, _userProfilePicture }) {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [open, setOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [successVis, setSuccessVis] = useState(false);
@@ -83,7 +84,7 @@ function NavigationSidePanel({ onPostCreated, _userProfilePicture }) {
     console.log(formValues);
 
     const res = await axios.post(
-      "http://localhost:8000/api/posts/",
+      `${API_URL}/posts/`,
       { description: formValues.content }, // Request payload
       {
         headers: {

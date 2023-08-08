@@ -27,6 +27,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 
 function EditComment({ _content, _commentId, _open, _handleClose, onUpdateComment }) {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [content, setContent] = useState(_content);
   const [open, setOpen] = useState(_open);
   const [successVis, setSuccessVis] = useState(false);
@@ -42,7 +43,7 @@ function EditComment({ _content, _commentId, _open, _handleClose, onUpdateCommen
     }
 
     const res = await axios.put(
-      `http://localhost:8000/api/posts/comment/${commentId}`,
+      `${API_URL}/posts/comment/${commentId}`,
       { newCommentContent: content },
       {
         headers: {

@@ -44,6 +44,7 @@ function ExpandedPost({
   handleDislike,
   onUpdatePostComments
 }) {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [authorId, setAuthorId] = useState(_authorId);
   const [content, setContent] = useState(_content);
   const [userName, setUserName] = useState(_userName);
@@ -62,31 +63,35 @@ function ExpandedPost({
   const [successDeleteCommentVis, setSuccessDeleteCommentVis] = useState(false);
 
   const fetchProfilePicture = async (profilePictureId) => {
-    try {
-      const res = await axios.get(
-        `http://localhost:8000/api/users/profileImage/${profilePictureId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          responseType: "arraybuffer",
+    if (profilePictureId !== "") {
+      try {
+        const res = await axios.get(
+          `${API_URL}/users/profileImage/${profilePictureId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            responseType: "arraybuffer",
+          }
+        );
+    
+        if (res.status === 200) {
+          const blob = new Blob([res.data], {
+            type: res.headers["content-type"],
+          });
+          return URL.createObjectURL(blob);
+        } else {
+          // Tia TODO: handle error
+          console.log("Error fetching profile picture");
+          return null;
         }
-      );
-  
-      if (res.status === 200) {
-        const blob = new Blob([res.data], {
-          type: res.headers["content-type"],
-        });
-        return URL.createObjectURL(blob);
-      } else {
+      } catch (err) {
+        console.error("Error fetching profile picture:", err);
         // Tia TODO: handle error
-        console.log("Error fetching profile picture");
         return null;
       }
-    } catch (err) {
-      console.error("Error fetching profile picture:", err);
-      // Tia TODO: handle error
-      return null;
+    } else {
+      return ""
     }
   };
   
@@ -122,7 +127,7 @@ function ExpandedPost({
     e.preventDefault()
 
     const res = await axios.post(
-      "http://localhost:8000/api/posts/comment",
+      `${API_URL}/posts/comment`,
       {
         commentContent: commentContent,
         postId: postId,

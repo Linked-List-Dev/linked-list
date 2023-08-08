@@ -28,6 +28,7 @@ import SettingsModal from "../Modals/SettingsModal";
 import { useNavigate } from "react-router-dom";
 
 function MobileSideNav({ onPostCreated, _userProfilePicture }) {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [isOpen, setIsOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -83,7 +84,7 @@ function MobileSideNav({ onPostCreated, _userProfilePicture }) {
     console.log(formValues);
 
     const res = await axios.post(
-      "http://localhost:8000/api/posts/",
+      `${API_URL}/posts/`,
       { description: formValues.content }, // Request payload
       {
         headers: {

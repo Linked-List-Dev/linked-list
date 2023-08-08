@@ -15,6 +15,7 @@ import MobileSideNav from "../../components/Mobile/MobileSideNav";
 import { useNavigate } from "react-router-dom";
 
 function Feed() {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [posts, setPosts] = useState([]);
   const [postProfilePictures, setPostProfilePictures] = useState({});
   const [loading, setLoading] = useState(true);
@@ -47,28 +48,33 @@ function Feed() {
   const handlePostCreate = async (newPost) => {
     if (newPost.authorProfilePictureId) {
       try {
-        const res = await axios.get(
-          `http://localhost:8000/api/users/profileImage/${newPost.authorProfilePictureId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-            responseType: "arraybuffer",
-          }
-        );
+        if (newPost.authorProfilePictureId !== "") {
+          const res = await axios.get(
+            `${API_URL}/users/profileImage/${newPost.authorProfilePictureId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+              responseType: "arraybuffer",
+            }
+          );
 
-        if (res.status === 200 || res.status === 304) {
-          const blob = new Blob([res.data], {
-            type: res.headers["content-type"],
-          });
-          const blobUrl = URL.createObjectURL(blob);
-          setPostProfilePictures((prevProfilePictures) => ({
-            ...prevProfilePictures,
-            [newPost.authorProfilePictureId]: blobUrl,
-          }));
+          if (res.status === 200 || res.status === 304) {
+            const blob = new Blob([res.data], {
+              type: res.headers["content-type"],
+            });
+            const blobUrl = URL.createObjectURL(blob);
+            setPostProfilePictures((prevProfilePictures) => ({
+              ...prevProfilePictures,
+              [newPost.authorProfilePictureId]: blobUrl,
+            }));
+          }
         }
       } catch (err) {
         console.log(err);
+        if (err.response.status === 401 || err.response.status === 400) {
+          navigate("/register");
+        }
       }
     }
     
@@ -80,17 +86,20 @@ function Feed() {
       try {
         setLoading(true); // Start loading
   
-        const profilePictureFetch = await axios.get(
-          `http://localhost:8000/api/users/profileImage/${localStorage.getItem(
-            "profilePictureId"
-          )}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-            responseType: "arraybuffer", // Set the responseType to arraybuffer
-          }
-        );
+        let profilePictureFetch = {}
+        if (localStorage.getItem("profilePictureId") !== "") {
+          profilePictureFetch = await axios.get(
+            `${API_URL}/users/profileImage/${localStorage.getItem(
+              "profilePictureId"
+            )}`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+              responseType: "arraybuffer", // Set the responseType to arraybuffer
+            }
+          );
+        }
 
         if (profilePictureFetch.status === 200 || profilePictureFetch.status === 304) {
           // Create a blob from the file data
@@ -103,7 +112,7 @@ function Feed() {
           setUserProfilePicture(blobUrl);
         }
 
-        const res = await axios.get("http://localhost:8000/api/feed/", {
+        const res = await axios.get(`${API_URL}/feed/`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -117,29 +126,9 @@ function Feed() {
           // Iterate through each post
           for (const post of res.data.posts) {
             if (post.authorProfilePictureId) {
-              const res = await axios.get(
-                `http://localhost:8000/api/users/profileImage/${post.authorProfilePictureId}`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                  },
-                  responseType: "arraybuffer",
-                }
-              );
-  
-              if (res.status === 200 || res.status === 304) {
-                const blob = new Blob([res.data], {
-                  type: res.headers["content-type"],
-                });
-                const blobUrl = URL.createObjectURL(blob);
-                postProfilePicturesData[post.authorProfilePictureId] = blobUrl;
-              }
-            }
-            // Iterate through each comment in the post
-            for (const comment of post.comments) {
-              try {
+              if (post.authorProfilePictureId !== ""){
                 const res = await axios.get(
-                  `http://localhost:8000/api/users/profileImage/${comment.authorProfilePictureId}`,
+                  `${API_URL}/users/profileImage/${post.authorProfilePictureId}`,
                   {
                     headers: {
                       Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -147,16 +136,43 @@ function Feed() {
                     responseType: "arraybuffer",
                   }
                 );
-  
+    
                 if (res.status === 200 || res.status === 304) {
                   const blob = new Blob([res.data], {
                     type: res.headers["content-type"],
                   });
                   const blobUrl = URL.createObjectURL(blob);
-                  commentProfilePictures[comment.authorProfilePictureId] = blobUrl;
+                  postProfilePicturesData[post.authorProfilePictureId] = blobUrl;
+                }
+              }
+            }
+            // Iterate through each comment in the post
+            for (const comment of post.comments) {
+              try {
+                if (comment.authorProfilePictureId !== ""){
+                  const res = await axios.get(
+                    `${API_URL}/users/profileImage/${comment.authorProfilePictureId}`,
+                    {
+                      headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                      },
+                      responseType: "arraybuffer",
+                    }
+                  );
+    
+                  if (res.status === 200 || res.status === 304) {
+                    const blob = new Blob([res.data], {
+                      type: res.headers["content-type"],
+                    });
+                    const blobUrl = URL.createObjectURL(blob);
+                    commentProfilePictures[comment.authorProfilePictureId] = blobUrl;
+                  }
                 }
               } catch (err) {
                 console.log(err);
+                if (err.response.status === 401 || err.response.status === 400) {
+                  navigate("/register");
+                }
               }
             }
           }
