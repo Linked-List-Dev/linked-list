@@ -228,7 +228,6 @@ function Landing() {
               <Box
                 width={"100vw"}
                 minHeight={"30vh"}
-                
                 sx={{
                   background: "linear-gradient(to top, #9398FC, #6858D8)",
                 }}
