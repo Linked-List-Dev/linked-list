@@ -7,6 +7,8 @@ import {
   Box,
   TextField,
   Stack,
+  Snackbar,
+  Alert
 } from "@mui/material";
 import AppTheme from "../util/Theme";
 import axios from "axios";
@@ -22,6 +24,8 @@ function RegisterSide() {
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const [registrationFailedVis, setRegistrationFailedVis] = useState(false);
+  const [registrationSucceededVis, setRegistrationSucceededVis] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -42,28 +46,32 @@ function RegisterSide() {
     if (formValues.password === formValues.confirmPassword) {
       e.preventDefault();
       console.log("formValues:", formValues);
-      const res = await axios.post(`${API_URL}/users`, {
-        name: formValues.name,
-        email: formValues.email,
-        password: formValues.confirmPassword,
-      });
 
-      if (res.status === 201) {
-        console.log("Created new user, navigate to the posts page (TODO)");
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("id", res.data.id);
-        localStorage.setItem("email", res.data.email);
-        localStorage.setItem("username", res.data.name);
-        localStorage.setItem("profilePictureId", res.data.profileImageId);
+      try {
+        const res = await axios.post(`${API_URL}/users`, {
+          name: formValues.name,
+          email: formValues.email,
+          password: formValues.confirmPassword,
+        });
 
-        navigate("/feed");
-        // TODO:
-        // setTimeout(() => {
-        //   setMessage('User created successfully');
-        //   navigate('/feed');
-        // }, 2000);
-      } else {
-        setError(res.data.error);
+        if (res.status === 201) {
+          console.log("Created new user, navigate to the posts page (TODO)");
+          localStorage.setItem("token", res.data.token);
+          localStorage.setItem("id", res.data.id);
+          localStorage.setItem("email", res.data.email);
+          localStorage.setItem("username", res.data.name);
+          localStorage.setItem("profilePictureId", res.data.profileImageId);
+
+          setRegistrationSucceededVis(true);
+
+          setTimeout(() => {
+            navigate("/feed");
+          }, 1200);
+        }
+      } catch (err) {
+        console.log("err.response:", err.response)
+        e.preventDefault();
+        setRegistrationFailedVis(true)
       }
     } else {
       e.preventDefault();
@@ -73,6 +81,14 @@ function RegisterSide() {
 
   const handleResetError = () => {
     setError("");
+  };
+
+  const registrationFailedVisClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setRegistrationFailedVis(false);
   };
 
   return (
@@ -189,6 +205,33 @@ function RegisterSide() {
             </Box>
           </Box>
         </Box>
+
+        <Snackbar
+          open={registrationFailedVis}
+          autoHideDuration={8000}
+          onClose={registrationFailedVisClose}
+        >
+          <Alert
+            onClose={registrationFailedVisClose}
+            severity="error"
+            sx={{ width: "100%" }}
+          >
+            Something went wrong when creating your account. This email might already be used by someone! Try again...
+          </Alert>
+        </Snackbar>
+
+        <Snackbar
+          open={registrationSucceededVis}
+          autoHideDuration={1200}
+        >
+          <Alert
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+            You have successfully registered and logged in!
+          </Alert>
+        </Snackbar>
+
       </ThemeProvider>
     </div>
   );

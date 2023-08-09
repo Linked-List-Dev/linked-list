@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { ThemeProvider, Typography, Button, Box } from "@mui/material";
+import { ThemeProvider, Typography, Button, Box, Snackbar, Alert } from "@mui/material";
 import AppTheme from "../util/Theme";
 import { Link } from "react-router-dom";
 import IconDark from "../assets/IconDark.svg";
@@ -15,7 +15,9 @@ function LoginSide({ openByDefault }) {
     email: "",
     password: "",
   });
-  const [error, setError] = useState("");
+  const [loginFailedVis, setLoginFailedVis] = useState(false);
+  const [loginSucceededVis, setLoginSucceededVis] = useState(false);
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -26,42 +28,48 @@ function LoginSide({ openByDefault }) {
     }));
   };
 
+  const loginFailedVisClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setLoginFailedVis(false);
+  };
+
   const handleSubmit = async (e) => {
     console.log(formValues);
     e.preventDefault();
-    
-    const res = await axios.post(`${API_URL}/users/login`, {
-      email: formValues.email,
-      password: formValues.password,
-    });
 
-    if (res.status === 200) {
-      console.log(
-        "Logged in a user, user's id and token are:",
-        res.data.id,
-        res.data.token
-      );
+    try {
+      const res = await axios.post(`${API_URL}/users/login`, {
+        email: formValues.email,
+        password: formValues.password,
+      });
 
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("id", res.data.id);
-      localStorage.setItem("email", res.data.email);
-      localStorage.setItem("username", res.data.name);
-      localStorage.setItem("profilePictureId", res.data.profileImageId);
+      if (res.status === 200) {
+        console.log(
+          "Logged in a user, user's id and token are:",
+          res.data.id,
+          res.data.token
+        );
 
-      navigate("/feed");
-      // TODO:
-      // setTimeout(() => {
-      //   setMessage('User logged in successfully');
-      //   navigate('/feed');
-      // }, 2000);
-    } else {
-      console.log("res.data.error:", res.data.error);
-      setError(res.data.error);
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("id", res.data.id);
+        localStorage.setItem("email", res.data.email);
+        localStorage.setItem("username", res.data.name);
+        localStorage.setItem("profilePictureId", res.data.profileImageId);
+
+        setLoginSucceededVis(true);
+
+        setTimeout(() => {
+          navigate("/feed");
+        }, 1200);
+      }
+    } catch (err) {
+      e.preventDefault();
+      console.log("err.response:", err.response)
+      setLoginFailedVis(true)
     }
-  };
-
-  const handleResetError = () => {
-    setError("");
   };
 
   const handleOpen = () => {
@@ -144,15 +152,40 @@ function LoginSide({ openByDefault }) {
         </Box>
 
         <SignInModal
-          error={error}
           open={open}
           handleClose={handleClose}
           handleChange={handleChange}
-          handleResetError={handleResetError}
           handleSubmit={handleSubmit}
           formValues={formValues}
         />
       </Box>
+
+      <Snackbar
+        open={loginFailedVis}
+        autoHideDuration={3000}
+        onClose={loginFailedVisClose}
+      >
+        <Alert
+          onClose={loginFailedVisClose}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          You have entered invalid authentication credentials! Try again...
+        </Alert>
+      </Snackbar>
+
+      <Snackbar
+        open={loginSucceededVis}
+        autoHideDuration={1200}
+      >
+        <Alert
+          severity="success"
+          sx={{ width: "100%" }}
+        >
+          You have logged in successfully!
+        </Alert>
+      </Snackbar>
+
     </ThemeProvider>
   );
 }
