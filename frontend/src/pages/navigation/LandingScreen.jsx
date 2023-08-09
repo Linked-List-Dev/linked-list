@@ -157,17 +157,8 @@ function Landing() {
                         paddingTop: "3vh",
                       }}
                     >
-                      <IconButton
-                        style={{
-                          position: "absolute",
-                          top: "50%",
-                          left: "10px",
-                          transform: "translateY(-50%)",
-                        }}
-                        onClick={handlePrev}
-                      >
-                        <ChevronLeftIcon />
-                      </IconButton>
+                      <Stack>
+                      
                       <Box
                         style={{
                           transition: "transform 0.5s ease",
@@ -210,17 +201,23 @@ function Landing() {
                           ))}
                         </Stack>
                       </Box>
+                      <Box>
                       <IconButton
-                        style={{
-                          position: "absolute",
-                          top: "50%",
-                          right: "10px",
-                          transform: "translateY(-50%)",
-                        }}
+                      sx={{borderRadius: 1}}
+                        onClick={handlePrev}
+                      >
+                        <ChevronLeftIcon />
+                      </IconButton>
+                      <IconButton
+                      sx={{borderRadius: 1}}
                         onClick={handleNext}
                       >
                         <ChevronRightIcon />
                       </IconButton>
+                      </Box>
+                      
+                      </Stack>
+                      
                     </Box>
                   </Box>
                 </Stack>

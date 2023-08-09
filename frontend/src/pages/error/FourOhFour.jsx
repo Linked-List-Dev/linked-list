@@ -32,7 +32,10 @@ function FourOhFour() {
               <Typography variant="h4">
                 Looks like the page you were looking for does not exist.
               </Typography>
-              <Button
+              
+            </Stack>
+            <Box paddingTop={3}>
+            <Button
                 component={Link}
                 to="/feed"
                 variant="outlined"
@@ -45,7 +48,8 @@ function FourOhFour() {
               >
                 Back to your feed
               </Button>
-            </Stack>
+            </Box>
+            
           </Box>
         </Box>
       </Box>
