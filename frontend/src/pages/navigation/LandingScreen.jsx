@@ -53,8 +53,17 @@ const cardData = [
   LinkedList is your gateway to building meaningful
   professional relationships.`,
   },
-  // Add more card data as needed
 ];
+
+const content = `a tech-focused social platform designed for tech
+enthusiasts. Similar to LinkedIn, LinkedList lets tech
+professionals showcase skills, build connections, and
+boost careers. Connect with like-minded tech experts,
+share knowledge through articles, and network with
+potential collaborators. Stay updated on industry trends
+and engage with influential personalities and companies.
+Join our vibrant community to enhance your tech career.
+Discover, connect, and thrive with LinkedList.`
 
 function Landing() {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -96,7 +105,7 @@ function Landing() {
     >
       <ThemeProvider theme={AppTheme}>
         {windowWidth >= 850 ? (
-          <Box width={"100vw"} maxHeight={"100vh"}>
+          <Box width={"100vw"} height={"100vh"}>
             <NavigationBar />
             <Box >
               <Box minWidth={"100vw"} color={"text.main"}>
@@ -122,15 +131,7 @@ function Landing() {
                     </Fade>
                     <Fade>
                       <Typography variant="h5" paddingTop={"3vh"}>
-                        a tech-focused social platform designed for tech
-                        enthusiasts. Similar to LinkedIn, LinkedList lets tech
-                        professionals showcase skills, build connections, and
-                        boost careers. Connect with like-minded tech experts,
-                        share knowledge through articles, and network with
-                        potential collaborators. Stay updated on industry trends
-                        and engage with influential personalities and companies.
-                        Join our vibrant community to enhance your tech career.
-                        Discover, connect, and thrive with LinkedList.
+                        {content}
                       </Typography>
                     </Fade>
                   </Box>
@@ -314,16 +315,7 @@ function Landing() {
                     </Fade>
                     <Fade>
                       <Typography variant="h5" padding={"3vh"}>
-                        Welcome to LinkedList, a tech-focused social platform
-                        designed for tech enthusiasts. Similar to LinkedIn,
-                        LinkedList lets tech professionals showcase skills,
-                        build connections, and boost careers. Connect with
-                        like-minded tech experts, share knowledge through
-                        articles, and network with potential collaborators. Stay
-                        updated on industry trends and engage with influential
-                        personalities and companies. Join our vibrant community
-                        to enhance your tech career. Discover, connect, and
-                        thrive with LinkedList.
+                        {content}
                       </Typography>
                     </Fade>
                   </Box>
@@ -468,7 +460,6 @@ function Landing() {
                     justifyContent: "center",
                     alignItems: "center",
                     color: "#cfcaca",
-                    position: "absolute",
                     bottom: 0,
                     width: "100%",
                     paddingBottom: "1rem",

@@ -478,7 +478,7 @@ function Profile() {
       ) : (
         <>
           <Backdrop
-            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            sx={{ color: "#fff", overflow: 'scroll'}}
             open={loading}
           >
             <CircularProgress color="inherit" />
@@ -698,7 +698,7 @@ function Profile() {
                               {biography ? (
                                 <Linkify text={biography} />
                               ) : (
-                                <Box>You haven't set your bio yet. Click the edit profile button to add one!</Box>
+                                `You haven't set your bio yet. Click the edit profile button to add one!`
                               )}
                             </>
                           ) : (
@@ -706,7 +706,7 @@ function Profile() {
                               {biography ? (
                                 <Linkify text={biography} />
                               ) : (
-                                <Box>This user has no bio added yet.</Box>
+                                `This user has no bio added yet.`
                               )}
                             </>
                           )}
@@ -972,7 +972,7 @@ function Profile() {
                               {biography ? (
                                 <Linkify text={biography} />
                               ) : (
-                                <Box>You haven't set your bio yet. Click the edit profile button to add one!</Box>
+                                `You haven't set your bio yet. Click the edit profile button to add one!`
                               )}
                             </>
                           ) : (
@@ -980,10 +980,11 @@ function Profile() {
                               {biography ? (
                                 <Linkify text={biography} />
                               ) : (
-                                <Box>This user has no bio added yet.</Box>
+                                `This user has no bio added yet.`
                               )}
                             </>
                           )}
+
                         </Typography>
                       </Paper>
                     </Box>

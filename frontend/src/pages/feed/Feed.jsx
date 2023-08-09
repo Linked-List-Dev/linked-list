@@ -203,14 +203,16 @@ function Feed() {
   }, []);
 
   return (
-    <div>
+    <Box>
       <Backdrop
-        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        sx={{ color: "#fff", overflow: 'hidden' }}
         open={loading}
       >
         <CircularProgress color="inherit" />
       </Backdrop>
+      
       <ThemeProvider theme={AppTheme}>
+      
         {windowWidth >= 768 ? (
           <Box
             sx={{
@@ -375,7 +377,7 @@ function Feed() {
           </Box>
         )}
       </ThemeProvider>
-    </div>
+    </Box>
   );
 }
 
