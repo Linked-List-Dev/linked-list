@@ -45,7 +45,7 @@ function SettingsModal({
 
         setTimeout(() => {
           navigate("/");
-        }, 1600);
+        }, 1800);
 
       }
     } catch (err) {
@@ -138,7 +138,7 @@ function SettingsModal({
 
       <Snackbar
         open={deleteAccountSucceededVis}
-        autoHideDuration={1600}
+        autoHideDuration={1800}
       >
         <Alert
           severity="success"

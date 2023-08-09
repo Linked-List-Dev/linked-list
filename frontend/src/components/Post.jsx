@@ -9,7 +9,10 @@ import {
   Typography,
   Stack,
   CardContent,
-  IconButton, Box
+  Alert,
+  Snackbar,
+  IconButton,
+  Box
 } from "@mui/material";
 import AppTheme from "../util/Theme";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
@@ -75,23 +78,23 @@ function Post({
   };
 
   const handleDeleteClick = async (e) => {
-    const res = await axios.delete(
-      `${API_URL}/posts/${postId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
-    );
-
-    console.log(res.status);
-    if (res.status === 204) {
-      // Tia TODO: create a popup saying that the post got deleted successfully
-      onDeletePost(postId);
-    } else {
-      console.log(
-        "Tia TODO: display an error saying failed to delete a post (res.data.error)"
+    try {
+      const res = await axios.delete(
+        `${API_URL}/posts/${postId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       );
+
+      console.log(res.status);
+      if (res.status === 204) {
+        onDeletePost(postId);
+      }
+    } catch (err) {
+      e.preventDefault();
+      console.log("err.response:", err.response)
     }
 
     e.stopPropagation();
@@ -330,7 +333,7 @@ function Post({
               </Stack>
 
               <Typography variant="h6" color="text.secondary">
-                <Linkify text={description}/>
+                <Linkify text={description} />
               </Typography>
             </CardContent>
           </CardActionArea>
@@ -362,19 +365,19 @@ function Post({
             <Button sx={{ color: "accent.main" }} onClick={handleComment}>
               <CommentIcon /> {comments.length}
             </Button>
-            <Box sx={{width: '100vw', textAlign: 'right'}}>
-            <Typography
-              variant="caption"
-              sx={{
-                position: "relative",
+            <Box sx={{ width: '100vw', textAlign: 'right' }}>
+              <Typography
+                variant="caption"
+                sx={{
+                  position: "relative",
 
-                color: "text.secondary",
-              }}
-            >
-              {updatedAt}
-            </Typography>
+                  color: "text.secondary",
+                }}
+              >
+                {updatedAt}
+              </Typography>
             </Box>
-            
+
           </CardActions>
         </Card>
         <Box>

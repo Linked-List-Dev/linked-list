@@ -7,6 +7,8 @@ import {
   CardContent,
   IconButton,
   Box,
+  Snackbar,
+  Alert
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -35,6 +37,8 @@ function Comment({
   const [editOpen, setEditOpen] = useState(false);
   const [commentId, setCommentId] = useState(_key);
   const [profilePhoto, setProfilePhoto] = useState(_profilePhoto);
+  const [commentDeleteFailedVis, setCommentDeleteFailedVis] = useState(false);
+  const [commentDeleteSucceededVis, setCommentDeleteSucceededVis] = useState(false);
 
   const handleEditOpen = () => {
     setEditOpen(true);
@@ -49,25 +53,44 @@ function Comment({
     setContent(newContent);
   };
 
-  const handleDeleteClick = async (e) => {
-    const res = await axios.delete(
-      `${API_URL}/posts/comment/${commentId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
-    );
-
-    console.log(res.status);
-    if (res.status === 204) {
-      onCommentDelete(commentId);
-    } else {
-      console.log(
-        "Tia TODO: display an error saying failed to delete a post (res.data.error)"
-      );
+  const closeCommentDeleteSucceededVis = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
     }
 
+    setCommentDeleteSucceededVis(false);
+  };
+
+
+  const closeCommentDeleteFailedVis = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setCommentDeleteFailedVis(false);
+  };
+
+  const handleDeleteClick = async (e) => {
+    try {
+      const res = await axios.delete(
+        `${API_URL}/posts/comment/${commentId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      console.log(res.status);
+      if (res.status === 204) {
+        setCommentDeleteSucceededVis(true)
+        onCommentDelete(commentId);
+      }
+    } catch (err) {
+      e.preventDefault();
+      console.log("err.response:", err.response)
+      setCommentDeleteFailedVis(true)
+    }
     e.stopPropagation();
   };
 
@@ -127,12 +150,39 @@ function Comment({
             <Typography variant="h5">{userName}</Typography>
           </Stack>
           <Typography>
-            <Linkify text={content}/>
-            </Typography>
-          <Box sx={{textAlign: 'right'}}>
-
-            <Typography variant="caption" sx={{color: "text.secondary", textAlign: 'right' }}>{updatedAt}</Typography>
+            <Linkify text={content} />
+          </Typography>
+          <Box sx={{ textAlign: 'right' }}>
+            <Typography variant="caption" sx={{ color: "text.secondary", textAlign: 'right' }}>{updatedAt}</Typography>
           </Box>
+
+          <Snackbar
+            open={commentDeleteFailedVis}
+            autoHideDuration={3000}
+            onClose={closeCommentDeleteFailedVis}
+          >
+            <Alert
+              onClose={closeCommentDeleteFailedVis}
+              severity="success"
+              sx={{ width: "100%" }}
+            >
+              Something went wrong trying to delete a comment! Try again later...
+            </Alert>
+          </Snackbar>
+
+          <Snackbar
+            open={commentDeleteSucceededVis}
+            autoHideDuration={3000}
+            onClose={closeCommentDeleteSucceededVis}
+          >
+            <Alert
+              onClose={closeCommentDeleteSucceededVis}
+              severity="success"
+              sx={{ width: "100%" }}
+            >
+              Comment deleted successfully!
+            </Alert>
+          </Snackbar>
 
         </CardContent>
       </Card>

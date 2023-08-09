@@ -43,6 +43,7 @@ function NavigationSidePanel({ onPostCreated, _userProfilePicture }) {
   const openSettingsModal = () => setSettingsOpen(true);
   const closeSettingsModal = () => setSettingsOpen(false);
   const [profileImage, setProfileImage] = useState(_userProfilePicture);
+  const [logoutSucceededVis, setLogoutSucceededVis] = useState(false);
 
   const navigate = useNavigate();
 
@@ -68,7 +69,12 @@ function NavigationSidePanel({ onPostCreated, _userProfilePicture }) {
     localStorage.setItem("email", "");
     localStorage.setItem("username", "");
     localStorage.setItem("profilePictureId", "");
-    navigate("/");
+
+    setLogoutSucceededVis(true)
+
+    setTimeout(() => {
+      navigate("/");
+    }, 1500);
   };
 
   const handleChange = (e) => {
@@ -190,7 +196,7 @@ function NavigationSidePanel({ onPostCreated, _userProfilePicture }) {
                 </ListItemButton>
               </ListItem>
             </List>
-            
+
           </Stack>
         </Box>
 
@@ -219,6 +225,18 @@ function NavigationSidePanel({ onPostCreated, _userProfilePicture }) {
             sx={{ width: "100%" }}
           >
             Your post was successfully created!
+          </Alert>
+        </Snackbar>
+
+        <Snackbar
+          open={logoutSucceededVis}
+          autoHideDuration={1500}
+        >
+          <Alert
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+            You have successfully logged out!
           </Alert>
         </Snackbar>
       </ThemeProvider>

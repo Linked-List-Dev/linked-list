@@ -8,6 +8,8 @@ import {
   Typography,
   Backdrop,
   CircularProgress,
+  Snackbar,
+  Alert
 } from "@mui/material";
 import Post from "../../components/Post";
 import axios from "axios";
@@ -24,6 +26,7 @@ function Feed() {
     // "There are no posts yet... Want to add one?"
   );
   const [userProfilePicture, setUserProfilePicture] = useState("");
+  const [postDeleteSucceededVis, setPostDeleteSucceededVis] = useState(false);
 
   const navigate = useNavigate();
 
@@ -41,6 +44,7 @@ function Feed() {
   }, []);
 
   const handlePostDelete = (postId) => {
+    setPostDeleteSucceededVis(true)
     // Remove the deleted post from the posts array in the state
     setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
   };
@@ -77,15 +81,15 @@ function Feed() {
         }
       }
     }
-    
+
     setPosts((prevPosts) => [...prevPosts, newPost]);
   }
-  
+
   useEffect(() => {
     async function getPosts() {
       try {
         setLoading(true); // Start loading
-  
+
         let profilePictureFetch = {}
         if (localStorage.getItem("profilePictureId") !== "") {
           profilePictureFetch = await axios.get(
@@ -106,7 +110,7 @@ function Feed() {
           const blob = new Blob([profilePictureFetch.data], {
             type: profilePictureFetch.headers["content-type"],
           });
-  
+
           // Convert the blob to a URL (blob URL)
           const blobUrl = URL.createObjectURL(blob);
           setUserProfilePicture(blobUrl);
@@ -117,16 +121,16 @@ function Feed() {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-  
+
         if (res.status === 200 || res.status === 304) {
           // Create an object to store the profile pictures for each comment author
           const commentProfilePictures = {};
           const postProfilePicturesData = {};
-  
+
           // Iterate through each post
           for (const post of res.data.posts) {
             if (post.authorProfilePictureId) {
-              if (post.authorProfilePictureId !== ""){
+              if (post.authorProfilePictureId !== "") {
                 const res = await axios.get(
                   `${API_URL}/users/profileImage/${post.authorProfilePictureId}`,
                   {
@@ -136,7 +140,7 @@ function Feed() {
                     responseType: "arraybuffer",
                   }
                 );
-    
+
                 if (res.status === 200 || res.status === 304) {
                   const blob = new Blob([res.data], {
                     type: res.headers["content-type"],
@@ -149,7 +153,7 @@ function Feed() {
             // Iterate through each comment in the post
             for (const comment of post.comments) {
               try {
-                if (comment.authorProfilePictureId !== ""){
+                if (comment.authorProfilePictureId !== "") {
                   const res = await axios.get(
                     `${API_URL}/users/profileImage/${comment.authorProfilePictureId}`,
                     {
@@ -159,7 +163,7 @@ function Feed() {
                       responseType: "arraybuffer",
                     }
                   );
-    
+
                   if (res.status === 200 || res.status === 304) {
                     const blob = new Blob([res.data], {
                       type: res.headers["content-type"],
@@ -176,9 +180,9 @@ function Feed() {
               }
             }
           }
-  
+
           setPostProfilePictures(postProfilePicturesData);
-  
+
           // Set the posts with the updated comment profile pictures
           const postsWithCommentsWithProfilePictures = res.data.posts.map((post) => ({
             ...post,
@@ -187,7 +191,7 @@ function Feed() {
               profilePicture: commentProfilePictures[comment.authorProfilePictureId] || "",
             })),
           }));
-  
+
           setPosts(postsWithCommentsWithProfilePictures);
         }
       } catch (err) {
@@ -198,9 +202,17 @@ function Feed() {
         setLoading(false); // Stop loading after fetching data, regardless of success or error
       }
     }
-  
+
     getPosts();
   }, []);
+
+  const closePostDeleteSucceededVis = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setPostDeleteSucceededVis(false);
+  };
 
   return (
     <Box>
@@ -210,9 +222,9 @@ function Feed() {
       >
         <CircularProgress color="inherit" />
       </Backdrop>
-      
+
       <ThemeProvider theme={AppTheme}>
-      
+
         {windowWidth >= 768 ? (
           <Box
             sx={{
@@ -252,33 +264,48 @@ function Feed() {
                 <Box>
                   <Stack spacing={3}>
                     {posts
-                     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                     .map((post) => {
-                      return (
-                        !loading && (
-                          <Post
-                            key={post._id}
-                            _postId={post._id}
-                            _userName={post.authorName}
-                            _jobTitle={post.authorJobTitle}
-                            _authorProfilePhoto={
-                              postProfilePictures[post.authorProfilePictureId]
-                            }
-                            _description={post.description}
-                            _likes={post.likes}
-                            _dislikes={post.dislikes}
-                            _authorId={post.authorId}
-                            _comments={post.comments}
-                            _createdAt={post.createdAt}
-                            _updatedAt={post.updatedAt}
-                            onDeletePost={handlePostDelete}
-                          />
-                        )
-                      );
-                    })}
+                      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                      .map((post) => {
+                        return (
+                          !loading && (
+                            <Post
+                              key={post._id}
+                              _postId={post._id}
+                              _userName={post.authorName}
+                              _jobTitle={post.authorJobTitle}
+                              _authorProfilePhoto={
+                                postProfilePictures[post.authorProfilePictureId]
+                              }
+                              _description={post.description}
+                              _likes={post.likes}
+                              _dislikes={post.dislikes}
+                              _authorId={post.authorId}
+                              _comments={post.comments}
+                              _createdAt={post.createdAt}
+                              _updatedAt={post.updatedAt}
+                              onDeletePost={handlePostDelete}
+                            />
+                          )
+                        );
+                      })}
                   </Stack>
                 </Box>
               )}
+
+
+              <Snackbar
+                open={postDeleteSucceededVis}
+                autoHideDuration={3000}
+                onClose={closePostDeleteSucceededVis}
+              >
+                <Alert
+                  onClose={closePostDeleteSucceededVis}
+                  severity="success"
+                  sx={{ width: "100%" }}
+                >
+                  Post deleted successfully!
+                </Alert>
+              </Snackbar>
 
               <Box
                 sx={{
@@ -334,8 +361,8 @@ function Feed() {
                 <Box>
                   <Stack spacing={3}>
                     {posts
-                     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                     .map((post) =>
+                      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                      .map((post) =>
                         !loading && (
                           <Post
                             key={post._id}
@@ -355,10 +382,25 @@ function Feed() {
                             onDeletePost={handlePostDelete}
                           />
                         )
-                    )}
+                      )}
                   </Stack>
                 </Box>
               )}
+
+              <Snackbar
+                open={postDeleteSucceededVis}
+                autoHideDuration={3000}
+                onClose={closePostDeleteSucceededVis}
+              >
+                <Alert
+                  onClose={closePostDeleteSucceededVis}
+                  severity="success"
+                  sx={{ width: "100%" }}
+                >
+                  Post deleted successfully!
+                </Alert>
+              </Snackbar>
+
               <Box
                 sx={{
                   textAlign: "center",
