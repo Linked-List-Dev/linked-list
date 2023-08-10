@@ -22,6 +22,7 @@ function EditPost({ _content, _postId, _open, _handleClose, onUpdatePostDescript
   const [open, setOpen] = useState(_open);
   const [successVis, setSuccessVis] = useState(false);
   const [postId, setpostId] = useState(_postId);
+  const charLimit = 450;
 
   const handleSubmit = async (e) => {
     if (!content) {
@@ -101,6 +102,7 @@ function EditPost({ _content, _postId, _open, _handleClose, onUpdatePostDescript
                     >
                       Edit Your Post
                     </Typography>
+                    <Box>
                     <TextField
                       sx={{
                         width: "30vw",
@@ -114,10 +116,24 @@ function EditPost({ _content, _postId, _open, _handleClose, onUpdatePostDescript
                       name="content"
                       label="What's on your mind?"
                       value={content}
+                      inputProps={{ maxLength: charLimit }}
                       onChange={handleChange}
                       fullWidth
                       required
                     />
+                    <Typography
+                    textAlign={"right"}
+                    color={
+                      content.length === 450
+                        ? "error"
+                        : "textSecondary"
+                    }
+                    sx={{ position: "absolute" }}
+                  >
+                    {content.length}/450
+                  </Typography>
+                    </Box>
+                    
 
                     <Button
                       onClick={handleSubmit}

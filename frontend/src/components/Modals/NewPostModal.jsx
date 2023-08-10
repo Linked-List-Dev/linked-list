@@ -1,10 +1,12 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import {
   TextField,
   Stack,
   Typography,
   Modal,
-  Box, Button
+  Box,
+  Button,
+  InputAdornment,
 } from "@mui/material";
 
 function NewPostModal({
@@ -14,6 +16,8 @@ function NewPostModal({
   handleChange,
   formValues,
 }) {
+  const charLimit = 450;
+
   return (
     <Modal
       open={open}
@@ -50,18 +54,32 @@ function NewPostModal({
                   New Post
                 </Typography>
 
-                <TextField
-                  sx={{ width: "30vw" }}
-                  multiline
-                  rows={5}
-                  variant="outlined"
-                  name="content"
-                  label="What's on your mind?"
-                  value={formValues.content}
-                  onChange={handleChange}
-                  fullWidth
-                  required
-                />
+                <Box>
+                  <TextField
+                    sx={{ width: "30vw" }}
+                    multiline
+                    rows={5}
+                    variant="outlined"
+                    name="content"
+                    label="What's on your mind?"
+                    value={formValues.content}
+                    inputProps={{ maxLength: charLimit }}
+                    onChange={handleChange}
+                    fullWidth
+                    required
+                  />
+                  <Typography
+                    textAlign={"right"}
+                    color={
+                      formValues.content.length === 450
+                        ? "error"
+                        : "textSecondary"
+                    }
+                    sx={{ position: "absolute" }}
+                  >
+                    {formValues.content.length}/450
+                  </Typography>
+                </Box>
 
                 <Button
                   type="submit"
