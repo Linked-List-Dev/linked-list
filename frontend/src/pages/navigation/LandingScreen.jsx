@@ -158,66 +158,66 @@ function Landing() {
                       }}
                     >
                       <Stack>
-                      
-                      <Box
-                        style={{
-                          transition: "transform 0.5s ease",
-                          transform: `translateX(-${activeIndex * 100.6}%)`,
-                        }}
-                      >
-                        <Stack direction={"row"} spacing={3}>
-                          {cardData.map((card, index) => (
-                            <Box
-                              key={index}
-                              style={{
-                                flex: "0 0 100%",
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "center",
-                                justifyContent: "center",
-                              }}
-                            >
-                              <Card
+
+                        <Box
+                          style={{
+                            transition: "transform 0.5s ease",
+                            transform: `translateX(-${activeIndex * 100.6}%)`,
+                          }}
+                        >
+                          <Stack direction={"row"} spacing={3}>
+                            {cardData.map((card, index) => (
+                              <Box
+                                key={index}
                                 style={{
-                                  width: "40vw",
-                                  height: "35vh",
-                                  textAlign: "left",
+                                  flex: "0 0 100%",
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  alignItems: "center",
+                                  justifyContent: "center",
                                 }}
                               >
-                                <CardContent>
-                                  <Typography variant="h4">
-                                    {card.title}
-                                  </Typography>
-                                  <Typography
-                                    variant="h5"
-                                    color={"text.secondary"}
-                                    paddingTop={2}
-                                  >
-                                    {card.content}
-                                  </Typography>
-                                </CardContent>
-                              </Card>
-                            </Box>
-                          ))}
-                        </Stack>
-                      </Box>
-                      <Box>
-                      <IconButton
-                      sx={{borderRadius: 1}}
-                        onClick={handlePrev}
-                      >
-                        <ChevronLeftIcon />
-                      </IconButton>
-                      <IconButton
-                      sx={{borderRadius: 1}}
-                        onClick={handleNext}
-                      >
-                        <ChevronRightIcon />
-                      </IconButton>
-                      </Box>
-                      
+                                <Card
+                                  style={{
+                                    width: "40vw",
+                                    height: "35vh",
+                                    textAlign: "left",
+                                  }}
+                                >
+                                  <CardContent>
+                                    <Typography variant="h4">
+                                      {card.title}
+                                    </Typography>
+                                    <Typography
+                                      variant="h5"
+                                      color={"text.secondary"}
+                                      paddingTop={2}
+                                    >
+                                      {card.content}
+                                    </Typography>
+                                  </CardContent>
+                                </Card>
+                              </Box>
+                            ))}
+                          </Stack>
+                        </Box>
+                        <Box>
+                          <IconButton
+                            sx={{ borderRadius: 1 }}
+                            onClick={handlePrev}
+                          >
+                            <ChevronLeftIcon />
+                          </IconButton>
+                          <IconButton
+                            sx={{ borderRadius: 1 }}
+                            onClick={handleNext}
+                          >
+                            <ChevronRightIcon />
+                          </IconButton>
+                        </Box>
+
                       </Stack>
-                      
+
                     </Box>
                   </Box>
                 </Stack>
@@ -338,17 +338,6 @@ function Landing() {
                         paddingTop: "3vh",
                       }}
                     >
-                      <IconButton
-                        style={{
-                          position: "absolute",
-                          top: "50%",
-                          left: "10px",
-                          transform: "translateY(-50%)",
-                        }}
-                        onClick={handlePrev}
-                      >
-                        <ChevronLeftIcon />
-                      </IconButton>
                       <Box
                         style={{
                           transition: "transform 0.5s ease",
@@ -391,17 +380,20 @@ function Landing() {
                           ))}
                         </Stack>
                       </Box>
-                      <IconButton
-                        style={{
-                          position: "absolute",
-                          top: "50%",
-                          right: "10px",
-                          transform: "translateY(-50%)",
-                        }}
-                        onClick={handleNext}
-                      >
-                        <ChevronRightIcon />
-                      </IconButton>
+                      <Box>
+                        <IconButton
+                          sx={{ borderRadius: 1 }}
+                          onClick={handlePrev}
+                        >
+                          <ChevronLeftIcon />
+                        </IconButton>
+                        <IconButton
+                          sx={{ borderRadius: 1 }}
+                          onClick={handleNext}
+                        >
+                          <ChevronRightIcon />
+                        </IconButton>
+                      </Box>
                     </Box>
                   </Box>
                 </Stack>

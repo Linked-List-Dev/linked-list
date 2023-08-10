@@ -58,8 +58,8 @@ function Profile() {
   const [openFollowingModal, setOpenFollowingModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
-  const [successProfileDataUpdateVis, setSuccessProfileDataUpdateVis] =
-    useState(false);
+  const [successProfileDataUpdateVis, setSuccessProfileDataUpdateVis] = useState(false);
+  const [failureProfilePicuteUpdateVis, setFailureProfilePicuteUpdateVis] = useState(false)
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [editOpen, setEditOpen] = useState(false);
   const handleClose = () => setOpen(false);
@@ -190,6 +190,9 @@ function Profile() {
       console.error("Error uploading the file:", error);
       if (err.response.status === 401 || err.response.status === 400) {
         navigate("/register");
+      } else {
+        setFailureProfilePicuteUpdateVis(true)
+        setLoading(false);
       }
     }
   };
@@ -200,6 +203,7 @@ function Profile() {
     }
 
     setSuccessProfileDataUpdateVis(false);
+    setFailureProfilePicuteUpdateVis(false);
   };
 
   useEffect(() => {
@@ -478,7 +482,7 @@ function Profile() {
       ) : (
         <>
           <Backdrop
-            sx={{ color: "#fff", overflow: 'scroll'}}
+            sx={{ color: "#fff", overflow: 'scroll' }}
             open={loading}
           >
             <CircularProgress color="inherit" />
@@ -1096,6 +1100,21 @@ function Profile() {
                 Your profile was updated!
               </Alert>
             </Snackbar>
+
+            <Snackbar
+              open={failureProfilePicuteUpdateVis}
+              autoHideDuration={5000}
+              onClose={handleSnackClose}
+            >
+              <Alert
+                onClose={handleSnackClose}
+                severity="error"
+                sx={{ width: "100%" }}
+              >
+                Failed to update your profile picture. Please use PNG or JPEG format only!
+              </Alert>
+            </Snackbar>
+
           </ThemeProvider>
         </>
       )}
