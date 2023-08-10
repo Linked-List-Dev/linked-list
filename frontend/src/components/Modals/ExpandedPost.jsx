@@ -16,6 +16,8 @@ import {
   Modal,
   Box,
   IconButton,
+  FormControl,
+  FormHelperText,
 } from "@mui/material";
 import AppTheme from "../../util/Theme";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
@@ -42,7 +44,7 @@ function ExpandedPost({
   handleClose,
   handleLike,
   handleDislike,
-  onUpdatePostComments
+  onUpdatePostComments,
 }) {
   const API_URL = import.meta.env.VITE_API_URL;
   const [authorId, setAuthorId] = useState(_authorId);
@@ -74,7 +76,7 @@ function ExpandedPost({
             responseType: "arraybuffer",
           }
         );
-    
+
         if (res.status === 200) {
           const blob = new Blob([res.data], {
             type: res.headers["content-type"],
@@ -91,10 +93,10 @@ function ExpandedPost({
         return null;
       }
     } else {
-      return ""
+      return "";
     }
   };
-  
+
   useEffect(() => {
     setContent(_content);
   }, [_content]);
@@ -124,7 +126,7 @@ function ExpandedPost({
   }, [_updatedAt]);
 
   const handleCreateComment = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     const res = await axios.post(
       `${API_URL}/posts/comment`,
@@ -143,12 +145,14 @@ function ExpandedPost({
     if (res.status === 200) {
       const newComment = {
         ...res.data.comment,
-        profilePicture: await fetchProfilePicture(res.data.comment.authorProfilePictureId),
+        profilePicture: await fetchProfilePicture(
+          res.data.comment.authorProfilePictureId
+        ),
       };
 
       // Spread the old comments and append the new comment to the comments array
       const updatedComments = [...comments, newComment];
-      
+
       setComments(updatedComments);
       onUpdatePostComments(updatedComments);
       setSuccessCreateCommentVis(true);
@@ -182,7 +186,7 @@ function ExpandedPost({
   const handleCommentUpdate = (commentId, newContent) => {
     // Update the content of the specific comment in the comments array in the state
     const updatedComments = comments.map((comment) =>
-        comment._id === commentId ? { ...comment, content: newContent } : comment
+      comment._id === commentId ? { ...comment, content: newContent } : comment
     );
     setComments(updatedComments);
     onUpdatePostComments(updatedComments);
@@ -234,14 +238,11 @@ function ExpandedPost({
               <Box>
                 <CardContent>
                   <Stack direction={"row"} spacing={2} paddingBottom={"1vh"}>
-                      <IconButton
-                        component={Link}
-                        to={`/profile/${authorId}`}
-                      >
-                        <Avatar src={profilePhoto} sx={{ width: 60, height: 60 }}>
-                          {profilePhoto ? null : userName[0]}
-                        </Avatar>
-                      </IconButton>
+                    <IconButton component={Link} to={`/profile/${authorId}`}>
+                      <Avatar src={profilePhoto} sx={{ width: 60, height: 60 }}>
+                        {profilePhoto ? null : userName[0]}
+                      </Avatar>
+                    </IconButton>
                     <Stack>
                       <Typography variant="h5">{userName}</Typography>
                       <Typography
@@ -254,7 +255,7 @@ function ExpandedPost({
                     </Stack>
                   </Stack>
                   <Typography variant="h5">
-                    <Linkify text={content}/>
+                    <Linkify text={content} />
                   </Typography>
                 </CardContent>
                 <CardActions
@@ -364,30 +365,48 @@ function ExpandedPost({
 
                 <Divider sx={{ fontFamily: "Lato" }} />
                 <form onSubmit={handleCreateComment}>
-                <Stack direction={"row"}>
-                  <TextField
-                    variant="filled"
-                    label="Add comment"
-                    fullWidth
-                    onChange={handleCommentChange}
-                    value={commentContent}
-                  />
-                  <Button
-                  type="submit"
-                    variant="contained"
-                    disableElevation
-                    sx={{
-                      backgroundColor: "accent.main",
-                      "&:hover": {
-                        backgroundColor: "accent.secondary",
-                      },
-                    }}
-                  >
-                    Comment
-                  </Button>
-                </Stack>
+                  <Stack direction={"row"}>
+                    {commentContent.length >= 450 ? (
+                      <FormControl fullWidth>
+                        <TextField
+                        error
+                          variant="filled"
+                          label="Add comment"
+                          fullWidth
+                          onChange={handleCommentChange}
+                          inputProps={{ maxLength: 450 }}
+                          value={commentContent}
+                        />
+                        <FormHelperText>
+                          Post cannot be longer than 450 characters.
+                        </FormHelperText>
+                      </FormControl>
+                    ) : (
+                      <TextField
+                        variant="filled"
+                        label="Add comment"
+                        fullWidth
+                        onChange={handleCommentChange}
+                        inputProps={{ maxLength: 450 }}
+                        value={commentContent}
+                      />
+                    )}
+
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      disableElevation
+                      sx={{
+                        backgroundColor: "accent.main",
+                        "&:hover": {
+                          backgroundColor: "accent.secondary",
+                        },
+                      }}
+                    >
+                      Comment
+                    </Button>
+                  </Stack>
                 </form>
-                
               </Box>
             </Stack>
           </Card>
@@ -419,7 +438,6 @@ function ExpandedPost({
             Comment deleted successfully!
           </Alert>
         </Snackbar>
-
       </ThemeProvider>
     </div>
   );
