@@ -1,7 +1,6 @@
 # LinkedList - Connecting Tech Professionals
 
-![LinkedList Logo](/frontend/public/LinkedListLogoLight.svg#gh-light-mode-only)
-![LinkedList Logo](/frontend/public/LinkedListLogoDark.svg#gh-dark-mode-only)
+![LinkedList Logo](frontend/src/assets/IconLight.svg)
 
 Welcome to LinkedList, a social media platform designed exclusively for individuals in the tech industry. Just like LinkedIn, but tailored specifically for tech enthusiasts, LinkedList provides a powerful platform for tech professionals to showcase their skills, build connections, and enhance their career prospects.
 
