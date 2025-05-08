@@ -4,6 +4,8 @@
 
 Welcome to LinkedList, a social media platform designed exclusively for individuals in the tech industry. Just like LinkedIn, but tailored specifically for tech enthusiasts, LinkedList provides a powerful platform for tech professionals to showcase their skills, build connections, and enhance their career prospects.
 
+To see the LinkedList in action, check out the following GIF demo: [imgur.com/rxMjVdw.gif](https://i.imgur.com/rxMjVdw.gif).
+
 ## Features
 
 - **Comprehensive Profiles**: Create a detailed profile highlighting your educational background, profession, experience, and a captivating bio that tells your unique story.
